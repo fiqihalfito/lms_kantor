@@ -1,0 +1,14 @@
+version: "3.9" # versi schema docker-compose
+services:
+    lms_db_service:
+        image: postgres:16
+        container_name: LMS_DB_postgres_container
+        restart: no
+        environment:
+            POSTGRES_USER: lmsdev
+            POSTGRES_PASSWORD: lmsdev
+            POSTGRES_DB: lmsdb
+        ports:
+            - "1414:5432"
+        volumes:
+            - ./database/pgdata:/var/lib/postgresql/data
