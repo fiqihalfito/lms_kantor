@@ -1,0 +1,16 @@
+import { db } from "database/connect";
+import { tDokumen } from "database/schema/schema";
+import { eq } from "drizzle-orm";
+
+
+export async function getDokumenUploadBySelf(idUser: string) {
+    // const res = await db.select().from(tDokumen).where(eq(tDokumen.idUser, idUser))
+    const res = await db.query.tDokumen.findMany({
+        with: {
+            layanan: true,
+            user: true
+        },
+        where: eq(tDokumen.idUser, idUser)
+    })
+    return res
+}

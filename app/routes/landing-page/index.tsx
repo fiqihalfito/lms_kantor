@@ -34,7 +34,7 @@ export default function LandingPage() {
           Aplikasi Pembelajaran Bidang Aplikasi PLN - Korporat dan Pelayanan Pelanggan
         </p>
         <div className="mt-12 flex items-center justify-center gap-4">
-          <Link to={"/dashboard"}>
+          <Link to={"/auth/login"}>
             <Button size="lg" className="rounded-full text-base cursor-pointer">
               Get Started <ArrowUpRight className="h-5! w-5!" />
             </Button>

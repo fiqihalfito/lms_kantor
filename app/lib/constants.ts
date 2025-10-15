@@ -1,0 +1,1 @@
+export type TIPE_DOKUMEN = "SOP" | "IK" | "Knowledge"

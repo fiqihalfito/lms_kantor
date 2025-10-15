@@ -1,12 +1,18 @@
 import type { Route } from "./+types/index";
 
+export async function loader({ request, params, context }: Route.LoaderArgs) {
 
-export default function DashboardStaff({ }: Route.ComponentProps) {
+    // const user = await getUserFromSession(request)
 
+}
 
+export default function DashboardStaff({ loaderData }: Route.ComponentProps) {
+
+    // const { user } = loaderData
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            {/* {JSON.stringify(user)} */}
             <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                 <div className="bg-muted/50 aspect-video rounded-xl" />
                 <div className="bg-muted/50 aspect-video rounded-xl" />

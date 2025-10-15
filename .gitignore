@@ -7,3 +7,6 @@
 
 #pgdata
 /database/pgdata/
+
+# storage
+/storage

@@ -1,0 +1,51 @@
+{
+  "id": "e1f8df67-9df8-4202-aee0-ea24788a5495",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.t_dokumen": {
+      "name": "t_dokumen",
+      "schema": "",
+      "columns": {
+        "id_dokumen": {
+          "name": "id_dokumen",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "judul": {
+          "name": "judul",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tipe": {
+          "name": "tipe",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

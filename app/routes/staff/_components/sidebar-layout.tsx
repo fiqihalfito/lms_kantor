@@ -1,5 +1,5 @@
 import { Outlet } from "react-router"
-import { AppSidebar } from "~/components/app-sidebar"
+import { AppSidebar } from "./app-sidebar"
 import {
     Breadcrumb,
     BreadcrumbItem,

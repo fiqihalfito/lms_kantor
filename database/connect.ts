@@ -1,5 +1,7 @@
-import * as schema from './schema';
-// import * as relations from './relations'
+
+import "dotenv/config"
+import * as schema from './schema/schema';
+import * as relations from './schema/relations'
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
@@ -13,7 +15,8 @@ export const db = drizzle({
     client: pool,
     schema: {
         ...schema,
-        //  ...relations
+        ...relations
     },
     // logger: true
 });
+
