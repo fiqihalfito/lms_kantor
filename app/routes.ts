@@ -27,7 +27,11 @@ export default [
 
             ...prefix("kuis", [
                 index("routes/staff/kuis/index.tsx"),
-                route("my-kuis", "routes/staff/kuis/my-kuis/index.tsx")
+                route("my-kuis", "routes/staff/kuis/my-kuis/index.tsx", [
+                    route("preview/:idDokumen", "routes/staff/kuis/preview-pdf/index.tsx")
+                ]),
+                route("kuis-maker/:idDokumen", "routes/staff/kuis/kuis-maker/index.tsx")
+
             ]),
 
             ...prefix("master", [

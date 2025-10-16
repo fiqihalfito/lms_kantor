@@ -1,4 +1,4 @@
-import { char, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
+import { char, integer, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 import { timestamps } from "./column.helpers";
 
 // ====================== column helper DRY ===============================
@@ -18,6 +18,14 @@ export const userFK = {
 
 export const teamFK = {
     idTeam: uuid("id_team").references(() => mTeam.idTeam, { onDelete: "cascade" })
+}
+
+export const dokumenFK = {
+    idDokumen: uuid("id_dokumen").references(() => tDokumen.idDokumen, { onDelete: "cascade" })
+}
+
+export const kuisFK = {
+    idKuis: uuid("id_kuis").references(() => tKuis.idKuis, { onDelete: "cascade" })
 }
 
 
@@ -67,3 +75,25 @@ export const tDokumen = pgTable('t_dokumen', {
     ...timestamps
 })
 
+// === Kuis =================================
+export const tKuis = pgTable('t_kuis', {
+    idKuis: uuid("id_kuis").defaultRandom().primaryKey(),
+    idDokumen: uuid("id_dokumen").unique().notNull().references(() => tDokumen.idDokumen, { onDelete: "cascade" }),
+})
+
+export const tKuisProgress = pgTable('t_kuis_progress', {
+    idKuisProgress: uuid("id_kuis_progress").defaultRandom().primaryKey(),
+    ...kuisFK,
+    ...userFK, // orang yang jawab soal
+    jumlahBenar: integer("jumlah_benar").default(0),
+    ...timestamps
+
+})
+
+export const tKuisElement = pgTable('t_kuis_element', {
+    idKuisElement: uuid("id_kuis_element").defaultRandom().primaryKey(),
+    ...kuisFK,
+    soal: text("soal"),
+    pilgan: text("pilgan"),
+    jawaban: char("jawaban")
+})

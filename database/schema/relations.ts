@@ -7,6 +7,8 @@ import {
     mUser,
     mTeam,
     mMemberTeam,
+    tKuis,
+    tKuisElement,
 } from "./schema";
 
 // ===================== SubBidang Relations =====================
@@ -70,5 +72,25 @@ export const tDokumenRelations = relations(tDokumen, ({ one }) => ({
     user: one(mUser, {
         fields: [tDokumen.idUser],
         references: [mUser.idUser],
+    }),
+    kuis: one(tKuis, {
+        fields: [tDokumen.idDokumen],
+        references: [tKuis.idDokumen]
+    })
+}));
+
+// ================ Kuis Relations ==========================
+export const tKuisRelations = relations(tKuis, ({ one, many }) => ({
+    dokumen: one(tDokumen, {
+        fields: [tKuis.idDokumen],
+        references: [tDokumen.idDokumen]
+    }),
+    kuisElement: many(tKuisElement)
+}))
+
+export const tKuisElementRelations = relations(tKuisElement, ({ one }) => ({
+    kuis: one(tKuis, {
+        fields: [tKuisElement.idKuis],
+        references: [tKuis.idKuis],
     }),
 }));

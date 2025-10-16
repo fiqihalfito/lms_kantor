@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, Outlet } from "react-router";
 import type { Route } from "./+types/index";
 import { Button } from "~/components/ui/button";
 import { EyeIcon, OctagonXIcon, UserPlusIcon } from "lucide-react";
@@ -35,33 +35,29 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                     <h1 className="text-3xl font-semibold tracking-tight">Pembuatan Kuis</h1>
                     <p className="text-muted-foreground">Kuis dari dokumen yang Anda upload</p>
                 </div>
-                <Link to={`new`}>
-                    <Button className="cursor-pointer" size={"lg"} >
-                        <UserPlusIcon className="size-5" />
-                        Tambah Kuis
-                    </Button>
-                </Link>
             </div>
 
             <Separator />
+
+            <Outlet />
 
             {/* {flashData ? <MyAlert title={flashData.message} status={flashData.type} className="w-2/3" /> : null} */}
 
             {dokumens.length === 0 ? (
                 <EmptyMaster Icon={OctagonXIcon} title="Dokumen Kuis" />
             ) : (
-                <TableWrapper className="w-2/3">
+                <TableWrapper className="">
                     <Table>
                         {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[100px]">No</TableHead>
                                 <TableHead>Judul Dokumen</TableHead>
-                                <TableHead>Filename</TableHead>
                                 <TableHead>Tipe</TableHead>
                                 <TableHead>Layanan</TableHead>
                                 <TableHead>Uploaded By</TableHead>
                                 <TableHead className="text-right">Aksi</TableHead>
+                                <TableHead className="text-right">Kuis</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -69,13 +65,12 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                 <TableRow key={item.idDokumen}>
                                     <TableCell className="font-medium">{i + 1}</TableCell>
                                     <TableCell>{item.judul}</TableCell>
-                                    <TableCell>{item.filename}</TableCell>
                                     <TableCell>{item.tipe}</TableCell>
                                     <TableCell>{item.layanan?.nama ?? "-"}</TableCell>
                                     <TableCell>{item.user?.nama}</TableCell>
                                     <TableCell className="text-right space-x-1.5">
 
-                                        <Link to={`preview/${item.filename}`} viewTransition>
+                                        <Link to={`preview/${item.idDokumen}`} viewTransition>
                                             <Button size={"icon"} className="cursor-pointer" >
                                                 <EyeIcon />
                                             </Button>
@@ -88,6 +83,22 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
 
                                         <AlertDialogDeleteButton idUser={item.idUser} nama={item.nama!} /> */}
                                     </TableCell>
+                                    <TableCell className="text-right">
+                                        {!item.kuis?.idKuis || item.kuis?.kuisElement.length === 0 ? (
+                                            <Link to={`../kuis-maker/${item.idDokumen}`} relative="path">
+                                                <Button className="cursor-pointer" size={"sm"}>
+                                                    Buat Kuis
+                                                </Button>
+                                            </Link>
+                                        ) : (
+                                            <Link to={`../kuis-maker/${item.idDokumen}`} relative="path">
+                                                <Button className="cursor-pointer" size={"sm"} variant={"outline"}>
+                                                    Lihat Kuis
+                                                </Button>
+                                            </Link>
+                                        )}
+                                    </TableCell>
+
                                 </TableRow>
                             ))}
 

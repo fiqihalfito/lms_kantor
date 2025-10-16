@@ -5,6 +5,9 @@ import { PreviewPDFViewer } from "~/components/preview-pdf";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
 
+    console.log("preview pdf loader hit");
+
+
     try {
         const dokumen = await getDokumenById(params.idDokumen)
         if (dokumen.length === 0) {
@@ -23,7 +26,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 export default function PreviewPDF({ loaderData, params }: Route.ComponentProps) {
 
     const { url, dokumen } = loaderData
-
 
     return (
         <PreviewPDFViewer dokumen={dokumen} url={url} />
