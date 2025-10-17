@@ -30,7 +30,12 @@ export default [
                 route("my-kuis", "routes/staff/kuis/my-kuis/index.tsx", [
                     route("preview/:idDokumen", "routes/staff/kuis/preview-pdf/index.tsx")
                 ]),
-                route("kuis-maker/:idDokumen", "routes/staff/kuis/kuis-maker/index.tsx")
+                route("kuis-maker/:idDokumen", "routes/staff/kuis/kuis-maker/index.tsx", [
+                    route("new", "routes/staff/kuis/kuis-maker/new/index.tsx"),
+                    route("review/:idKuisElement", "routes/staff/kuis/kuis-maker/review/index.tsx", [
+                        route("delete", "routes/staff/kuis/kuis-maker/delete/index.tsx")
+                    ])
+                ])
 
             ]),
 

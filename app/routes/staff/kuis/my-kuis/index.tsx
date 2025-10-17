@@ -46,7 +46,7 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
             {dokumens.length === 0 ? (
                 <EmptyMaster Icon={OctagonXIcon} title="Dokumen Kuis" />
             ) : (
-                <TableWrapper className="">
+                <TableWrapper className="w-2/3">
                     <Table>
                         {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                         <TableHeader>
@@ -56,7 +56,8 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                 <TableHead>Tipe</TableHead>
                                 <TableHead>Layanan</TableHead>
                                 <TableHead>Uploaded By</TableHead>
-                                <TableHead className="text-right">Aksi</TableHead>
+                                <TableHead className="text-center">Jumlah soal</TableHead>
+                                <TableHead className="text-center">Lihat</TableHead>
                                 <TableHead className="text-right">Kuis</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -68,20 +69,13 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                     <TableCell>{item.tipe}</TableCell>
                                     <TableCell>{item.layanan?.nama ?? "-"}</TableCell>
                                     <TableCell>{item.user?.nama}</TableCell>
-                                    <TableCell className="text-right space-x-1.5">
-
+                                    <TableCell className="text-center">{item.kuis.kuisElement.length}</TableCell>
+                                    <TableCell className="text-center space-x-1.5">
                                         <Link to={`preview/${item.idDokumen}`} viewTransition>
                                             <Button size={"icon"} className="cursor-pointer" >
                                                 <EyeIcon />
                                             </Button>
                                         </Link>
-                                        {/* <Link to={`edit/${item.idUser}`} viewTransition>
-                                            <Button size={"icon"} className="cursor-pointer" >
-                                                <PencilIcon />
-                                            </Button>
-                                        </Link>
-
-                                        <AlertDialogDeleteButton idUser={item.idUser} nama={item.nama!} /> */}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         {!item.kuis?.idKuis || item.kuis?.kuisElement.length === 0 ? (
