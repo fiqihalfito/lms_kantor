@@ -3,16 +3,13 @@ import type { Route } from "./+types/index";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
 } from "~/components/ui/table"
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -21,10 +18,9 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
-import { ArrowUpRightIcon, FolderXIcon } from "lucide-react"
+import { FolderXIcon } from "lucide-react"
 import {
     Empty,
-    EmptyContent,
     EmptyDescription,
     EmptyHeader,
     EmptyMedia,
@@ -42,7 +38,6 @@ import { userContext } from "~/lib/context";
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
-
 
     const dokumens = await getAllDokumenByTipe(user?.idSubBidang!, params.tipeDokumen)
 

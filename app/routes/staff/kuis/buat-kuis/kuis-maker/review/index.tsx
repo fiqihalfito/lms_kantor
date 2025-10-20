@@ -20,7 +20,7 @@ import {
 } from "~/components/ui/alert-dialog"
 import { getKuisElementById } from "./_service";
 import { Button } from "~/components/ui/button";
-import { NavLink, useFetcher } from "react-router";
+import { NavLink, Outlet, useFetcher } from "react-router";
 import { CheckIcon, CircleXIcon, SquarePenIcon, TrashIcon } from "lucide-react";
 import { ItemMedia } from "~/components/ui/item";
 import { Spinner } from "~/components/ui/spinner";
@@ -41,20 +41,22 @@ export default function ReviewSoal({ params, loaderData }: Route.ComponentProps)
     return (
         <Card>
             <CardHeader>
+                <Outlet />
                 <CardTitle>{kuisElement.soal}</CardTitle>
                 {/* <CardDescription>Card Description</CardDescription> */}
                 <CardAction className="space-x-2">
+
+                    <Button variant="default" asChild size={"sm"}>
+                        <NavLink to={`edit`}>
+                            <SquarePenIcon />
+                            Edit
+                        </NavLink>
+                    </Button>
+                    <AlertDialogDeleteButton idKuisElement={kuisElement.idKuisElement} />
                     <Button variant="outline" asChild size={"sm"}>
                         <NavLink to={`..`} viewTransition>
                             <CircleXIcon />
                             Tutup
-                        </NavLink>
-                    </Button>
-                    <AlertDialogDeleteButton idKuisElement={kuisElement.idKuisElement} />
-                    <Button variant="default" asChild size={"sm"}>
-                        <NavLink to={`..`}>
-                            <SquarePenIcon />
-                            Edit
                         </NavLink>
                     </Button>
                 </CardAction>

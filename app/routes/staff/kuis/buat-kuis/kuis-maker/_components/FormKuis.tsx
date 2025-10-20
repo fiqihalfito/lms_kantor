@@ -121,21 +121,25 @@ export function FormKuis({ defaultValues, mode }: FormKuisProp) {
                                         Pilihan ganda
                                     </FieldLabel>
                                     {pilihan.map((p, i) => (
-                                        <ButtonGroup>
-                                            <ButtonGroupText asChild>
-                                                <Label htmlFor={p}>{p.toUpperCase()}</Label>
-                                            </ButtonGroupText>
-                                            <InputGroup>
-                                                <InputGroupInput
-                                                    id={p}
-                                                    name={p}
-                                                    placeholder={`pilihan ${p.toUpperCase()}`}
-                                                    type="text"
-                                                    defaultValue={defaultValuesPilganParsed[p]}
-                                                    required
-                                                />
-                                            </InputGroup>
-                                        </ButtonGroup>
+                                        <>
+                                            <ButtonGroup>
+                                                <ButtonGroupText asChild>
+                                                    <Label htmlFor={p}>{p.toUpperCase()}</Label>
+                                                </ButtonGroupText>
+                                                <InputGroup>
+                                                    <InputGroupInput
+                                                        id={p}
+                                                        name={p}
+                                                        placeholder={`pilihan ${p.toUpperCase()}`}
+                                                        type="text"
+                                                        defaultValue={defaultValuesPilganParsed[p]}
+                                                        required
+                                                    />
+                                                </InputGroup>
+                                            </ButtonGroup>
+                                            {errors?.[p] ? <FieldError className="-mt-2">{errors[p]}</FieldError> : null}
+                                        </>
+
                                     ))}
                                 </Field>
                                 <Field className="w-1/5">
@@ -156,6 +160,7 @@ export function FormKuis({ defaultValues, mode }: FormKuisProp) {
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+                                    {errors?.jawaban ? <FieldError>{errors.jawaban}</FieldError> : null}
                                 </Field>
                             </FieldGroup>
                         </FieldSet>

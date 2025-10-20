@@ -23,6 +23,7 @@ import {
   FilesIcon,
 } from "lucide-react"
 import { FIRST_SEGMENT } from "~/lib/route-config"
+import { Spinner } from "../../../components/ui/spinner"
 
 const items: {
   title: string
@@ -65,16 +66,16 @@ const items: {
           url: `/${FIRST_SEGMENT}/kuis`,
         },
         {
-          title: "My kuis",
-          url: `/${FIRST_SEGMENT}/kuis/my-kuis`,
+          title: "Buat Kuis",
+          url: `/${FIRST_SEGMENT}/kuis/buat-kuis`,
         },
         {
-          title: `Quiz`,
-          url: `/${FIRST_SEGMENT}/kuis/IK`,
+          title: `Mulai Kuis`,
+          url: `/${FIRST_SEGMENT}/kuis/mulai-kuis`,
         },
         {
           title: `Skor`,
-          url: `/${FIRST_SEGMENT}/kuis/Knowledge`,
+          url: `/${FIRST_SEGMENT}/kuis/skor`,
         },
       ],
     },
@@ -169,11 +170,14 @@ export function NavMain() {
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <NavLink to={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </NavLink>
-                      </SidebarMenuSubButton>
+                      <NavLink to={subItem.url}>
+                        {({ isActive, isPending }) => (
+                          <SidebarMenuSubButton isActive={isActive}>
+                            {isPending && <Spinner />}
+                            <span>{subItem.title}</span>
+                          </SidebarMenuSubButton>
+                        )}
+                      </NavLink>
                     </SidebarMenuSubItem>
                   ))}
                 </SidebarMenuSub>

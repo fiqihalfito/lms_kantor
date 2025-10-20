@@ -3,12 +3,12 @@ import type { Route } from "./+types";
 import { createKuis, getCurrentKuis, getDokumenDataById, getSoal } from "./_service";
 import { data, Link, NavLink, Outlet, useLocation } from "react-router";
 import { Button } from "~/components/ui/button";
-import { ChevronRightIcon, CircleOffIcon, FilePlusIcon } from "lucide-react";
+import { ChevronLeft, ChevronRightIcon, CircleOffIcon, FilePlusIcon } from "lucide-react";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "~/components/ui/item";
 import { FIRST_SEGMENT } from "~/lib/route-config";
-import { tKuisElement } from "database/schema/schema";
 import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
+import { Spinner } from "~/components/ui/spinner";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
 
@@ -42,12 +42,26 @@ export default function KuisMaker({ params, loaderData }: Route.ComponentProps) 
                     <h1 className="text-3xl font-semibold tracking-tight">Pembuatan Kuis</h1>
                     <p className="text-muted-foreground">Soal Soal Kuis dari dokumen "{dokumen[0].judul}"</p>
                 </div>
-                <Link to={`new`} viewTransition>
-                    <Button className="cursor-pointer" size={"lg"} >
-                        <FilePlusIcon className="size-5" />
-                        Tambah Soal
+                <div className="flex items-center gap-x-2">
+                    <Button variant={"outline"} className="cursor-pointer" size={"lg"} asChild >
+                        <NavLink to={`../..`} relative="path" viewTransition>
+                            {({ isPending }) => (
+                                <>
+                                    {isPending ? <Spinner /> : <ChevronLeft className="size-5" />}
+                                    Kembali
+                                </>
+                            )}
+
+                        </NavLink>
                     </Button>
-                </Link>
+                    <Button className="cursor-pointer" size={"lg"} asChild >
+                        <Link to={`new`} viewTransition>
+                            <FilePlusIcon className="size-5" />
+                            Tambah Soal
+                        </Link>
+                    </Button>
+                </div>
+
             </div>
 
             <Separator />
@@ -75,16 +89,16 @@ export default function KuisMaker({ params, loaderData }: Route.ComponentProps) 
                                     </ItemMedia>
                                     <ItemContent>
                                         <ItemTitle>{s.soal}</ItemTitle>
-                                        {/* <ItemDescription>
-                                            New login detected from unknown device.
-                                        </ItemDescription> */}
+                                        <ItemDescription>
+                                            Jawaban : {s.jawaban?.toUpperCase()} . {s?.pilgan ? JSON.parse(s.pilgan)[s.jawaban!] : null}
+                                        </ItemDescription>
                                     </ItemContent>
                                     <ItemActions>
                                         <Button
                                             size="sm"
                                             variant="outline"
                                             className="cursor-pointer"
-                                            disabled={`/${FIRST_SEGMENT}/kuis/kuis-maker/${params.idDokumen}/review/${s.idKuisElement}` === currentPathname}
+                                            disabled={`/${FIRST_SEGMENT}/kuis/buat-kuis/kuis-maker/${params.idDokumen}/review/${s.idKuisElement}` === currentPathname}
                                             type="button"
                                         >
                                             <NavLink to={`review/${s.idKuisElement}`} viewTransition>

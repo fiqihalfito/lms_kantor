@@ -1,4 +1,4 @@
-import { Outlet } from "react-router"
+import { Outlet, useNavigate, useNavigation } from "react-router"
 import { AppSidebar } from "./app-sidebar"
 import {
     Breadcrumb,
@@ -14,8 +14,14 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "~/components/ui/sidebar"
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "~/components/ui/empty"
+import { Spinner } from "~/components/ui/spinner"
 
 export default function SidebarLayout() {
+
+    const navigation = useNavigation()
+    const isLoading = Boolean(navigation.location)
+
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -42,8 +48,28 @@ export default function SidebarLayout() {
                         </Breadcrumb>
                     </div>
                 </header>
-                <Outlet />
+                <div className="flex flex-1 relative">
+                    {isLoading && <LoadingOutlet />}
+                    <Outlet />
+
+                </div>
             </SidebarInset>
         </SidebarProvider>
+    )
+}
+
+function LoadingOutlet() {
+    return (
+        <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center z-50">
+            <Empty>
+                <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                        <Spinner />
+                    </EmptyMedia>
+                    <EmptyTitle>Sedang Memuat</EmptyTitle>
+                </EmptyHeader>
+            </Empty>
+        </div>
+
     )
 }

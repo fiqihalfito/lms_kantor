@@ -27,15 +27,28 @@ export default [
 
             ...prefix("kuis", [
                 index("routes/staff/kuis/index.tsx"),
-                route("my-kuis", "routes/staff/kuis/my-kuis/index.tsx", [
-                    route("preview/:idDokumen", "routes/staff/kuis/preview-pdf/index.tsx")
+                route("buat-kuis", "routes/staff/kuis/buat-kuis/index.tsx", [
+                    route("preview/:idDokumen", "routes/staff/kuis/buat-kuis/preview-pdf/index.tsx"),
                 ]),
-                route("kuis-maker/:idDokumen", "routes/staff/kuis/kuis-maker/index.tsx", [
-                    route("new", "routes/staff/kuis/kuis-maker/new/index.tsx"),
-                    route("review/:idKuisElement", "routes/staff/kuis/kuis-maker/review/index.tsx", [
-                        route("delete", "routes/staff/kuis/kuis-maker/delete/index.tsx")
+                // biar tidak kena layout, tapi pakai nested route
+                route("buat-kuis/kuis-maker/:idDokumen", "routes/staff/kuis/buat-kuis/kuis-maker/index.tsx", [
+                    route("new", "routes/staff/kuis/buat-kuis/kuis-maker/new/index.tsx"),
+                    route("review/:idKuisElement", "routes/staff/kuis/buat-kuis/kuis-maker/review/index.tsx", [
+                        route("delete", "routes/staff/kuis/buat-kuis/kuis-maker/delete/index.tsx"),
+                        route("edit", "routes/staff/kuis/buat-kuis/kuis-maker/edit/index.tsx")
                     ])
+                ]),
+
+                ...prefix("mulai-kuis", [
+                    index("routes/staff/kuis/mulai-kuis/index.tsx"),
+                    route("init/:idKuis", "routes/staff/kuis/mulai-kuis/init/index.tsx"),
+                    route("on/:idKuisProgress/kuis/:idKuis", "routes/staff/kuis/mulai-kuis/on/index.tsx")
+                ]),
+
+                ...prefix("skor", [
+                    index("routes/staff/kuis/skor/index.tsx")
                 ])
+
 
             ]),
 

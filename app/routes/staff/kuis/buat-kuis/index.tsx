@@ -15,6 +15,7 @@ import { getDokumenUploadBySelf } from "./_service";
 import { userContext } from "~/lib/context";
 import { EmptyMaster } from "~/components/empty-master";
 import { TableWrapper } from "~/components/table-wrapper";
+import { wait } from "~/lib/utils";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -69,7 +70,7 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                     <TableCell>{item.tipe}</TableCell>
                                     <TableCell>{item.layanan?.nama ?? "-"}</TableCell>
                                     <TableCell>{item.user?.nama}</TableCell>
-                                    <TableCell className="text-center">{item.kuis.kuisElement.length}</TableCell>
+                                    <TableCell className="text-center">{item.kuis?.kuisElement ? item.kuis?.kuisElement.length : "-"}</TableCell>
                                     <TableCell className="text-center space-x-1.5">
                                         <Link to={`preview/${item.idDokumen}`} viewTransition>
                                             <Button size={"icon"} className="cursor-pointer" >
@@ -79,13 +80,13 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         {!item.kuis?.idKuis || item.kuis?.kuisElement.length === 0 ? (
-                                            <Link to={`../kuis-maker/${item.idDokumen}`} relative="path">
+                                            <Link to={`kuis-maker/${item.idDokumen}`} relative="path">
                                                 <Button className="cursor-pointer" size={"sm"}>
                                                     Buat Kuis
                                                 </Button>
                                             </Link>
                                         ) : (
-                                            <Link to={`../kuis-maker/${item.idDokumen}`} relative="path">
+                                            <Link to={`kuis-maker/${item.idDokumen}`} relative="path">
                                                 <Button className="cursor-pointer" size={"sm"} variant={"outline"}>
                                                     Lihat Kuis
                                                 </Button>

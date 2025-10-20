@@ -9,6 +9,7 @@ import {
     mMemberTeam,
     tKuis,
     tKuisElement,
+    tKuisProgress,
 } from "./schema";
 
 // ===================== SubBidang Relations =====================
@@ -27,6 +28,8 @@ export const mUserRelations = relations(mUser, ({ one, many }) => ({
     }),
     dokumen: many(tDokumen),
     memberTeams: many(mMemberTeam),
+    kuisProgress: many(tKuisProgress)
+
 }));
 
 // ===================== Layanan Relations =====================
@@ -85,7 +88,12 @@ export const tKuisRelations = relations(tKuis, ({ one, many }) => ({
         fields: [tKuis.idDokumen],
         references: [tDokumen.idDokumen]
     }),
-    kuisElement: many(tKuisElement)
+    kuisElement: many(tKuisElement),
+    kuisProgress: one(tKuisProgress, {
+        fields: [tKuis.idKuis],
+        references: [tKuisProgress.idKuis]
+    })
+    // kuisProgress: many(tKuisProgress)
 }))
 
 export const tKuisElementRelations = relations(tKuisElement, ({ one }) => ({
@@ -93,4 +101,15 @@ export const tKuisElementRelations = relations(tKuisElement, ({ one }) => ({
         fields: [tKuisElement.idKuis],
         references: [tKuis.idKuis],
     }),
+}));
+
+export const tKuisProgressRelations = relations(tKuisProgress, ({ one, many }) => ({
+    kuis: one(tKuis, {
+        fields: [tKuisProgress.idKuis],
+        references: [tKuis.idKuis],
+    }),
+    user: one(mUser, {
+        fields: [tKuisProgress.idUser],
+        references: [mUser.idUser]
+    })
 }));

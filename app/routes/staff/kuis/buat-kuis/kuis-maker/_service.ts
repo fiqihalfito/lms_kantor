@@ -19,6 +19,6 @@ export async function createKuis(idDokumen: string) {
 }
 
 export async function getSoal(idKuis: string) {
-    const res = await db.select().from(tKuisElement).where(eq(tKuisElement.idKuis, idKuis))
+    const res = await db.select().from(tKuisElement).where(eq(tKuisElement.idKuis, idKuis)).orderBy(tKuisElement.createdAt)
     return res
 }

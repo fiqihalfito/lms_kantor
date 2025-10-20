@@ -19,7 +19,7 @@ import {
   SquareTerminal,
 } from "lucide-react"
 
-import { NavMain } from "~/components/nav-main"
+import { NavMain } from "~/routes/staff/_components/nav-main"
 import { NavProjects } from "~/components/nav-projects"
 import { NavUser } from "~/components/nav-user"
 import {
