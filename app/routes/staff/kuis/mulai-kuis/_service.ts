@@ -1,32 +1,52 @@
 import { db } from "database/connect";
-import { mLayanan, mUser, tDokumen, tKuis, tKuisProgress } from "database/schema/schema";
-import { and, eq, isNull } from "drizzle-orm";
+import { mLayanan, mUser, tDokumen, tKuis, tKuisElement, tKuisProgress } from "database/schema/schema";
+import { and, eq, isNull, ne, notExists } from "drizzle-orm";
 
 
-export async function getKuisList(idUser: string, status?: "belum" | "sudah") {
+export async function getKuisBelumDikerjakan(idUser: string, idSubBidang: string) {
 
 
-    const kuisList = await db.query.tKuis.findMany({
-        with: {
-            dokumen: {
-                with: {
-                    layanan: true,
-                    user: {
+    // const kuisList = await db.query.tKuis.findMany({
+    //     with: {
+    //         dokumen: {
+    //             with: {
+    //                 layanan: true,
+    //                 user: true
+    //             }
+    //         },
+    //         kuisElement: true,
+    //         kuisProgress: {
+    //             where: ne(tKuisProgress.idUser, idUser),
+    //             // limit: 1
+    //         }
+    //         // kuisProgressOne: true
+    //     },
+    //     where: eq(tKuis.idSubBidang, idSubBidang)
+    //     // where: and(eq(tKuis.idSubBidang, idSubBidang), ne(tKuisProgress.idUser, idUser))
+    // })
+    const kuisProgressSelf = db.select().from(tKuisProgress).where(and(eq(tKuisProgress.idUser, idUser), eq(tKuisProgress.isSelesai, true)))
+    const kuisList = await db
+        .select({
+            idKuis: tKuis.idKuis,
+            judulDokumen: tDokumen.judul,
+            tipeDokumen: tDokumen.tipe,
+            namaLayanan: mLayanan.nama,
+            uploadedBy: mUser.nama,
+            tanggalKuisTerbuat: tKuis.createdAt,
+            jumlahSoal: db.$count(tKuisElement, eq(tKuisElement.idKuis, tKuis.idKuis))
+        })
+        .from(tKuis)
+        .where(notExists(kuisProgressSelf))
+        .innerJoin(tDokumen, eq(tKuis.idDokumen, tDokumen.idDokumen))
+        .leftJoin(mLayanan, eq(tDokumen.idLayanan, mLayanan.idLayanan))
+        .innerJoin(mUser, eq(mUser.idUser, tDokumen.idUser))
 
-                    }
-                }
-            },
-            kuisElement: true,
-            // kuisProgress: {
-            //     where: eq(tKuisProgress.idUser, idUser)
-            // }
-            kuisProgress: true
-        }
-    })
 
-    const list = kuisList.filter(item => item.kuisProgress === null || item.kuisProgress?.isSelesai === false)
+    // return kuisList
 
-    return list
+    // const list = kuisList.filter(item => item.kuisProgressOne === null || item.kuisProgressOne?.isSelesai === false)
+
+    return kuisList
 }
 
 export async function getDokumenBelumDikerjakan(idUser: string) {

@@ -89,11 +89,11 @@ export const tKuisRelations = relations(tKuis, ({ one, many }) => ({
         references: [tDokumen.idDokumen]
     }),
     kuisElement: many(tKuisElement),
-    kuisProgress: one(tKuisProgress, {
+    kuisProgressOne: one(tKuisProgress, {
         fields: [tKuis.idKuis],
         references: [tKuisProgress.idKuis]
-    })
-    // kuisProgress: many(tKuisProgress)
+    }),
+    kuisProgress: many(tKuisProgress)
 }))
 
 export const tKuisElementRelations = relations(tKuisElement, ({ one }) => ({

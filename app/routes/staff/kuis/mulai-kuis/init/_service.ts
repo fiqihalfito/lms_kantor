@@ -19,3 +19,10 @@ export async function checkKuisProgressExist(idKuis: string, idUser: string) {
     const res = await db.select().from(tKuisProgress).where(and(eq(tKuisProgress.idKuis, idKuis), eq(tKuisProgress.idUser, idUser)))
     return res
 }
+
+export async function resetKuis(idKuisProgress: string) {
+    await db.update(tKuisProgress).set({
+        isSelesai: false,
+        jumlahBenar: 0
+    }).where(eq(tKuisProgress.idKuisProgress, idKuisProgress))
+}

@@ -1,25 +1,29 @@
 import { db } from "database/connect";
+import { tKuisProgress } from "database/schema/schema";
+import { and, eq } from "drizzle-orm";
 
 export async function getKuisSudahDikerjakan(idUser: string) {
-    const res = await db.query.tKuis.findMany({
+    const res = await db.query.tKuisProgress.findMany({
         with: {
-            dokumen: {
+            kuis: {
                 with: {
-                    layanan: true,
-                    user: {
-
+                    dokumen: true,
+                    kuisElement: {
+                        columns: {
+                            idKuisElement: true
+                        }
                     }
                 }
             },
-            kuisElement: true,
-            // kuisProgress: {
-            //     where: eq(tKuisProgress.idUser, idUser)
-            // }
-            kuisProgress: true
-        }
+            user: {
+                columns: {
+                    nama: true
+                }
+            }
+        },
+        where: and(eq(tKuisProgress.idUser, idUser), eq(tKuisProgress.isSelesai, true))
     })
 
-    const list = res.filter(item => item.kuisProgress !== null && item.kuisProgress.isSelesai === true)
 
-    return list
+    return res
 }

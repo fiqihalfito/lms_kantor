@@ -13,8 +13,8 @@ export async function getCurrentKuis(idDokumen: string) {
     return res
 }
 
-export async function createKuis(idDokumen: string) {
-    const res = await db.insert(tKuis).values({ idDokumen: idDokumen }).returning({ idKuis: tKuis.idKuis })
+export async function createKuis(idSubBidang: string, idDokumen: string) {
+    const res = await db.insert(tKuis).values({ idDokumen: idDokumen, idSubBidang: idSubBidang }).returning({ idKuis: tKuis.idKuis })
     return res
 }
 

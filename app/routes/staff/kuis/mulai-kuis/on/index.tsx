@@ -9,6 +9,7 @@ import { Button } from "~/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { redirect, useSubmit } from "react-router";
 import { FIRST_SEGMENT } from "~/lib/route-config";
+import { Progress } from "~/components/ui/progress";
 
 export async function action({ request, params }: Route.ActionArgs) {
 
@@ -85,10 +86,11 @@ export default function UjianPage({ params, loaderData }: Route.ComponentProps) 
             <Separator />
             <div className="flex-1 ">
                 <div className="max-w-5xl mx-auto space-y-4">
-                    <pre className="bg-muted p-2 rounded text-sm">
+                    {/* <pre className="bg-muted p-2 rounded text-sm">
                         {JSON.stringify(jawabanSet, null, 2)}
-                    </pre>
+                    </pre> */}
                     <p className="text-sm text-muted-foreground">Pertanyaan No. {indexSoal + 1} dari {allSoal.length} pertanyaan</p>
+                    <Progress value={((indexSoal + 1) / allSoal.length) * 100} />
                     <Card key={indexSoal}>
                         <CardHeader>
                             <CardTitle>{currentSoal.soal}</CardTitle>

@@ -1,7 +1,7 @@
 "use client"
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
-import { NavLink } from "react-router"
+import { ChevronRight, LayoutDashboardIcon, type LucideIcon } from "lucide-react"
+import { NavLink, useLocation } from "react-router"
 
 import {
   Collapsible,
@@ -35,6 +35,7 @@ const items: {
     url: string
   }[]
 }[] = [
+
     {
       title: "Dokumen",
       url: "#",
@@ -147,10 +148,28 @@ const items: {
   ]
 
 export function NavMain() {
+
+  const location = useLocation()
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
+        <SidebarMenuItem key={"dashboard"}>
+          <SidebarMenuButton asChild isActive={location.pathname === `/${FIRST_SEGMENT}/dashboard`}>
+            <NavLink to={`/${FIRST_SEGMENT}/dashboard`}>
+              {({ isPending }) => (
+                <>
+                  <LayoutDashboardIcon />
+                  {"Dashboard"}
+                  {isPending && <Spinner className="ml-auto" />}
+                </>
+              )}
+
+
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         {items.map((item) => (
           <Collapsible
             key={item.title}

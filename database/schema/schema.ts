@@ -1,4 +1,4 @@
-import { boolean, char, integer, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, char, integer, pgTable, text, unique, uuid, varchar } from "drizzle-orm/pg-core";
 import { timestamps } from "./column.helpers";
 
 // ====================== column helper DRY ===============================
@@ -79,6 +79,7 @@ export const tDokumen = pgTable('t_dokumen', {
 export const tKuis = pgTable('t_kuis', {
     idKuis: uuid("id_kuis").defaultRandom().primaryKey(),
     idDokumen: uuid("id_dokumen").unique().notNull().references(() => tDokumen.idDokumen, { onDelete: "cascade" }),
+    ...subBidangFK,
     ...timestamps
 })
 
@@ -90,8 +91,9 @@ export const tKuisProgress = pgTable('t_kuis_progress', {
     jawabanSet: text("jawaban_set"),
     isSelesai: boolean("is_selesai").default(false),
     ...timestamps
-
-})
+}, (t) => [
+    unique().on(t.idKuis, t.idUser),
+])
 
 export const tKuisElement = pgTable('t_kuis_element', {
     idKuisElement: uuid("id_kuis_element").defaultRandom().primaryKey(),

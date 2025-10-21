@@ -10,12 +10,13 @@ import {
     TableRow,
 } from "~/components/ui/table"
 import { EmptyMaster } from "~/components/empty-master";
-import { OctagonXIcon, PencilRulerIcon } from "lucide-react";
+import { CircleXIcon, OctagonXIcon, PencilRulerIcon, RotateCcwIcon } from "lucide-react";
 import { Form } from "react-router";
 import { Button } from "~/components/ui/button";
 import { formatTimestampId } from "~/lib/utils";
 import { userContext } from "~/lib/context";
 import { getKuisSudahDikerjakan } from "./_service";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "~/components/ui/empty";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -41,7 +42,7 @@ export default function SkorPage({ loaderData }: Route.ComponentProps) {
             <Separator />
 
             {kuisSudahDikerjakan.length === 0 ? (
-                <EmptyMaster Icon={OctagonXIcon} title="Dokumen Kuis" />
+                <EmptySkor />
             ) : (
                 <TableWrapper className="">
                     <Table>
@@ -50,9 +51,9 @@ export default function SkorPage({ loaderData }: Route.ComponentProps) {
                             <TableRow>
                                 <TableHead className="w-[100px]">No</TableHead>
                                 <TableHead>Judul Dokumen</TableHead>
-                                <TableHead>Tipe</TableHead>
-                                <TableHead>Layanan</TableHead>
-                                <TableHead>Uploaded By</TableHead>
+                                {/* <TableHead>Tipe</TableHead> */}
+                                {/* <TableHead>Layanan</TableHead> */}
+                                {/* <TableHead>Uploaded By</TableHead> */}
                                 <TableHead>Kuis created at</TableHead>
                                 <TableHead>Jumlah soal</TableHead>
                                 <TableHead>Skor</TableHead>
@@ -63,19 +64,19 @@ export default function SkorPage({ loaderData }: Route.ComponentProps) {
                             {kuisSudahDikerjakan.map((item, i) => (
                                 <TableRow key={item.idKuis}>
                                     <TableCell className="font-medium">{i + 1}</TableCell>
-                                    <TableCell>{item.dokumen.judul}</TableCell>
-                                    <TableCell>{item.dokumen.tipe}</TableCell>
-                                    <TableCell>{item.dokumen.layanan?.nama ?? "-"}</TableCell>
-                                    <TableCell>{item?.dokumen.user?.nama ?? "-"}</TableCell>
+                                    <TableCell>{item.kuis?.dokumen.judul}</TableCell>
+                                    {/* <TableCell>{item.dokumen.tipe}</TableCell> */}
+                                    {/* <TableCell>{item.dokumen.layanan?.nama ?? "-"}</TableCell> */}
+                                    {/* <TableCell>{item?.dokumen.user?.nama ?? "-"}</TableCell> */}
                                     <TableCell>{formatTimestampId(item.createdAt)}</TableCell>
-                                    <TableHead>{item.kuisElement.length}</TableHead>
-                                    <TableHead>{`${item.kuisProgress.jumlahBenar}/${item.kuisElement.length}`}</TableHead>
+                                    <TableHead>{item.kuis?.kuisElement.length}</TableHead>
+                                    <TableHead>{`${item.jumlahBenar}/${item.kuis?.kuisElement.length}`}</TableHead>
                                     <TableCell className="text-right space-x-1.5">
-                                        <Form method="post" action={`init/${item.idKuis}`}>
+                                        <Form method="post" action={`../kuis/mulai-kuis/init/${item.idKuis}`}>
                                             <Button type="submit" size={"sm"} className="cursor-pointer">
-                                                <PencilRulerIcon />
+                                                <RotateCcwIcon />
                                                 {/* {item.sudahMengerjakan && item.kuisProgress.isSelesai ? "Ujian lagi" : "Mulai Ujian"} */}
-                                                {item?.kuisProgress && item.kuisProgress.isSelesai ? "Ujian lagi" : "Mulai Ujian"}
+                                                Ujian Lagi
                                             </Button>
                                         </Form>
 
@@ -88,5 +89,21 @@ export default function SkorPage({ loaderData }: Route.ComponentProps) {
                 </TableWrapper>
             )}
         </div>
+    )
+}
+
+function EmptySkor() {
+    return (
+        <Empty>
+            <EmptyHeader>
+                <EmptyMedia variant="icon">
+                    <CircleXIcon />
+                </EmptyMedia>
+                <EmptyTitle>Anda belum mengerjakan kuis apapun</EmptyTitle>
+                <EmptyDescription>
+                    Silahkan kerjakan kuis yang ada
+                </EmptyDescription>
+            </EmptyHeader>
+        </Empty>
     )
 }

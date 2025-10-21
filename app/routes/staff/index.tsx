@@ -1,7 +1,9 @@
+import { wait } from "~/lib/utils";
 import type { Route } from "./+types/index";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
+    await wait(3000)
     // const user = await getUserFromSession(request)
 
 }

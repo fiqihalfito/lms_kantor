@@ -9,16 +9,18 @@ import { FIRST_SEGMENT } from "~/lib/route-config";
 import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
 import { Spinner } from "~/components/ui/spinner";
+import { userContext } from "~/lib/context";
 
-export async function loader({ request, params }: Route.LoaderArgs) {
+export async function loader({ request, params, context }: Route.LoaderArgs) {
 
+    const user = context.get(userContext)
     const { headers, flashData } = await getFlashSession(request)
 
     const dokumen = await getDokumenDataById(params.idDokumen)
     const currentKuis = await getCurrentKuis(dokumen[0].idDokumen)
     let idKuis: string | undefined = currentKuis[0]?.idKuis
     if (currentKuis.length === 0) {
-        const kuis = await createKuis(dokumen[0].idDokumen)
+        const kuis = await createKuis(user?.idSubBidang!, dokumen[0].idDokumen)
         idKuis = kuis[0].idKuis
     }
     const soal = await getSoal(idKuis)
