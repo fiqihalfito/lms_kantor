@@ -53,7 +53,7 @@ export default function SkorPage({ loaderData }: Route.ComponentProps) {
                                 <TableHead>Judul Dokumen</TableHead>
                                 {/* <TableHead>Tipe</TableHead> */}
                                 {/* <TableHead>Layanan</TableHead> */}
-                                {/* <TableHead>Uploaded By</TableHead> */}
+                                <TableHead>Uploaded By</TableHead>
                                 <TableHead>Kuis created at</TableHead>
                                 <TableHead>Jumlah soal</TableHead>
                                 <TableHead>Skor</TableHead>
@@ -67,7 +67,7 @@ export default function SkorPage({ loaderData }: Route.ComponentProps) {
                                     <TableCell>{item.kuis?.dokumen.judul}</TableCell>
                                     {/* <TableCell>{item.dokumen.tipe}</TableCell> */}
                                     {/* <TableCell>{item.dokumen.layanan?.nama ?? "-"}</TableCell> */}
-                                    {/* <TableCell>{item?.dokumen.user?.nama ?? "-"}</TableCell> */}
+                                    <TableCell>{item?.kuis?.dokumen.user?.nama ?? "-"}</TableCell>
                                     <TableCell>{formatTimestampId(item.createdAt)}</TableCell>
                                     <TableHead>{item.kuis?.kuisElement.length}</TableHead>
                                     <TableHead>{`${item.jumlahBenar}/${item.kuis?.kuisElement.length}`}</TableHead>

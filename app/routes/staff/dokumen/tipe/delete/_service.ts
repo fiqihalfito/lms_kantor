@@ -20,3 +20,8 @@ export async function deleteDokumen(idDokumen: string) {
 
     return res[0].judul
 }
+
+export async function getJudulDokumen(idDokumen: string) {
+    const res = await db.select({ judul: tDokumen.judul }).from(tDokumen).where(eq(tDokumen.idDokumen, idDokumen))
+    return res
+}

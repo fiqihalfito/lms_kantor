@@ -10,6 +10,7 @@ import {
 } from "~/components/ui/table"
 import {
     AlertDialog,
+    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -18,7 +19,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
-import { FolderXIcon } from "lucide-react"
+import { FolderXIcon, MoreHorizontal, MoreVerticalIcon } from "lucide-react"
 import {
     Empty,
     EmptyDescription,
@@ -29,10 +30,27 @@ import {
 import { getAllDokumenByTipe } from "./_services";
 import { Button } from "~/components/ui/button";
 import { EyeIcon, FilePlusIcon, PencilIcon, TrashIcon } from "lucide-react";
-import { Link, Outlet, useFetcher } from "react-router";
+import { data, Link, Outlet, useFetcher } from "react-router";
 import { formatTimestampId } from "~/lib/utils";
 import { FIRST_SEGMENT } from "~/lib/route-config";
 import { userContext } from "~/lib/context";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuPortal,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu"
+import { useEffect, useState } from "react";
+import { getFlashSession } from "~/lib/session.server";
+import { MyAlert } from "~/components/alert-custom";
 
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
@@ -40,8 +58,9 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     const user = context.get(userContext)
 
     const dokumens = await getAllDokumenByTipe(user?.idSubBidang!, params.tipeDokumen)
+    const { flashData, headers } = await getFlashSession(request)
 
-    return { dokumens }
+    return data({ dokumens, flashData }, { headers })
 }
 
 
@@ -49,7 +68,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 
 export default function DokumenIndex({ loaderData, params }: Route.ComponentProps) {
 
-    const { dokumens } = loaderData
+    const { dokumens, flashData } = loaderData
 
     const tipeMapping: Record<any, any> = {
         descPage: {
@@ -58,6 +77,8 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
             "Knowledge": "Berisi dokumen Knowledge",
         },
     }
+
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
 
 
@@ -83,6 +104,7 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
 
             <Outlet />
 
+            {flashData && <MyAlert status={flashData.type} title={flashData.message} />}
             {dokumens.length === 0 ? (
                 <EmptyComp />
             ) : (
@@ -111,10 +133,8 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                     <TableCell>{d.user?.nama}</TableCell>
                                     <TableCell>{formatTimestampId(d.createdAt, { withZoneLabel: true })}</TableCell>
                                     <TableCell>{d.updatedAt ? formatTimestampId(d.updatedAt, { withZoneLabel: true }) : "-"}</TableCell>
-                                    {/* <TableCell>{d.createdAt}</TableCell> */}
-                                    {/* <TableCell>{d.subBidang?.nama}</TableCell> */}
                                     <TableCell className="text-right space-x-1.5">
-                                        <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/preview/${d.idDokumen}`} viewTransition>
+                                        {/* <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/preview/${d.idDokumen}`} viewTransition>
                                             <Button size={"icon"} className="cursor-pointer" >
                                                 <EyeIcon />
                                             </Button>
@@ -124,9 +144,57 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                             <Button size={"icon"} className="cursor-pointer" >
                                                 <PencilIcon />
                                             </Button>
-                                        </Link>
+                                        </Link> */}
 
-                                        <AlertDialogDeleteButton idDokumen={d.idDokumen} tipeDokumen={params.tipeDokumen} />
+                                        <DropdownMenu modal={false}>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="secondary" size={"icon"}>
+                                                    <MoreVerticalIcon />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className="w-40" align="end">
+                                                {/* <DropdownMenuLabel>Menu Aksi</DropdownMenuLabel> */}
+                                                <DropdownMenuGroup>
+                                                    <DropdownMenuItem asChild>
+                                                        <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/preview/${d.idDokumen}`} viewTransition>
+                                                            Baca
+                                                            <DropdownMenuShortcut>
+                                                                <EyeIcon />
+                                                            </DropdownMenuShortcut>
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
+                                                        <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/edit/${d.idDokumen}`} viewTransition>
+                                                            Edit
+                                                            <DropdownMenuShortcut>
+                                                                <PencilIcon />
+                                                            </DropdownMenuShortcut>
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuGroup>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuGroup>
+                                                    <DropdownMenuItem variant="destructive" asChild>
+                                                        <Link to={`delete/${d.idDokumen}`} viewTransition>
+                                                            Hapus
+                                                            <TrashIcon className="ml-auto" />
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                    {/* <DropdownMenuItem onSelect={() => setShowDeleteDialog(true)} variant="destructive">
+                                                        Hapus
+                                                        <TrashIcon className="ml-auto" />
+                                                    </DropdownMenuItem> */}
+                                                </DropdownMenuGroup>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                        <AlertDialogDeleteButton
+                                            key={d.idDokumen}
+                                            idDokumen={d.idDokumen}
+                                            tipeDokumen={params.tipeDokumen}
+                                            judul={d.judul}
+                                            open={showDeleteDialog}
+                                            onOpenChange={setShowDeleteDialog}
+                                        />
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -148,27 +216,41 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
 
 function AlertDialogDeleteButton({
     idDokumen,
-    tipeDokumen
+    tipeDokumen,
+    judul,
+    open,
+    onOpenChange
 }: {
     idDokumen: string,
-    tipeDokumen: string
+    tipeDokumen: string,
+    judul: string | null
+    open: boolean,
+    onOpenChange: React.Dispatch<React.SetStateAction<boolean>>
 }) {
 
     const fetcher = useFetcher({ key: "delete_dokumen" })
-
     const isDeleting = fetcher.state !== "idle"
+
+    // Tutup modal saat delete sukses
+    useEffect(() => {
+        if (fetcher.state === "idle" && fetcher.data?.success) {
+            onOpenChange(false);
+        }
+    }, [fetcher.state, fetcher.data, onOpenChange]);
+
 
 
     return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild>
+        <AlertDialog open={open} onOpenChange={onOpenChange}>
+            {/* <AlertDialog> */}
+            {/* <AlertDialogTrigger asChild>
                 <Button size={"icon"} className="cursor-pointer" variant={"destructive"} >
                     <TrashIcon />
                 </Button>
-            </AlertDialogTrigger>
+            </AlertDialogTrigger> */}
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                    <AlertDialogTitle>Apakah Anda yakin hapus {judul}?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Menghapus tidak bisa dibatalkan. Ini akan menghapus permanen dokumen di server.
                     </AlertDialogDescription>
@@ -189,6 +271,14 @@ function AlertDialogDeleteButton({
                             {isDeleting ? "Menghapus..." : "Ya, Hapus"}
                         </Button>
                     </fetcher.Form>
+                    {/* <fetcher.Form method="post">
+                        <Button
+                            type="submit"
+                            className="cursor-pointer"
+                        >
+                            {isDeleting ? "Menghapus..." : "Ya, Hapus"}
+                        </Button>
+                    </fetcher.Form> */}
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

@@ -63,10 +63,6 @@ const items: {
       isActive: true,
       items: [
         {
-          title: "Dashboard",
-          url: `/${FIRST_SEGMENT}/kuis`,
-        },
-        {
           title: "Buat Kuis",
           url: `/${FIRST_SEGMENT}/kuis/buat-kuis`,
         },

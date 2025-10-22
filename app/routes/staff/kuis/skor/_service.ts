@@ -7,7 +7,15 @@ export async function getKuisSudahDikerjakan(idUser: string) {
         with: {
             kuis: {
                 with: {
-                    dokumen: true,
+                    dokumen: {
+                        with: {
+                            user: {
+                                columns: {
+                                    nama: true
+                                }
+                            }
+                        }
+                    },
                     kuisElement: {
                         columns: {
                             idKuisElement: true

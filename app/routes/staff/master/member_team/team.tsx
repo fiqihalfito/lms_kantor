@@ -1,7 +1,7 @@
-import { data, Link, useFetcher, useSubmit } from "react-router";
+import { data, useFetcher, useSubmit } from "react-router";
 import type { Route } from "./+types/team";
 import { Button } from "~/components/ui/button";
-import { ArrowLeftRightIcon, MoreVerticalIcon, OctagonXIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { ArrowLeftRightIcon, MoreVerticalIcon, OctagonXIcon, TrashIcon } from "lucide-react";
 import { Separator } from "~/components/ui/separator";
 import {
     Table,
@@ -27,19 +27,13 @@ import {
 import { Spinner } from "~/components/ui/spinner";
 import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
-import { wait } from "~/lib/utils";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuSeparator,
     DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { useCallback } from "react";

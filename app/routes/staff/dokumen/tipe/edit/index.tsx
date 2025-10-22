@@ -19,6 +19,7 @@ import {
 import * as z from "zod"
 import { data, redirect } from "react-router";
 import { FIRST_SEGMENT } from "~/lib/route-config";
+import { setFlashSession } from "~/lib/session.server";
 
 export async function action({
     request,
@@ -73,7 +74,12 @@ export async function action({
         idUser: user?.idUser!,
     })
 
-    return redirect(`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}`)
+    const headers = await setFlashSession(request, {
+        type: "success",
+        message: `Dokumen ${validated.data.judul} berhasil diupdate`
+    })
+
+    return redirect(`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}`, { headers })
 }
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {

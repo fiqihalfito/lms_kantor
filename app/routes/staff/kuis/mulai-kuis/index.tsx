@@ -11,12 +11,10 @@ import {
     TableHeader,
     TableRow,
 } from "~/components/ui/table"
-import { EmptyMaster } from "~/components/empty-master";
-import { CheckCircle2Icon, CircleCheck, OctagonXIcon, PencilRulerIcon } from "lucide-react";
-import { Form, Link, useSearchParams } from "react-router";
+import { CircleCheck, PencilRulerIcon } from "lucide-react";
+import { Form } from "react-router";
 import { Button } from "~/components/ui/button";
 import { formatTimestampId } from "~/lib/utils";
-import { ButtonGroup } from "~/components/ui/button-group";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "~/components/ui/empty";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
@@ -24,6 +22,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     const user = context.get(userContext)
 
     const kuislist = await getKuisBelumDikerjakan(user?.idUser!, user?.idSubBidang!)
+    console.log(kuislist);
 
 
     return { kuislist }

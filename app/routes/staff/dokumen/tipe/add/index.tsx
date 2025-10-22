@@ -41,12 +41,13 @@ import {
     parseFormData,
 
 } from "@remix-run/form-data-parser";
-import { getListLayananDropdown, saveNewDokumen, tInsertNewDokumenValidation } from "./_service";
+import { checkWhichTeam, getListLayananDropdown, saveDokumentoTeam, saveNewDokumen, tInsertNewDokumenValidation } from "./_service";
 import { FIRST_SEGMENT } from "~/lib/route-config";
 import { userContext } from "~/lib/context";
 import { Button } from "~/components/ui/button";
 import { FormDokumen } from "../_components/FormDokumen";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
+import { setFlashSession } from "~/lib/session.server";
 
 export async function action({
     request,
@@ -94,7 +95,7 @@ export async function action({
 
 
 
-    const idNewDokumen = await saveNewDokumen({
+    const newDokumen = await saveNewDokumen({
         filename: filename,
         idLayanan: validated.data.layanan,
         idSubBidang: user?.idSubBidang!,
@@ -103,7 +104,22 @@ export async function action({
         idUser: user?.idUser!,
     })
 
-    return redirect(`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}`)
+    // insert to team condition
+    let idTeam
+    if (params.tipeDokumen === "SOP") {
+        idTeam = null
+    } else {
+        const team = await checkWhichTeam(user?.idUser!)
+        idTeam = team.length > 0 ? team[0].idTeam : null
+    }
+    await saveDokumentoTeam(idTeam, newDokumen[0].idDokumen)
+
+    const headers = await setFlashSession(request, {
+        type: "success",
+        message: `Dokumen ${validated.data.judul} berhasil ditambahkan`
+    })
+
+    return redirect(`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}`, { headers })
 
 
 }

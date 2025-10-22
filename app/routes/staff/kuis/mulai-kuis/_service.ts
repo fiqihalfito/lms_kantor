@@ -1,30 +1,11 @@
 import { db } from "database/connect";
-import { mLayanan, mUser, tDokumen, tKuis, tKuisElement, tKuisProgress } from "database/schema/schema";
-import { and, eq, isNull, ne, notExists } from "drizzle-orm";
+import { mLayanan, mUser, tDokumen, tKuis, tKuisElement, tKuisProgress, tStatusBaca } from "database/schema/schema";
+import { and, eq, gt, isNull, or } from "drizzle-orm";
 
 
 export async function getKuisBelumDikerjakan(idUser: string, idSubBidang: string) {
 
 
-    // const kuisList = await db.query.tKuis.findMany({
-    //     with: {
-    //         dokumen: {
-    //             with: {
-    //                 layanan: true,
-    //                 user: true
-    //             }
-    //         },
-    //         kuisElement: true,
-    //         kuisProgress: {
-    //             where: ne(tKuisProgress.idUser, idUser),
-    //             // limit: 1
-    //         }
-    //         // kuisProgressOne: true
-    //     },
-    //     where: eq(tKuis.idSubBidang, idSubBidang)
-    //     // where: and(eq(tKuis.idSubBidang, idSubBidang), ne(tKuisProgress.idUser, idUser))
-    // })
-    const kuisProgressSelf = db.select().from(tKuisProgress).where(and(eq(tKuisProgress.idUser, idUser), eq(tKuisProgress.isSelesai, true)))
     const kuisList = await db
         .select({
             idKuis: tKuis.idKuis,
@@ -33,18 +14,50 @@ export async function getKuisBelumDikerjakan(idUser: string, idSubBidang: string
             namaLayanan: mLayanan.nama,
             uploadedBy: mUser.nama,
             tanggalKuisTerbuat: tKuis.createdAt,
-            jumlahSoal: db.$count(tKuisElement, eq(tKuisElement.idKuis, tKuis.idKuis))
+            jumlahSoal: db.$count(
+                tKuisElement,
+                eq(tKuisElement.idKuis, tKuis.idKuis)
+            ),
         })
         .from(tKuis)
-        .where(notExists(kuisProgressSelf))
+        .leftJoin(
+            tKuisProgress,
+            and(
+                eq(tKuis.idKuis, tKuisProgress.idKuis),
+                eq(tKuisProgress.idUser, idUser)
+            )
+        )
         .innerJoin(tDokumen, eq(tKuis.idDokumen, tDokumen.idDokumen))
         .leftJoin(mLayanan, eq(tDokumen.idLayanan, mLayanan.idLayanan))
         .innerJoin(mUser, eq(mUser.idUser, tDokumen.idUser))
+        .leftJoin(tStatusBaca,
+            and(
+                eq(tStatusBaca.idDokumen, tDokumen.idDokumen),
+                eq(tStatusBaca.idUser, mUser.idUser)
+            )
+        )
+        .leftJoin(tKuisElement, eq(tKuisElement.idKuis, tKuis.idKuis))
+        .where(
+            and(
+                // <-- Tambahan: Filter berdasarkan idSubBidang
+                eq(tKuis.idSubBidang, idSubBidang),
 
+                // <-- Perbaikan: Kelompokkan kondisi kuis
+                or(
+                    isNull(tKuisProgress.idKuisProgress), // Belum dikerjakan
+                    eq(tKuisProgress.isSelesai, false)    // Sudah dikerjakan tapi belum selesai
+                ),
 
-    // return kuisList
+                // <-- Perbaikan: Jadikan kondisi wajib
+                eq(tStatusBaca.isRead, true), // Dokumen wajib sudah dibaca
 
-    // const list = kuisList.filter(item => item.kuisProgressOne === null || item.kuisProgressOne?.isSelesai === false)
+                // jumlah soal harus lebih dari 0
+                gt(db.$count(
+                    tKuisElement,
+                    eq(tKuisElement.idKuis, tKuis.idKuis)
+                ), 0)
+            )
+        );
 
     return kuisList
 }

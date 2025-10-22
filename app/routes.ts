@@ -20,7 +20,8 @@ export default [
                     route("preview/:idDokumen", "routes/staff/dokumen/tipe/preview-pdf/index.tsx"),
                     route("new", "routes/staff/dokumen/tipe/add/index.tsx"),
                     route("edit/:idDokumen", "routes/staff/dokumen/tipe/edit/index.tsx"),
-                    route("delete", "routes/staff/dokumen/tipe/delete/index.tsx"),
+                    // route("delete-confirm/:idDokumen", "routes/staff/dokumen/tipe/delete/confirm/index.tsx"),
+                    route("delete/:idDokumen", "routes/staff/dokumen/tipe/delete/index.tsx"),
                 ]),
                 // route("storage/:bucket/:filename", "routes/staff/dokumen/preview-pdf/index.tsx")
             ]),
