@@ -47,7 +47,7 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
             {dokumens.length === 0 ? (
                 <EmptyMaster Icon={OctagonXIcon} title="Dokumen Kuis" />
             ) : (
-                <TableWrapper className="w-2/3">
+                <TableWrapper className="w-2/3x">
                     <Table>
                         {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                         <TableHeader>
