@@ -100,7 +100,11 @@ export function FormDokumen({ defaultValues, listLayanan, tipeDokumen, mode }: F
                                     <FieldLabel htmlFor="layanan">
                                         Layanan
                                     </FieldLabel>
-                                    <Select name="layanan" defaultValue={defaultValues?.idLayanan ?? undefined}>
+                                    <Select
+                                        name="layanan"
+                                        defaultValue={defaultValues?.idLayanan ?? undefined}
+                                        required={tipeDokumen === "IK"}
+                                    >
                                         <SelectTrigger id="layanan">
                                             <SelectValue placeholder="Layanan" />
                                         </SelectTrigger>
