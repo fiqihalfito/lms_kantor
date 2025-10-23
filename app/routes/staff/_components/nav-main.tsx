@@ -66,10 +66,10 @@ const items: {
           title: "Buat Kuis",
           url: `/${FIRST_SEGMENT}/kuis/buat-kuis`,
         },
-        {
-          title: `Mulai Kuis`,
-          url: `/${FIRST_SEGMENT}/kuis/mulai-kuis`,
-        },
+        // {
+        //   title: `Mulai Kuis`,
+        //   url: `/${FIRST_SEGMENT}/kuis/mulai-kuis`,
+        // },
         {
           title: `Skor`,
           url: `/${FIRST_SEGMENT}/kuis/skor`,

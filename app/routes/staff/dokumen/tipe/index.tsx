@@ -59,7 +59,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     const user = context.get(userContext)
 
     const dokumens = await getAllDokumenByTipe(user?.idSubBidang!, params.tipeDokumen, user?.idUser!)
-    console.log(dokumens[0].kuis.kuisElement.length);
+    console.log(dokumens[0].kuis?.kuisElement.length);
 
 
     const { flashData, headers } = await getFlashSession(request)
@@ -197,7 +197,7 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                         <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/edit/${d.idDokumen}`} viewTransition>
                                                             Edit
                                                             <DropdownMenuShortcut>
-                                                                {currentLoginIdUser !== d.idUser ? <Badge variant={"destructive"} className="tracking-wider">Dilarang</Badge> : <PencilIcon />}
+                                                                {currentLoginIdUser !== d.idUser ? <Badge variant={"destructive"} className="tracking-wider rounded-full">Dilarang</Badge> : <PencilIcon />}
 
                                                             </DropdownMenuShortcut>
                                                         </Link>
@@ -206,13 +206,22 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                 </DropdownMenuGroup>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuGroup>
-                                                    <DropdownMenuItem disabled={!Boolean(d.kuis?.idKuis) || d.kuis.kuisElement.length === 0} onClick={() => handleMulaiKuis(d.kuis.idKuis)}>
-                                                        {/* <Link to={`/${FIRST_SEGMENT}/kuis/mulai-kuis/init/${d.kuis?.idKuis}`} viewTransition> */}
+                                                    <DropdownMenuItem disabled={d.statusBaca.length === 0 || !Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length === 0} onClick={() => handleMulaiKuis(d.kuis.idKuis)}>
                                                         Mulai Kuis
                                                         <DropdownMenuShortcut>
-                                                            {!Boolean(d.kuis?.idKuis) || d.kuis.kuisElement.length === 0 ? <Badge variant={"destructive"} className="tracking-wider">Belum dibuat</Badge> : <NotebookPenIcon />}
+                                                            {d.statusBaca.length === 0 ? (
+                                                                <Badge variant={"destructive"} className="tracking-wider rounded-full">Baca dulu</Badge>
+                                                            ) : (
+                                                                <>
+                                                                    {!Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length === 0 ? (
+                                                                        <Badge variant={"destructive"} className="tracking-wider rounded-full">Belum dibuat</Badge>
+                                                                    ) : (
+                                                                        <NotebookPenIcon />
+                                                                    )}
+                                                                </>
+                                                            )}
+
                                                         </DropdownMenuShortcut>
-                                                        {/* </Link> */}
                                                     </DropdownMenuItem>
 
                                                 </DropdownMenuGroup>
@@ -221,7 +230,7 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                     <DropdownMenuItem variant="destructive" asChild disabled={currentLoginIdUser !== d.idUser}>
                                                         <Link to={`delete/${d.idDokumen}`} viewTransition>
                                                             Hapus {currentLoginIdUser !== d.idUser ? (
-                                                                <Badge variant={"destructive"} className="ml-auto tracking-wider">Dilarang</Badge>
+                                                                <Badge variant={"destructive"} className="ml-auto tracking-wider rounded-full">Dilarang</Badge>
                                                             ) : (
                                                                 <TrashIcon className="ml-auto" />
                                                             )}

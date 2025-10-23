@@ -1,4 +1,3 @@
-"use client"
 
 import { ChevronRight, LayoutGridIcon, ShapesIcon, SquareUserRoundIcon, UsersRoundIcon, type LucideIcon } from "lucide-react"
 import { NavLink } from "react-router"
