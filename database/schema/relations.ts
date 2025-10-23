@@ -10,6 +10,7 @@ import {
     tKuis,
     tKuisElement,
     tKuisProgress,
+    tStatusBaca,
 } from "./schema";
 
 // ===================== SubBidang Relations =====================
@@ -63,7 +64,7 @@ export const mMemberTeamRelations = relations(mMemberTeam, ({ one }) => ({
 }));
 
 // ===================== Dokumen Relations =====================
-export const tDokumenRelations = relations(tDokumen, ({ one }) => ({
+export const tDokumenRelations = relations(tDokumen, ({ one, many }) => ({
     layanan: one(mLayanan, {
         fields: [tDokumen.idLayanan],
         references: [mLayanan.idLayanan],
@@ -79,8 +80,16 @@ export const tDokumenRelations = relations(tDokumen, ({ one }) => ({
     kuis: one(tKuis, {
         fields: [tDokumen.idDokumen],
         references: [tKuis.idDokumen]
-    })
+    }),
+    statusBaca: many(tStatusBaca)
 }));
+
+export const tStatusBacaRelations = relations(tStatusBaca, ({ one }) => ({
+    dokumen: one(tDokumen, {
+        fields: [tStatusBaca.idDokumen],
+        references: [tDokumen.idDokumen]
+    })
+}))
 
 // ================ Kuis Relations ==========================
 export const tKuisRelations = relations(tKuis, ({ one, many }) => ({
@@ -89,10 +98,10 @@ export const tKuisRelations = relations(tKuis, ({ one, many }) => ({
         references: [tDokumen.idDokumen]
     }),
     kuisElement: many(tKuisElement),
-    kuisProgressOne: one(tKuisProgress, {
-        fields: [tKuis.idKuis],
-        references: [tKuisProgress.idKuis]
-    }),
+    // kuisProgressOne: one(tKuisProgress, {
+    //     fields: [tKuis.idKuis],
+    //     references: [tKuisProgress.idKuis]
+    // }),
     kuisProgress: many(tKuisProgress)
 }))
 

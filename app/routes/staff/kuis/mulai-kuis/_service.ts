@@ -36,7 +36,7 @@ export async function getKuisBelumDikerjakan(idUser: string, idSubBidang: string
                 eq(tStatusBaca.idUser, mUser.idUser)
             )
         )
-        .leftJoin(tKuisElement, eq(tKuisElement.idKuis, tKuis.idKuis))
+        // .leftJoin(tKuisElement, eq(tKuisElement.idKuis, tKuis.idKuis))
         .where(
             and(
                 // <-- Tambahan: Filter berdasarkan idSubBidang

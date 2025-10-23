@@ -42,7 +42,7 @@ async function main() {
     // 3️⃣ Insert users
     const userS1Names = [
         // 🔹 Batch pertama (DBA Team) - 18 orang
-        "Achmad Ridwan", "Andi Abd. Jalil", "Ando Pratama Wibawa", "Asdin Wahyu Pamungkas", "Bayu Tri Sulistyo",
+        "Achmad Ridwan", "Andi Abd Jalil", "Ando Pratama Wibawa", "Asdin Wahyu Pamungkas", "Bayu Tri Sulistyo",
         "Citra Hafitasari", "Doand Panjaitan", "Dwiky Melinia Eriani", "Fahri Bagus Firmansyah", "Felisia Mascarehas",
         "Hananta Prasetia", "Ikrar Harvy", "Kamila Aprilia", "Latif Unggul Irfanto", "Mahrunisa Indah",
         "Muhammad Ridha HAKIM", "Nabila Fidasari", "Rizky Ramdani",

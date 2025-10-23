@@ -19,7 +19,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
-import { FolderXIcon, MoreHorizontal, MoreVerticalIcon } from "lucide-react"
+import { FolderXIcon, MoreHorizontal, MoreVerticalIcon, NotebookPenIcon } from "lucide-react"
 import {
     Empty,
     EmptyDescription,
@@ -30,7 +30,7 @@ import {
 import { getAllDokumenByTipe } from "./_services";
 import { Button } from "~/components/ui/button";
 import { EyeIcon, FilePlusIcon, PencilIcon, TrashIcon } from "lucide-react";
-import { data, Link, Outlet, useFetcher } from "react-router";
+import { data, Form, Link, Outlet, useFetcher, useSubmit } from "react-router";
 import { formatTimestampId } from "~/lib/utils";
 import { FIRST_SEGMENT } from "~/lib/route-config";
 import { userContext } from "~/lib/context";
@@ -51,16 +51,20 @@ import {
 import { useEffect, useState } from "react";
 import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
+import { Badge } from "~/components/ui/badge";
 
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
 
-    const dokumens = await getAllDokumenByTipe(user?.idSubBidang!, params.tipeDokumen)
+    const dokumens = await getAllDokumenByTipe(user?.idSubBidang!, params.tipeDokumen, user?.idUser!)
+    console.log(dokumens[0].kuis.kuisElement.length);
+
+
     const { flashData, headers } = await getFlashSession(request)
 
-    return data({ dokumens, flashData }, { headers })
+    return data({ dokumens, flashData, currentLoginIdUser: user?.idUser }, { headers })
 }
 
 
@@ -68,7 +72,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 
 export default function DokumenIndex({ loaderData, params }: Route.ComponentProps) {
 
-    const { dokumens, flashData } = loaderData
+    const { dokumens, flashData, currentLoginIdUser } = loaderData
 
     const tipeMapping: Record<any, any> = {
         descPage: {
@@ -79,6 +83,15 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
     }
 
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+    const mulaiKuisSubmit = useSubmit()
+
+    const handleMulaiKuis = (idKuis: string) => {
+        mulaiKuisSubmit(null, {
+            action: `/${FIRST_SEGMENT}/kuis/mulai-kuis/init/${idKuis}`,
+            method: "post"
+        })
+    }
 
 
 
@@ -120,6 +133,8 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                 <TableHead>Uploaded By</TableHead>
                                 <TableHead>Created At</TableHead>
                                 <TableHead>Updated At</TableHead>
+                                <TableHead>Baca</TableHead>
+                                <TableHead>Kuis</TableHead>
                                 {/* <TableHead>Aksi</TableHead> */}
                                 <TableHead className="text-right">Aksi</TableHead>
                             </TableRow>
@@ -133,6 +148,20 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                     <TableCell>{d.user?.nama}</TableCell>
                                     <TableCell>{formatTimestampId(d.createdAt, { withZoneLabel: true })}</TableCell>
                                     <TableCell>{d.updatedAt ? formatTimestampId(d.updatedAt, { withZoneLabel: true }) : "-"}</TableCell>
+                                    <TableCell>
+                                        {d.statusBaca[0]?.isRead ? (
+                                            <Badge className="bg-green-600 rounded-full">Done</Badge>
+                                        ) : (
+                                            <Badge variant={"destructive"} className="rounded-full">Not Yet</Badge>
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {d.kuis?.kuisProgress[0]?.idKuisProgress && d.kuis?.kuisProgress[0]?.isSelesai === true ? (
+                                            <Badge className="bg-green-600 rounded-full">Done</Badge>
+                                        ) : (
+                                            <Badge variant={"destructive"} className="rounded-full">Not Yet</Badge>
+                                        )}
+                                    </TableCell>
                                     <TableCell className="text-right space-x-1.5">
                                         {/* <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/preview/${d.idDokumen}`} viewTransition>
                                             <Button size={"icon"} className="cursor-pointer" >
@@ -148,11 +177,12 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
 
                                         <DropdownMenu modal={false}>
                                             <DropdownMenuTrigger asChild>
+
                                                 <Button variant="secondary" size={"icon"}>
                                                     <MoreVerticalIcon />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent className="w-40" align="end">
+                                            <DropdownMenuContent className="w-96" align="end">
                                                 {/* <DropdownMenuLabel>Menu Aksi</DropdownMenuLabel> */}
                                                 <DropdownMenuGroup>
                                                     <DropdownMenuItem asChild>
@@ -163,21 +193,39 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                             </DropdownMenuShortcut>
                                                         </Link>
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem asChild>
+                                                    <DropdownMenuItem asChild disabled={currentLoginIdUser !== d.idUser}>
                                                         <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/edit/${d.idDokumen}`} viewTransition>
                                                             Edit
                                                             <DropdownMenuShortcut>
-                                                                <PencilIcon />
+                                                                {currentLoginIdUser !== d.idUser ? <Badge variant={"destructive"} className="tracking-wider">Dilarang</Badge> : <PencilIcon />}
+
                                                             </DropdownMenuShortcut>
                                                         </Link>
                                                     </DropdownMenuItem>
+
                                                 </DropdownMenuGroup>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuGroup>
-                                                    <DropdownMenuItem variant="destructive" asChild>
+                                                    <DropdownMenuItem disabled={!Boolean(d.kuis?.idKuis) || d.kuis.kuisElement.length === 0} onClick={() => handleMulaiKuis(d.kuis.idKuis)}>
+                                                        {/* <Link to={`/${FIRST_SEGMENT}/kuis/mulai-kuis/init/${d.kuis?.idKuis}`} viewTransition> */}
+                                                        Mulai Kuis
+                                                        <DropdownMenuShortcut>
+                                                            {!Boolean(d.kuis?.idKuis) || d.kuis.kuisElement.length === 0 ? <Badge variant={"destructive"} className="tracking-wider">Belum dibuat</Badge> : <NotebookPenIcon />}
+                                                        </DropdownMenuShortcut>
+                                                        {/* </Link> */}
+                                                    </DropdownMenuItem>
+
+                                                </DropdownMenuGroup>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuGroup>
+                                                    <DropdownMenuItem variant="destructive" asChild disabled={currentLoginIdUser !== d.idUser}>
                                                         <Link to={`delete/${d.idDokumen}`} viewTransition>
-                                                            Hapus
-                                                            <TrashIcon className="ml-auto" />
+                                                            Hapus {currentLoginIdUser !== d.idUser ? (
+                                                                <Badge variant={"destructive"} className="ml-auto tracking-wider">Dilarang</Badge>
+                                                            ) : (
+                                                                <TrashIcon className="ml-auto" />
+                                                            )}
+
                                                         </Link>
                                                     </DropdownMenuItem>
                                                     {/* <DropdownMenuItem onSelect={() => setShowDeleteDialog(true)} variant="destructive">
