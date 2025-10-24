@@ -197,8 +197,12 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                         <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/edit/${d.idDokumen}`} viewTransition>
                                                             Edit
                                                             <DropdownMenuShortcut>
-                                                                {currentLoginIdUser !== d.idUser ? <Badge variant={"destructive"} className="tracking-wider rounded-full">Dilarang</Badge> : <PencilIcon />}
-
+                                                                {currentLoginIdUser !== d.idUser ? (
+                                                                    // <Badge variant={"destructive"} className="tracking-wider rounded-full">Dilarang</Badge>
+                                                                    <span className="text-red-600 text-xs">dilarang</span>
+                                                                ) : (
+                                                                    <PencilIcon />
+                                                                )}
                                                             </DropdownMenuShortcut>
                                                         </Link>
                                                     </DropdownMenuItem>
@@ -210,11 +214,13 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                         Mulai Kuis
                                                         <DropdownMenuShortcut>
                                                             {d.statusBaca.length === 0 ? (
-                                                                <Badge variant={"destructive"} className="tracking-wider rounded-full">Baca dulu</Badge>
+                                                                // <Badge variant={"destructive"} className="tracking-wider rounded-full">Baca dulu</Badge>
+                                                                <span className="text-red-600 ">Baca dulu</span>
                                                             ) : (
                                                                 <>
                                                                     {!Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length === 0 ? (
-                                                                        <Badge variant={"destructive"} className="tracking-wider rounded-full">Belum dibuat</Badge>
+                                                                        // <Badge variant={"destructive"} className="tracking-wider rounded-full">Belum dibuat</Badge>
+                                                                        <span className="text-red-600 ">Belum dibuat</span>
                                                                     ) : (
                                                                         <NotebookPenIcon />
                                                                     )}
@@ -229,11 +235,16 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                 <DropdownMenuGroup>
                                                     <DropdownMenuItem variant="destructive" asChild disabled={currentLoginIdUser !== d.idUser}>
                                                         <Link to={`delete/${d.idDokumen}`} viewTransition>
-                                                            Hapus {currentLoginIdUser !== d.idUser ? (
-                                                                <Badge variant={"destructive"} className="ml-auto tracking-wider rounded-full">Dilarang</Badge>
-                                                            ) : (
-                                                                <TrashIcon className="ml-auto" />
-                                                            )}
+                                                            Hapus
+                                                            <DropdownMenuShortcut>
+                                                                {currentLoginIdUser !== d.idUser ? (
+                                                                    // <Badge variant={"destructive"} className="ml-auto tracking-wider rounded-full">Dilarang</Badge>
+                                                                    <span className="text-red-600 ">dilarang</span>
+                                                                ) : (
+                                                                    <TrashIcon className="ml-auto text-red-600" />
+                                                                )}
+                                                            </DropdownMenuShortcut>
+
 
                                                         </Link>
                                                     </DropdownMenuItem>
