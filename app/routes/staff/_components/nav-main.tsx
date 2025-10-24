@@ -151,7 +151,7 @@ export function NavMain() {
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        <SidebarMenuItem key={"dashboard"}>
+        <SidebarMenuItem key={"dashboard_user"}>
           <SidebarMenuButton asChild isActive={location.pathname === `/${FIRST_SEGMENT}/dashboard`}>
             <NavLink to={`/${FIRST_SEGMENT}/dashboard`}>
               {({ isPending }) => (
@@ -161,8 +161,19 @@ export function NavMain() {
                   {isPending && <Spinner className="ml-auto" />}
                 </>
               )}
-
-
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem key={"dashboard-subbidang"}>
+          <SidebarMenuButton asChild isActive={location.pathname === `/${FIRST_SEGMENT}/dashboard-subbidang`}>
+            <NavLink to={`/${FIRST_SEGMENT}/dashboard-subbidang`}>
+              {({ isPending }) => (
+                <>
+                  <LayoutDashboardIcon />
+                  {"Dashboard Subbidang"}
+                  {isPending && <Spinner className="ml-auto" />}
+                </>
+              )}
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
