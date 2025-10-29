@@ -14,7 +14,7 @@ export default [
         layout("routes/staff/_components/sidebar-layout.tsx", [
             // index("routes/staff/layout-index.tsx"),
             route("dashboard", "routes/staff/index.tsx"),
-            route("dashboard-subbidang", "routes/staff/dashboard-subbidang.tsx"),
+            route("dashboard-subbidang", "routes/staff/dashboard-subbidang/index.tsx"),
 
             ...prefix("dokumen", [
                 route(":tipeDokumen", "routes/staff/dokumen/tipe/index.tsx", [

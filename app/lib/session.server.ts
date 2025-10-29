@@ -11,7 +11,8 @@ export type SessionFlashMessage = {
     [SESSION_FLASH_KEY]: FlashData
 }
 
-export type SessionUser = typeof mUser.$inferSelect
+export type UserDataForSession = Omit<typeof mUser.$inferSelect, "password">
+export type SessionUser = UserDataForSession & { namaSubbidang: string }
 export let SESSION_KEY = 'user'
 
 // !!! important part =======================================>>>>>>>>>>>>>>>>>>

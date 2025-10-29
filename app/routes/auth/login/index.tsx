@@ -4,11 +4,12 @@ import { LoginForm } from "./_components/login-form";
 import {
     authenticator,
 } from "~/lib/auth.server";
-import { saveSession } from "~/lib/session.server";
+import { saveSession, type SessionUser } from "~/lib/session.server";
 
 import * as z from "zod";
 import { data, redirect } from "react-router";
 import { loginMiddleware } from "~/lib/middleware.server";
+import { getNamaSubbidang } from "./_service";
 
 
 
@@ -48,8 +49,17 @@ export async function action({ request, params }: Route.ActionArgs) {
         return data({ errors: { notFound: "User tidak terdaftar atau salah password" } }, { status: 400 })
     }
 
-    // user found then get the first element into header then redirect
-    const headers = await saveSession(request, user[0])
+    const namaSubbidang = await getNamaSubbidang(user[0].idSubBidang)
+    // user found then get the first element and nama subbidang into header then redirect
+    const sessionUser: SessionUser = {
+        email: user[0].email,
+        idSubBidang: user[0].idSubBidang,
+        idUser: user[0].idUser,
+        nama: user[0].nama,
+        namaSubbidang: namaSubbidang!
+    }
+
+    const headers = await saveSession(request, sessionUser)
     return redirect('/app/dashboard', { headers })
 
 }
