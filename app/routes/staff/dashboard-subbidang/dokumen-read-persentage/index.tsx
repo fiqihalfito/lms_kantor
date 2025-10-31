@@ -34,7 +34,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
 
-    // filter
+    // filters
     const url = new URL(request.url)
     const tipeDokumen = url.searchParams.get("tipeDokumen") as TIPE_DOKUMEN | null
     const team = url.searchParams.get("team")
@@ -55,7 +55,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 export default function DokumenReadPersentage({ loaderData }: Route.ComponentProps) {
 
     const { dokumenDanStatusRead, activeFilter } = loaderData
-    const [searchParams, setSearchParams] = useSearchParams();
+    // const [searchParams, setSearchParams] = useSearchParams();
     const [filterOpen, setFilterOpen] = useState(false)
 
     // filter
