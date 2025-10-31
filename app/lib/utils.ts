@@ -139,3 +139,34 @@ export function wait(ms: number) {
 }
 
 
+export function toTitleCaseUniversal(str: string) {
+  if (!str) {
+    return "";
+  }
+
+  // 1. Tangani CamelCase: Sisipkan spasi sebelum huruf kapital yang tidak diikuti oleh spasi
+  // Contoh: "userName" menjadi "user Name"
+  let spacedStr = str.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+  // 2. Tangani pemisah: Ganti semua garis bawah, tanda hubung, dan spasi berulang
+  // dengan satu spasi tunggal, lalu ubah ke huruf kecil.
+  let cleanedStr = spacedStr
+    .replace(/[\s_-]+/g, ' ') // Ganti pemisah (spasi, _, -) dengan 1 spasi
+    .toLowerCase()
+    .trim(); // Hapus spasi di awal/akhir
+
+  // 3. Konversi menjadi Title Case: Kapitalisasi huruf pertama dari setiap kata
+  const words = cleanedStr.split(' ');
+
+  const titleCased = words.map(word => {
+    if (word.length === 0) {
+      return word;
+    }
+    // Huruf pertama menjadi kapital, sisanya tetap kecil
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  });
+
+  return titleCased.join(' ');
+}
+
+

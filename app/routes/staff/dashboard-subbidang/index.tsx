@@ -19,6 +19,7 @@ import {
 } from "~/components/ui/item"
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
+import { NavLink, Outlet } from "react-router";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -51,6 +52,8 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
             </div>
             <Separator />
 
+            {/* <Outlet /> */}
+
             <div className="flex flex-col gap-4">
 
                 <div className="grid grid-cols-3 gap-4">
@@ -64,17 +67,20 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                             <p>Card Footer</p>
                         </CardFooter> */}
                     </Card>
-                    <Card>
-                        <CardHeader>
-                            <CardDescription>Persentase Membaca Dokumen</CardDescription>
-                            <CardTitle className="text-4xl tabular-nums">50.5%</CardTitle>
-                            {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
-                            {/* <CardAction>Card Action</CardAction> */}
-                        </CardHeader>
-                        {/* <CardFooter>
+                    <NavLink to={"dokumen-read-persentage"}>
+                        <Card>
+                            <CardHeader>
+                                <CardDescription>Persentase Membaca Dokumen</CardDescription>
+                                <CardTitle className="text-4xl tabular-nums">50.5%</CardTitle>
+                                {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
+                                {/* <CardAction>Card Action</CardAction> */}
+                            </CardHeader>
+                            {/* <CardFooter>
                             <p>Card Footer</p>
                         </CardFooter> */}
-                    </Card>
+                        </Card>
+                    </NavLink>
+
                     <Card>
                         <CardHeader>
                             <CardDescription>Persentase Selesai Kuis</CardDescription>
@@ -121,7 +127,7 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                                 <CardContent>
                                     <div className="space-y-1.5">
                                         {tim.members.map((member, i) => (
-                                            <Item variant="outline" size="sm">
+                                            <Item variant="outline" size="sm" key={member.idMemberTeam}>
                                                 <ItemMedia variant={"icon"}>
                                                     {/* <BadgeCheckIcon className="size-5" /> */}
                                                     {i + 1}

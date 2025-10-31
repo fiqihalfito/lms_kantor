@@ -88,6 +88,10 @@ export const tStatusBacaRelations = relations(tStatusBaca, ({ one }) => ({
     dokumen: one(tDokumen, {
         fields: [tStatusBaca.idDokumen],
         references: [tDokumen.idDokumen]
+    }),
+    userBaca: one(mUser, {
+        fields: [tStatusBaca.idUser],
+        references: [mUser.idUser]
     })
 }))
 
