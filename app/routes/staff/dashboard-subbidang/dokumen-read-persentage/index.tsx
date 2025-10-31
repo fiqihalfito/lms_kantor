@@ -1,6 +1,6 @@
 import { Separator } from "~/components/ui/separator";
 import type { Route } from "./+types";
-import { getDokumenAndStatusRead } from "./_service";
+import { getAllTeam, getDokumenAndStatusRead } from "./_service";
 import { userContext } from "~/lib/context";
 import { TableWrapper } from "~/components/table-wrapper";
 import {
@@ -45,16 +45,20 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     const dokumenDanStatusRead = await getDokumenAndStatusRead(user?.idSubBidang!, activeFilter.tipeDokumen)
 
     // masterdata
+    const teams = await getAllTeam(user?.idSubBidang!)
+
+    const masterData = {
+        teams: teams
+    }
 
 
-
-    return { dokumenDanStatusRead, activeFilter }
+    return { dokumenDanStatusRead, masterData, activeFilter }
 }
 
 
 export default function DokumenReadPersentage({ loaderData }: Route.ComponentProps) {
 
-    const { dokumenDanStatusRead, activeFilter } = loaderData
+    const { dokumenDanStatusRead, activeFilter, masterData } = loaderData
     // const [searchParams, setSearchParams] = useSearchParams();
     const [filterOpen, setFilterOpen] = useState(false)
 
@@ -93,9 +97,9 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
         setFilterOpen(false)
     }
 
-    const filteredActiveFilter = Object.entries(activeFilter).filter(([key, value], i) => {
-        return value !== null && value !== "";
-    })
+    // const filteredActiveFilter = Object.entries(activeFilter).filter(([key, value], i) => {
+    //     return value !== null && value !== "";
+    // })
 
 
     return (
@@ -161,9 +165,9 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
                                             <SelectValue placeholder="team" />
                                         </SelectTrigger>
                                         <SelectContent >
-                                            {tipeDokumen.map((tipedok, i) => (
-                                                <SelectItem key={tipedok} value={tipedok}>
-                                                    {tipedok}
+                                            {masterData.teams.map((team, i) => (
+                                                <SelectItem key={team.idTeam} value={team.idTeam}>
+                                                    {team.nama}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -184,7 +188,7 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
 
                     </PopoverContent>
                 </Popover>
-                {filteredActiveFilter.length > 0 && (
+                {/* {filteredActiveFilter.length > 0 && (
                     <>
                         {filteredActiveFilter.map(([key, value], i) => (
                             <Button variant={"outline"} className="border-dashed font-medium " size={"sm"}>
@@ -196,6 +200,24 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
                             </Button>
                         ))}
                     </>
+                )} */}
+                {activeFilter.tipeDokumen && (
+                    <Button variant={"outline"} className="border-dashed font-medium " size={"sm"}>
+                        Tipe Dokumen
+                        <Separator orientation="vertical" className="mx-2" />
+                        <Badge variant={"default"}>
+                            {activeFilter.tipeDokumen}
+                        </Badge>
+                    </Button>
+                )}
+                {activeFilter.team && (
+                    <Button variant={"outline"} className="border-dashed font-medium " size={"sm"}>
+                        Team
+                        <Separator orientation="vertical" className="mx-2" />
+                        <Badge variant={"default"}>
+                            {masterData.teams.find(team => team.idTeam === activeFilter.team)?.nama}
+                        </Badge>
+                    </Button>
                 )}
             </div>
             <TableWrapper>
