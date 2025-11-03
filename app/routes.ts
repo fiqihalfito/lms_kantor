@@ -16,7 +16,9 @@ export default [
             route("dashboard", "routes/staff/index.tsx"),
             ...prefix("dashboard-subbidang", [
                 index("routes/staff/dashboard-subbidang/index.tsx"),
-                route("dokumen-read-persentage", "routes/staff/dashboard-subbidang/dokumen-read-persentage/index.tsx")
+                route("dokumen-read-persentage/tipe/:tipe", "routes/staff/dashboard-subbidang/dokumen-read-persentage/index.tsx", [
+                    route(":idDokumen/jumlah-orang-baca", "routes/staff/dashboard-subbidang/dokumen-read-persentage/jumlah-orang-baca/index.tsx")
+                ])
             ]),
 
             ...prefix("dokumen", [

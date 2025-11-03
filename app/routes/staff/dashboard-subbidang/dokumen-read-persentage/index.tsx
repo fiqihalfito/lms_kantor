@@ -20,29 +20,35 @@ import {
 } from "~/components/ui/popover"
 import { Button } from "~/components/ui/button";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
-import { Form, useSearchParams, useSubmit } from "react-router";
+import { Form, NavLink, Outlet, useSearchParams, useSubmit } from "react-router";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
 import type { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
 import { Badge } from "~/components/ui/badge";
 import { Field, FieldLabel } from "~/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { BadgeXIcon, BrushCleaningIcon, EraserIcon, XCircleIcon, XIcon } from "lucide-react";
-import { toTitleCaseUniversal } from "~/lib/utils";
+import { BadgeXIcon, BrushCleaningIcon, EraserIcon, FunnelIcon, XCircleIcon, XIcon } from "lucide-react";
+import { cn, toTitleCaseUniversal, wait } from "~/lib/utils";
+import { Spinner } from "~/components/ui/spinner";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
+    // await wait(3000)
     const user = context.get(userContext)
 
     // filters
     const url = new URL(request.url)
-    const tipeDokumen = url.searchParams.get("tipeDokumen") as TIPE_DOKUMEN | null
+    // const tipeDokumen = url.searchParams.get("tipeDokumen") as TIPE_DOKUMEN | null
+    const tipeDokumen = params.tipe as TIPE_DOKUMEN
     const team = url.searchParams.get("team")
     const activeFilter = {
-        tipeDokumen: tipeDokumen,
+        tipeDokumen: tipeDokumen ?? undefined,
         team: team
     }
-    const dokumenDanStatusRead = await getDokumenAndStatusRead(user?.idSubBidang!, activeFilter.tipeDokumen)
+    const dokumenDanStatusRead = await getDokumenAndStatusRead(user?.idSubBidang!, {
+        idTeam: activeFilter.team,
+        tipe: activeFilter.tipeDokumen
+    })
 
     // masterdata
     const teams = await getAllTeam(user?.idSubBidang!)
@@ -56,29 +62,29 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 }
 
 
-export default function DokumenReadPersentage({ loaderData }: Route.ComponentProps) {
+export default function DokumenReadPersentage({ loaderData, params }: Route.ComponentProps) {
 
     const { dokumenDanStatusRead, activeFilter, masterData } = loaderData
-    // const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [filterOpen, setFilterOpen] = useState(false)
 
     // filter
-    const tipeDokumen: TIPE_DOKUMEN[] = ["SOP", "IK", "Knowledge"]
+    const tipeDokumenOptions: TIPE_DOKUMEN[] = ["SOP", "IK", "Knowledge"]
 
     // controller filter
     // const [filterTipe, setFilterTipe] = useState<TIPE_DOKUMEN | null>(activeFilter.tipe)
     const [filter, setFilter] = useState({
-        tipeDokumen: activeFilter.tipeDokumen ?? "",
+        // tipeDokumen: activeFilter.tipeDokumen ?? "",
         team: activeFilter.team ?? ""
     })
 
     const handleReset = () => {
         setFilter({
-            tipeDokumen: "",
+            // tipeDokumen: "",
             team: ""
         })
 
-        // setSearchParams({})
+        setSearchParams({})
     }
 
     // handler umum
@@ -88,10 +94,13 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
 
     const submit = useSubmit()
     const handleFilterSubmit = () => {
-        submit({
-            ...filter
-        }, {
-            method: "get"
+        // ambil hanya field yang punya nilai
+        const nonEmptyFilter = Object.fromEntries(
+            Object.entries(filter).filter(([_, value]) => value !== "")
+        );
+
+        submit(nonEmptyFilter, {
+            method: "GET"
         })
 
         setFilterOpen(false)
@@ -113,9 +122,13 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
             <Separator />
 
             <div className="flex items-center gap-x-2">
+
                 <Popover open={filterOpen} onOpenChange={setFilterOpen}>
                     <PopoverTrigger asChild>
-                        <Button variant="outline">Filter</Button>
+                        <Button>
+                            <FunnelIcon />
+                            Filter
+                        </Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="w-[500px]">
                         <div className="flex items-center justify-between mb-6">
@@ -133,7 +146,7 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
                         </div>
                         <div className="space-y-4">
                             <div className="grid grid-cols-3 gap-4">
-                                <Field>
+                                {/* <Field>
                                     <FieldLabel htmlFor="tipeDokumen">
                                         Tipe Dokumen
                                     </FieldLabel>
@@ -145,14 +158,14 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
                                             <SelectValue placeholder="Tipe Dokumen" />
                                         </SelectTrigger>
                                         <SelectContent >
-                                            {tipeDokumen.map((tipedok, i) => (
+                                            {tipeDokumenOptions.map((tipedok, i) => (
                                                 <SelectItem key={tipedok} value={tipedok}>
                                                     {tipedok}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                </Field>
+                                </Field> */}
                                 <Field>
                                     <FieldLabel htmlFor="team">
                                         Team
@@ -201,6 +214,8 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
                         ))}
                     </>
                 )} */}
+
+                {/* Filter Result ====================== */}
                 {activeFilter.tipeDokumen && (
                     <Button variant={"outline"} className="border-dashed font-medium " size={"sm"}>
                         Tipe Dokumen
@@ -220,37 +235,59 @@ export default function DokumenReadPersentage({ loaderData }: Route.ComponentPro
                     </Button>
                 )}
             </div>
-            <TableWrapper>
-                <Table>
-                    {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[100px]">No</TableHead>
-                            <TableHead>Judul Dokumen</TableHead>
-                            <TableHead>Tipe Dokumen</TableHead>
-                            <TableHead>Jumlah anggota yang telah baca</TableHead>
-                            <TableHead className="text-right">Amount</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {dokumenDanStatusRead.map((dok, i) => (
-                            <TableRow key={dok.idDokumen}>
-                                <TableCell className="font-medium">{i + 1}</TableCell>
-                                <TableCell>{dok.judul}</TableCell>
-                                <TableCell>{dok.tipe}</TableCell>
-                                <TableCell>{dok.statusBaca.length}</TableCell>
-                                {/* <TableCell className="text-right">{invoice.totalAmount}</TableCell> */}
+
+
+            <div className="flex gap-x-4 items-start">
+                <TableWrapper className="flex-1">
+                    <Table>
+                        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[100px]">No</TableHead>
+                                <TableHead>Judul Dokumen</TableHead>
+                                <TableHead>Tipe Dokumen</TableHead>
+                                {params.tipe !== "SOP" && <TableHead>Team</TableHead>}
+                                <TableHead>telah dibaca</TableHead>
+                                <TableHead className="text-right">Aksi</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                    {/* <TableFooter>
+                        </TableHeader>
+                        <TableBody>
+                            {dokumenDanStatusRead.map((dok, i) => (
+                                <TableRow key={dok.idDokumen} className={cn(params.idDokumen === dok.idDokumen && "bg-slate-200 hover:bg-slate-200")}>
+                                    <TableCell className="font-medium">{i + 1}</TableCell>
+                                    <TableCell>{dok.judul}</TableCell>
+                                    <TableCell>{dok.tipe}</TableCell>
+                                    <TableCell>{dok.statusBaca.length} orang </TableCell>
+                                    <TableCell className="text-right">
+                                        <Button asChild size={"sm"}>
+                                            <NavLink key={dok.idDokumen} to={`${dok.idDokumen}/jumlah-orang-baca`}>
+                                                {({ isPending }) => (
+                                                    <>
+                                                        {isPending && <Spinner />}
+                                                        Lihat Jumlah Orang Baca
+                                                    </>
+                                                )}
+                                            </NavLink>
+                                        </Button>
+                                    </TableCell>
+                                    {/* <TableCell className="text-right">{invoice.totalAmount}</TableCell> */}
+                                </TableRow>
+
+                            ))}
+                        </TableBody>
+                        {/* <TableFooter>
                         <TableRow>
                             <TableCell colSpan={3}>Total</TableCell>
                             <TableCell className="text-right">$2,500.00</TableCell>
                         </TableRow>
                     </TableFooter> */}
-                </Table>
-            </TableWrapper>
+                    </Table>
+                </TableWrapper>
+
+                <Outlet />
+            </div>
+            {/* Table ==================================================== */}
+
         </div>
     )
 }

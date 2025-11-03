@@ -24,7 +24,10 @@ export async function getAllDokumenByTipe(idSubBidang: string, tipe: string, idU
                 }
             }
         },
-        where: and(eq(tDokumen.idSubBidang, idSubBidang), eq(tDokumen.tipe, tipe)),
+        where: and(
+            eq(tDokumen.idSubBidang, idSubBidang),
+            eq(tDokumen.tipe, tipe),
+        ),
         orderBy: [desc(tDokumen.createdAt)]
     });
     return res

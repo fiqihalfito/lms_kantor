@@ -89,7 +89,8 @@ export const tStatusBaca = pgTable('t_status_baca', {
     ...userFK,
     ...dokumenFK,
     isRead: boolean("is_read").default(false),
-    countRead: integer("count_read").default(0)
+    countRead: integer("count_read").default(0),
+    ...timestamps
 }, (t) => [
     unique().on(t.idUser, t.idDokumen)
 ])

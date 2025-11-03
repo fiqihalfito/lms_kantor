@@ -94,6 +94,45 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                     </Card>
                 </div>
 
+                {/* baris 2 */}
+                <div className="grid grid-cols-3 gap-4">
+                    <Card>
+                        <CardHeader>
+                            <CardDescription>Jumlah dokumen SOP</CardDescription>
+                            <CardTitle className="text-4xl tabular-nums">{jumlahDokumen}</CardTitle>
+                            {/* <CardAction>Card Action</CardAction> */}
+                        </CardHeader>
+                        {/* <CardFooter>
+                            <p>Card Footer</p>
+                        </CardFooter> */}
+                    </Card>
+                    <NavLink to={"dokumen-read-persentage/tipe/SOP"}>
+                        <Card>
+                            <CardHeader>
+                                <CardDescription>Persentase Membaca Dokumen SOP</CardDescription>
+                                <CardTitle className="text-4xl tabular-nums">50.5%</CardTitle>
+                                {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
+                                {/* <CardAction>Card Action</CardAction> */}
+                            </CardHeader>
+                            {/* <CardFooter>
+                            <p>Card Footer</p>
+                        </CardFooter> */}
+                        </Card>
+                    </NavLink>
+
+                    <Card>
+                        <CardHeader>
+                            <CardDescription>Persentase Selesai Kuis</CardDescription>
+                            <CardTitle className="text-4xl tabular-nums">50.5%</CardTitle>
+                            {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
+                            {/* <CardAction>Card Action</CardAction> */}
+                        </CardHeader>
+                        {/* <CardFooter>
+                            <p>Card Footer</p>
+                        </CardFooter> */}
+                    </Card>
+                </div>
+
                 <div className="border shadow rounded-lg p-6 space-y-4">
                     <div className="flex items-center justify-between">
                         <h1 className="text-base font-semibold">Team {currentSubbidang}</h1>

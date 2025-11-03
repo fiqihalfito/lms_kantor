@@ -1,9 +1,15 @@
 import { db } from "database/connect";
-import { mTeam } from "database/schema/schema";
-import { eq } from "drizzle-orm";
+import { mTeam, mUser, tDokumen, tStatusBaca } from "database/schema/schema";
+import { and, eq } from "drizzle-orm";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
 
-export async function getDokumenAndStatusRead(idSubbidang: string, tipe: TIPE_DOKUMEN | null) {
+export async function getDokumenAndStatusRead(
+    idSubbidang: string,
+    filter: {
+        tipe: TIPE_DOKUMEN,
+        idTeam: string | null
+    }
+) {
     const res = await db.query.tDokumen.findMany({
         with: {
             statusBaca: {
@@ -14,9 +20,23 @@ export async function getDokumenAndStatusRead(idSubbidang: string, tipe: TIPE_DO
                         }
                     }
                 }
+            },
+            dokumenTeam: {
+                with: {
+                    team: {
+                        where: filter.idTeam ? eq(mTeam.idTeam, filter.idTeam) : undefined
+                    }
+                }
             }
-        }
+        },
+        where: and(
+            filter.tipe ? eq(tDokumen.tipe, filter.tipe) : undefined,
+            eq(tDokumen.idSubBidang, idSubbidang)
+        )
     })
+    // const res = await db.select().from(tDokumen)
+    //     .leftJoin(tStatusBaca, eq(tDokumen.idDokumen, tStatusBaca.idDokumen))
+    //     .leftJoin(tStatusBaca)
     return res
 }
 
