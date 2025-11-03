@@ -5,33 +5,27 @@ import { PreviewPDFViewer } from "~/components/preview-pdf";
 import { userContext } from "~/lib/context";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
-
-    try {
-        const user = context.get(userContext)
-        const dokumen = await getDokumenById(params.idDokumen)
-        if (dokumen.length === 0) {
-            throw new Response("Not Found", { status: 404 });
-        }
-
-        await setDokumenisRead(user?.idUser!, params.idDokumen)
-
-        const url = await getPresignedUrl("dokumen", dokumen[0].filename!)
-
-        return { url, dokumen: dokumen[0] }
-    } catch (error) {
-        console.log(error);
-
-        throw new Response("Not Found", { status: 404 });
+  try {
+    const user = context.get(userContext);
+    const dokumen = await getDokumenById(params.idDokumen);
+    if (dokumen.length === 0) {
+      throw new Response("Not Found", { status: 404 });
     }
+
+    await setDokumenisRead(user?.idUser!, params.idDokumen);
+
+    const url = await getPresignedUrl("dokumen", dokumen[0].filename!);
+
+    return { url, dokumen: dokumen[0] };
+  } catch (error: any) {
+    console.log(error?.cause.detail);
+
+    throw new Response("Not Found", { status: 404 });
+  }
 }
 
-
 export default function PreviewPDF({ loaderData, params }: Route.ComponentProps) {
+  const { url, dokumen } = loaderData;
 
-    const { url, dokumen } = loaderData
-
-
-    return (
-        <PreviewPDFViewer dokumen={dokumen} url={url} />
-    )
+  return <PreviewPDFViewer dokumen={dokumen} url={url} />;
 }
