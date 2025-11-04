@@ -1,6 +1,6 @@
 import { userContext } from "~/lib/context";
 import type { Route } from "./+types";
-import { getJumlahDokumen, getTeamAndMember } from "./_service";
+import { getDokumenAndStatusReadCount, getJumlahDokumen, getTeamAndMember } from "./_service";
 import { Separator } from "~/components/ui/separator";
 import {
     Card,
@@ -20,6 +20,7 @@ import {
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { NavLink, Outlet } from "react-router";
+import type { TIPE_DOKUMEN } from "~/lib/constants";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -29,18 +30,52 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     // total tim dan anggota
     const teamAndMember = await getTeamAndMember(user?.idSubBidang!)
     // jumlah dokumen
-    const jumlahDokumen = await getJumlahDokumen(user?.idSubBidang!)
+    const jumlahDokumen = {
+        SOP: await getJumlahDokumen(user?.idSubBidang!, "SOP"),
+        IK: await getJumlahDokumen(user?.idSubBidang!, "IK"),
+        Knowledge: await getJumlahDokumen(user?.idSubBidang!, "Knowledge"),
+    }
 
-    return { currentSubbidang, teamAndMember, jumlahDokumen }
+    const jumlahPembaca = {
+        SOP: await getDokumenAndStatusReadCount(user?.idSubBidang!, "SOP"),
+        IK: await getDokumenAndStatusReadCount(user?.idSubBidang!, "IK"),
+        Knowledge: await getDokumenAndStatusReadCount(user?.idSubBidang!, "Knowledge")
+
+    }
+
+    console.log("jumlahPembaca", jumlahPembaca);
+
+
+
+
+
+
+    return { currentSubbidang, teamAndMember, jumlahDokumen, jumlahPembaca, }
 }
 
 export default function DashboardSubbidang({ loaderData }: Route.ComponentProps) {
 
-    const { currentSubbidang, teamAndMember, jumlahDokumen } = loaderData
+    const { currentSubbidang, teamAndMember, jumlahDokumen, jumlahPembaca } = loaderData
     const totalMembers = teamAndMember.reduce((total, team) => {
         // Add the number of members in the current team to the total
         return total + team.members.length;
     }, 0); // Start the initial total at 0
+
+
+    function getPersentageReader(totalPembaca: number, jumlahOrang: number) {
+        if (jumlahOrang === 0) return 0 // hindari division by zero
+        return (totalPembaca / jumlahOrang) * 100
+    }
+
+    const persentasePembacaSemuaDokumen = (tipe: TIPE_DOKUMEN) => {
+        if (jumlahPembaca[tipe].length === 0) {
+            return 0
+        }
+        const jumlah = jumlahPembaca[tipe].reduce((total, item) => {
+            return total + getPersentageReader(item.jumlahDibaca, totalMembers)
+        }, 0) / jumlahPembaca[tipe].length
+        return jumlah
+    }
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-8 pt-2">
@@ -59,33 +94,28 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                 <div className="grid grid-cols-3 gap-4">
                     <Card>
                         <CardHeader>
-                            <CardDescription>Jumlah dokumen terupload</CardDescription>
-                            <CardTitle className="text-4xl tabular-nums">{jumlahDokumen}</CardTitle>
+                            <CardDescription>Jumlah dokumen SOP</CardDescription>
+                            <CardTitle className="text-4xl tabular-nums">{jumlahDokumen.SOP}</CardTitle>
                             {/* <CardAction>Card Action</CardAction> */}
                         </CardHeader>
                         {/* <CardFooter>
                             <p>Card Footer</p>
                         </CardFooter> */}
                     </Card>
-                    <NavLink to={"dokumen-read-persentage"}>
-                        <Card>
-                            <CardHeader>
-                                <CardDescription>Persentase Membaca Dokumen</CardDescription>
-                                <CardTitle className="text-4xl tabular-nums">50.5%</CardTitle>
-                                {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
-                                {/* <CardAction>Card Action</CardAction> */}
-                            </CardHeader>
-                            {/* <CardFooter>
-                            <p>Card Footer</p>
-                        </CardFooter> */}
-                        </Card>
-                    </NavLink>
-
                     <Card>
                         <CardHeader>
-                            <CardDescription>Persentase Selesai Kuis</CardDescription>
-                            <CardTitle className="text-4xl tabular-nums">50.5%</CardTitle>
-                            {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
+                            <CardDescription>Jumlah dokumen IK</CardDescription>
+                            <CardTitle className="text-4xl tabular-nums">{jumlahDokumen.IK}</CardTitle>
+                            {/* <CardAction>Card Action</CardAction> */}
+                        </CardHeader>
+                        {/* <CardFooter>
+                            <p>Card Footer</p>
+                        </CardFooter> */}
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardDescription>Jumlah dokumen Knowledge</CardDescription>
+                            <CardTitle className="text-4xl tabular-nums">{jumlahDokumen.Knowledge}</CardTitle>
                             {/* <CardAction>Card Action</CardAction> */}
                         </CardHeader>
                         {/* <CardFooter>
@@ -96,21 +126,24 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
 
                 {/* baris 2 */}
                 <div className="grid grid-cols-3 gap-4">
-                    <Card>
-                        <CardHeader>
-                            <CardDescription>Jumlah dokumen SOP</CardDescription>
-                            <CardTitle className="text-4xl tabular-nums">{jumlahDokumen}</CardTitle>
-                            {/* <CardAction>Card Action</CardAction> */}
-                        </CardHeader>
-                        {/* <CardFooter>
-                            <p>Card Footer</p>
-                        </CardFooter> */}
-                    </Card>
-                    <NavLink to={"dokumen-read-persentage/tipe/SOP"}>
+                    <NavLink to={"dokumen-read-persentage/tipe/SOP"} viewTransition>
                         <Card>
                             <CardHeader>
                                 <CardDescription>Persentase Membaca Dokumen SOP</CardDescription>
-                                <CardTitle className="text-4xl tabular-nums">50.5%</CardTitle>
+                                <CardTitle className="text-4xl tabular-nums">{persentasePembacaSemuaDokumen("SOP").toFixed(2)}%</CardTitle>
+                                {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
+                                {/* <CardAction>Card Action</CardAction> */}
+                            </CardHeader>
+                            {/* <CardFooter>
+                            <p>Card Footer</p>
+                        </CardFooter> */}
+                        </Card>
+                    </NavLink>
+                    <NavLink to={"dokumen-read-persentage/tipe/IK"} viewTransition>
+                        <Card>
+                            <CardHeader>
+                                <CardDescription>Persentase Membaca Dokumen IK</CardDescription>
+                                <CardTitle className="text-4xl tabular-nums">{persentasePembacaSemuaDokumen("IK").toFixed(2)}%</CardTitle>
                                 {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
                                 {/* <CardAction>Card Action</CardAction> */}
                             </CardHeader>
@@ -120,17 +153,19 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                         </Card>
                     </NavLink>
 
-                    <Card>
-                        <CardHeader>
-                            <CardDescription>Persentase Selesai Kuis</CardDescription>
-                            <CardTitle className="text-4xl tabular-nums">50.5%</CardTitle>
-                            {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
-                            {/* <CardAction>Card Action</CardAction> */}
-                        </CardHeader>
-                        {/* <CardFooter>
+                    <NavLink to={"dokumen-read-persentage/tipe/Knowledge"} viewTransition>
+                        <Card>
+                            <CardHeader>
+                                <CardDescription>Persentase Membaca Dokumen Knowledge</CardDescription>
+                                <CardTitle className="text-4xl tabular-nums">{persentasePembacaSemuaDokumen("Knowledge").toFixed(2)}%</CardTitle>
+                                {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
+                                {/* <CardAction>Card Action</CardAction> */}
+                            </CardHeader>
+                            {/* <CardFooter>
                             <p>Card Footer</p>
                         </CardFooter> */}
-                    </Card>
+                        </Card>
+                    </NavLink>
                 </div>
 
                 <div className="border shadow rounded-lg p-6 space-y-4">

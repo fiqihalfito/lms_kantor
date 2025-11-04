@@ -72,17 +72,18 @@ export const tDokumen = pgTable('t_dokumen', {
     ...layananFK,
     ...subBidangFK,
     ...userFK,
-    ...timestamps
+    ...teamFK,
+    ...timestamps,
 })
 
-export const tDokumenTeam = pgTable('t_dokumen_team', {
-    idDokumenTeam: uuid("id_dokumen_team").defaultRandom().primaryKey(),
-    ...dokumenFK,
-    ...teamFK
-}, (t) => [
-    // Pastikan 1 dokumen tidak bisa di-link ke tim yang sama dua kali
-    unique().on(t.idDokumen)
-])
+// export const tDokumenTeam = pgTable('t_dokumen_team', {
+//     idDokumenTeam: uuid("id_dokumen_team").defaultRandom().primaryKey(),
+//     ...dokumenFK,
+//     ...teamFK
+// }, (t) => [
+//     // Pastikan 1 dokumen tidak bisa di-link ke tim yang sama dua kali
+//     unique().on(t.idDokumen, t.idTeam)
+// ])
 
 export const tStatusBaca = pgTable('t_status_baca', {
     idStatusBaca: uuid("id_status_baca").defaultRandom().primaryKey(),

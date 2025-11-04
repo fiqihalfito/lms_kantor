@@ -41,7 +41,7 @@ import {
     parseFormData,
 
 } from "@remix-run/form-data-parser";
-import { checkWhichTeam, getListLayananDropdown, saveDokumentoTeam, saveNewDokumen, tInsertNewDokumenValidation } from "./_service";
+import { checkWhichTeam, getListLayananDropdown, saveNewDokumen, tInsertNewDokumenValidation } from "./_service";
 import { FIRST_SEGMENT } from "~/lib/route-config";
 import { userContext } from "~/lib/context";
 import { Button } from "~/components/ui/button";
@@ -94,16 +94,6 @@ export async function action({
     await moveToRealBucket("dokumen", filename)
 
 
-
-    const newDokumen = await saveNewDokumen({
-        filename: filename,
-        idLayanan: validated.data.layanan,
-        idSubBidang: user?.idSubBidang!,
-        judul: validated.data.judul,
-        tipe: params.tipeDokumen,
-        idUser: user?.idUser!,
-    })
-
     // insert to team condition
     let idTeam
     if (params.tipeDokumen === "SOP") {
@@ -112,7 +102,26 @@ export async function action({
         const team = await checkWhichTeam(user?.idUser!)
         idTeam = team.length > 0 ? team[0].idTeam : null
     }
-    await saveDokumentoTeam(idTeam, newDokumen[0].idDokumen)
+
+    const newDokumen = await saveNewDokumen({
+        filename: filename,
+        idLayanan: validated.data.layanan,
+        idSubBidang: user?.idSubBidang!,
+        judul: validated.data.judul,
+        tipe: params.tipeDokumen,
+        idUser: user?.idUser!,
+        idTeam: idTeam
+    })
+
+    // insert to team condition
+    // let idTeam
+    // if (params.tipeDokumen === "SOP") {
+    //     idTeam = null
+    // } else {
+    //     const team = await checkWhichTeam(user?.idUser!)
+    //     idTeam = team.length > 0 ? team[0].idTeam : null
+    // }
+    // await saveDokumentoTeam(idTeam, newDokumen[0].idDokumen)
 
     const headers = await setFlashSession(request, {
         type: "success",

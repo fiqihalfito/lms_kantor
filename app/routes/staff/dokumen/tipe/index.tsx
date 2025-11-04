@@ -10,16 +10,14 @@ import {
 } from "~/components/ui/table"
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
-import { FolderXIcon, MoreHorizontal, MoreVerticalIcon, NotebookPenIcon } from "lucide-react"
+import { FolderXIcon, MoreVerticalIcon, NotebookPenIcon } from "lucide-react"
 import {
     Empty,
     EmptyDescription,
@@ -27,10 +25,10 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from "~/components/ui/empty"
-import { getAllDokumenByTipe } from "./_services";
+import { checkWhichTeam, getAllDokumenByTipe, getAllLayanan, getAllTeams } from "./_services";
 import { Button } from "~/components/ui/button";
 import { EyeIcon, FilePlusIcon, PencilIcon, TrashIcon } from "lucide-react";
-import { data, Form, Link, Outlet, useFetcher, useSubmit } from "react-router";
+import { data, Link, Outlet, useFetcher, useSubmit } from "react-router";
 import { formatTimestampId } from "~/lib/utils";
 import { FIRST_SEGMENT } from "~/lib/route-config";
 import { userContext } from "~/lib/context";
@@ -39,32 +37,75 @@ import {
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
     DropdownMenuSeparator,
     DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { useEffect, useState } from "react";
 import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
 import { Badge } from "~/components/ui/badge";
+import { Filter } from "./_components/filter";
+import { Search } from "./_components/search";
+
 
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
 
-    const dokumens = await getAllDokumenByTipe(user?.idSubBidang!, params.tipeDokumen, user?.idUser!)
-    console.log(dokumens[0].kuis?.kuisElement.length);
+    // find idTeam if exists
+    let idTeam = null;
+    if (params.tipeDokumen !== "SOP") {
+        const userTeam = await checkWhichTeam(user?.idUser!)
+        idTeam = userTeam.length > 0 ? userTeam[0].idTeam : null
+    }
+
+    // url search param
+    const url = new URL(request.url);
+    const teamFilter = url.searchParams.get("teamFilter");
+    const layananFilter = url.searchParams.get("layananFilter");
+    const searchFilter = url.searchParams.get("search");
+
+    const activeFilter = {
+        team: teamFilter ?? idTeam,
+        layanan: layananFilter || null,
+        search: searchFilter || null
+    }
+
+
+
+    // get Main data ===========
+    const dokumens = await getAllDokumenByTipe(
+        user?.idSubBidang!,
+        user?.idUser!,
+        params.tipeDokumen,
+        {
+            idTeam: activeFilter.team,
+            idLayanan: activeFilter.layanan,
+            search: activeFilter.search
+        }
+    )
+
+    // filter master data
+    const teams = await getAllTeams(user?.idSubBidang!)
+    const layanan = await getAllLayanan(user?.idSubBidang!)
+    const filterData = {
+        teams,
+        layanan
+    }
 
 
     const { flashData, headers } = await getFlashSession(request)
-
-    return data({ dokumens, flashData, currentLoginIdUser: user?.idUser }, { headers })
+    return data({
+        dokumens,
+        filterData,
+        flashData,
+        currentLoginIdUser: user?.idUser,
+        activeFilter
+    },
+        { headers }
+    )
 }
 
 
@@ -72,7 +113,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 
 export default function DokumenIndex({ loaderData, params }: Route.ComponentProps) {
 
-    const { dokumens, flashData, currentLoginIdUser } = loaderData
+    const { dokumens, flashData, currentLoginIdUser, filterData, activeFilter } = loaderData
 
     const tipeMapping: Record<any, any> = {
         descPage: {
@@ -118,6 +159,19 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
             <Outlet />
 
             {flashData && <MyAlert status={flashData.type} title={flashData.message} />}
+
+
+            <div className="flex gap-4">
+                <Search search={activeFilter.search} />
+                {params.tipeDokumen !== "SOP" && (
+                    <Filter
+                        filterData={filterData}
+                        activeFilter={activeFilter}
+                    />
+                )}
+            </div>
+
+
             {dokumens.length === 0 ? (
                 <EmptyComp />
             ) : (

@@ -1,8 +1,17 @@
 import { db } from "database/connect";
-import { tDokumen, tKuisProgress, tStatusBaca } from "database/schema/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { mLayanan, mMemberTeam, mTeam, tDokumen, tKuisProgress, tStatusBaca } from "database/schema/schema";
+import { and, desc, eq, ilike } from "drizzle-orm";
 
-export async function getAllDokumenByTipe(idSubBidang: string, tipe: string, idUser: string) {
+export async function getAllDokumenByTipe(
+    idSubBidang: string,
+    idUser: string,
+    tipe: string,
+    filter: {
+        idTeam?: string | null,
+        idLayanan?: string | null,
+        search?: string | null
+    }
+) {
     const res = await db.query.tDokumen.findMany({
         with: {
             subBidang: true,
@@ -27,9 +36,27 @@ export async function getAllDokumenByTipe(idSubBidang: string, tipe: string, idU
         where: and(
             eq(tDokumen.idSubBidang, idSubBidang),
             eq(tDokumen.tipe, tipe),
+            filter.idTeam ? eq(tDokumen.idTeam, filter.idTeam) : undefined,
+            filter.idLayanan ? eq(tDokumen.idLayanan, filter.idLayanan) : undefined,
+            filter.search ? ilike(tDokumen.judul, `%${filter.search}%`) : undefined
         ),
         orderBy: [desc(tDokumen.createdAt)]
     });
+
     return res
 }
 
+export async function checkWhichTeam(idUser: string) {
+    const res = await db.select().from(mMemberTeam).where(eq(mMemberTeam.idUser, idUser))
+    return res
+}
+
+export async function getAllTeams(idSubBidang: string) {
+    const res = await db.select().from(mTeam).where(eq(mTeam.idSubBidang, idSubBidang))
+    return res
+}
+
+export async function getAllLayanan(idSubBidang: string) {
+    const res = await db.select().from(mLayanan).where(eq(mLayanan.idSubBidang, idSubBidang)).orderBy(mLayanan.nama)
+    return res
+}

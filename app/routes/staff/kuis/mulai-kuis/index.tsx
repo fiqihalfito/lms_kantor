@@ -22,7 +22,6 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     const user = context.get(userContext)
 
     const kuislist = await getKuisBelumDikerjakan(user?.idUser!, user?.idSubBidang!)
-    console.log(kuislist);
 
 
     return { kuislist }

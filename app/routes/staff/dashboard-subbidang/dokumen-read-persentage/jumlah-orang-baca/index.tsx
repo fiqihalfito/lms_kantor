@@ -13,7 +13,7 @@ import {
 import { Badge } from "~/components/ui/badge";
 import { formatTimestampId, wait } from "~/lib/utils";
 import { NavLink } from "react-router";
-import { XCircleIcon } from "lucide-react";
+import { CircleCheckBigIcon, CircleSlash, XCircleIcon } from "lucide-react";
 import { userContext } from "~/lib/context";
 import {
     Tabs,
@@ -21,6 +21,14 @@ import {
     TabsList,
     TabsTrigger,
 } from "~/components/ui/tabs"
+import {
+    Empty,
+    EmptyContent,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from "~/components/ui/empty"
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -35,9 +43,10 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     return { readers, unreaders, judulDokumen }
 }
 
-export default function JumlahOrangBaca({ params, loaderData }: Route.ComponentProps) {
+export default function JumlahOrangBaca({ params, loaderData, matches }: Route.ComponentProps) {
 
     const { readers, unreaders, judulDokumen } = loaderData
+    const jumlahOrang = matches[3].loaderData.masterData.jumlahOrang
 
     return (
         <div className="border rounded-lg shadow p-4 space-y-4">
@@ -49,7 +58,7 @@ export default function JumlahOrangBaca({ params, loaderData }: Route.ComponentP
                 </div>
                 <div className="flex items-center gap-2">
                     <Badge className="rounded-full tabular-nums  ">
-                        {readers.length} / {unreaders.length} orang
+                        {readers.length} / {jumlahOrang} orang
                     </Badge>
                     <Button variant={"outline"} size={"sm"} asChild>
                         <NavLink to={`..`}>
@@ -69,55 +78,83 @@ export default function JumlahOrangBaca({ params, loaderData }: Route.ComponentP
                         <TabsTrigger value="notyet">Belum Baca</TabsTrigger>
                     </TabsList>
                     <TabsContent value="done" >
-                        <ItemGroup className="flex flex-col gap-2">
-                            {readers.map((reader, i) => (
-                                <Item variant="outline" key={reader.idStatusBaca} size={"sm"}>
-                                    <ItemMedia variant="icon">
-                                        {i + 1}
-                                    </ItemMedia>
-                                    <ItemContent>
-                                        <ItemTitle>{reader.userBaca?.nama}</ItemTitle>
-                                        <ItemDescription>
-                                            {reader.userBaca?.memberTeams.team?.nama}
-                                        </ItemDescription>
-                                    </ItemContent>
-                                    <ItemActions>
-                                        <Badge className="rounded-full" variant={"secondary"}>
-                                            {formatTimestampId(reader.createdAt, { withZoneLabel: true })}
-                                        </Badge>
-                                    </ItemActions>
-                                </Item>
-                            ))}
-                        </ItemGroup>
-
+                        {readers.length === 0 ? (
+                            <EmptyStatus status="belumsatupun" />
+                        ) : (
+                            <ItemGroup className="flex flex-col gap-2">
+                                {readers.map((reader, i) => (
+                                    <Item variant="outline" key={reader.idStatusBaca} size={"sm"}>
+                                        <ItemMedia variant="icon">
+                                            {i + 1}
+                                        </ItemMedia>
+                                        <ItemContent>
+                                            <ItemTitle>{reader.userBaca?.nama}</ItemTitle>
+                                            <ItemDescription>
+                                                {reader.userBaca?.memberTeams.team?.nama}
+                                            </ItemDescription>
+                                        </ItemContent>
+                                        <ItemActions>
+                                            <Badge className="rounded-full" variant={"secondary"}>
+                                                {formatTimestampId(reader.createdAt, { withZoneLabel: true })}
+                                            </Badge>
+                                        </ItemActions>
+                                    </Item>
+                                ))}
+                            </ItemGroup>
+                        )}
 
                     </TabsContent>
                     <TabsContent value="notyet">
-                        <ItemGroup className="flex flex-col gap-2">
-                            {unreaders.map((unreader, i) => (
-                                <Item variant="outline" key={unreader.idUser} size={"sm"}>
-                                    <ItemMedia variant="icon">
-                                        {i + 1}
-                                    </ItemMedia>
-                                    <ItemContent>
-                                        <ItemTitle>{unreader.nama}</ItemTitle>
-                                        <ItemDescription>
-                                            {unreader.memberTeams.team?.nama}
-                                        </ItemDescription>
-                                    </ItemContent>
-                                    {/* <ItemActions>
+                        {unreaders.length === 0 ? (
+                            <EmptyStatus status="selesai" />
+                        ) : (
+                            <ItemGroup className="flex flex-col gap-2">
+                                {unreaders.map((unreader, i) => (
+                                    <Item variant="outline" key={unreader.idUser} size={"sm"}>
+                                        <ItemMedia variant="icon">
+                                            {i + 1}
+                                        </ItemMedia>
+                                        <ItemContent>
+                                            <ItemTitle>{unreader.nama}</ItemTitle>
+                                            <ItemDescription>
+                                                {unreader.memberTeams.team?.nama}
+                                            </ItemDescription>
+                                        </ItemContent>
+                                        {/* <ItemActions>
                                         <Badge className="rounded-full" variant={"secondary"}>
                                             {formatTimestampId(unreader.createdAt, { withZoneLabel: true })}
                                         </Badge>
                                     </ItemActions> */}
-                                </Item>
-                            ))}
-                        </ItemGroup>
+                                    </Item>
+                                ))}
+                            </ItemGroup>
+                        )}
+
                     </TabsContent>
                 </Tabs>
             </div>
 
 
         </div >
+    )
+}
+
+export function EmptyStatus({
+    status
+}: {
+    status: "selesai" | "belumsatupun"
+}) {
+    return (
+        <Empty className="from-muted/50 to-background h-full bg-gradient-to-b from-30%">
+            <EmptyHeader>
+                <EmptyMedia variant="icon">
+                    {status === "selesai" ? <CircleCheckBigIcon /> : <CircleSlash />}
+                </EmptyMedia>
+                <EmptyTitle>{status === "selesai" ? "Selesai" : "Belum Ada"}</EmptyTitle>
+                <EmptyDescription>
+                    {status === "selesai" ? "Semua orang telah membaca" : "Semua orang belum membaca"}
+                </EmptyDescription>
+            </EmptyHeader>
+        </Empty>
     )
 }

@@ -1,6 +1,6 @@
 
 import { db } from "database/connect";
-import { mLayanan, mMemberTeam, tDokumen, tDokumenTeam } from "database/schema/schema";
+import { mLayanan, mMemberTeam, tDokumen } from "database/schema/schema";
 import { eq } from "drizzle-orm";
 import * as z from "zod";
 
@@ -17,7 +17,7 @@ export const tInsertNewDokumenValidation = z.object({
         .max(5 * 1024 * 1024, { error: "max 5 mb" }), // file diambil dari hasil parse
 });
 
-export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, tipe, idUser }: typeof tDokumen.$inferInsert) {
+export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, tipe, idUser, idTeam }: typeof tDokumen.$inferInsert) {
     const newIDDokumen = await db.insert(tDokumen).values({
         filename: filename,
         judul: judul,
@@ -25,23 +25,24 @@ export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, 
         idSubBidang: idSubBidang,
         tipe: tipe,
         idUser: idUser,
+        idTeam: idTeam
     }).returning({ idDokumen: tDokumen.idDokumen })
 
     return newIDDokumen
 }
 
-export async function saveDokumentoTeam(idTeam: string | null, idDokumen: string) {
-    await db.insert(tDokumenTeam).values({
-        idTeam: idTeam,
-        idDokumen: idDokumen
-    })
-        .onConflictDoUpdate({
-            target: tDokumenTeam.idDokumen,
-            set: {
-                idTeam: idTeam
-            }
-        })
-}
+// export async function saveDokumentoTeam(idTeam: string | null, idDokumen: string) {
+//     await db.insert(tDokumenTeam).values({
+//         idTeam: idTeam,
+//         idDokumen: idDokumen
+//     })
+//         .onConflictDoUpdate({
+//             target: tDokumenTeam.idDokumen,
+//             set: {
+//                 idTeam: idTeam
+//             }
+//         })
+// }
 
 export async function checkWhichTeam(idUser: string) {
     const res = await db.select().from(mMemberTeam).where(eq(mMemberTeam.idUser, idUser))

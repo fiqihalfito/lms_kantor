@@ -196,14 +196,15 @@ export function NavMain() {
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <NavLink to={subItem.url}>
-                        {({ isActive, isPending }) => (
-                          <SidebarMenuSubButton isActive={isActive}>
-                            {isPending && <Spinner />}
-                            <span>{subItem.title}</span>
-                          </SidebarMenuSubButton>
-                        )}
-                      </NavLink>
+                      <SidebarMenuSubButton asChild isActive={!!location.pathname.includes(subItem.url)}>
+                        <NavLink to={subItem.url}>
+                          {/* {({ isActive, isPending }) => (
+                            { isPending && <Spinner />}
+                          <span>{subItem.title}</span>
+                          )} */}
+                          {subItem.title}
+                        </NavLink>
+                      </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
                 </SidebarMenuSub>

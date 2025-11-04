@@ -5,7 +5,6 @@ import { PreviewPDFViewer } from "~/components/preview-pdf";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
 
-    console.log("preview pdf loader hit");
 
 
     try {

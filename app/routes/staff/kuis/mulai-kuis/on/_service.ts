@@ -31,7 +31,6 @@ export async function getDokumenDataByIdKuis(idKuis: string) {
 
 export async function hitungBenarJawaban(jawabanSet: Record<string, "a" | "b" | "c" | "d">) {
     const idKuisElementsterjawab = Object.keys(jawabanSet)
-    // console.log(idKuisElementsterjawab);
 
     const soals = await db.query.tKuisElement.findMany({
         where: inArray(tKuisElement.idKuisElement, idKuisElementsterjawab),
