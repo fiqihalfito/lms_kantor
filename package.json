@@ -10,9 +10,11 @@
         "db:dev:generate": "npx drizzle-kit generate --config=drizzle-dev.config.ts",
         "db:dev:migrate": "npx drizzle-kit migrate --config=drizzle-dev.config.ts",
         "db:dev:push": "npx drizzle-kit push --config=drizzle-dev.config.ts",
-        "db:dev:seed": "npx tsx ./database/seed.ts"
+        "db:dev:seed": "npx tsx ./database/seed.ts",
+        "db:dev:test-query": "npx tsx ./database/test-query.ts"
     },
     "dependencies": {
+        "@radix-ui/react-accordion": "^1.2.12",
         "@radix-ui/react-alert-dialog": "^1.1.15",
         "@radix-ui/react-avatar": "^1.1.10",
         "@radix-ui/react-collapsible": "^1.1.12",

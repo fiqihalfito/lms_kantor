@@ -13,6 +13,7 @@ import {
 } from "~/components/ui/card"
 import {
     Item,
+    ItemActions,
     ItemContent,
     ItemMedia,
     ItemTitle,
@@ -21,6 +22,9 @@ import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { NavLink, Outlet } from "react-router";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
+// import { ChevronRightIcon } from "lucide-react";
+import { SkillUser } from "./_components/skill-user";
+import { Button } from "~/components/ui/button";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -29,6 +33,9 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     const currentSubbidang = user?.namaSubbidang!
     // total tim dan anggota
     const teamAndMember = await getTeamAndMember(user?.idSubBidang!)
+
+
+
     // jumlah dokumen
     const jumlahDokumen = {
         SOP: await getJumlahDokumen(user?.idSubBidang!, "SOP"),
@@ -43,7 +50,8 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     }
 
-    console.log("jumlahPembaca", jumlahPembaca);
+
+
 
 
 
@@ -87,7 +95,7 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
             </div>
             <Separator />
 
-            {/* <Outlet /> */}
+            <Outlet />
 
             <div className="flex flex-col gap-4">
 
@@ -209,9 +217,15 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                                                 <ItemContent>
                                                     <ItemTitle>{member.user?.nama}</ItemTitle>
                                                 </ItemContent>
-                                                {/* <ItemActions>
-                                                    <ChevronRightIcon className="size-4" />
-                                                </ItemActions> */}
+                                                <ItemActions>
+                                                    {/* <ChevronRightIcon className="size-4" /> */}
+                                                    {/* <SkillUser /> */}
+                                                    <Button size={"sm"} variant={"outline"}>
+                                                        <NavLink to={`detail-skill/${member.idUser}`}>
+                                                            Lihat Skill
+                                                        </NavLink>
+                                                    </Button>
+                                                </ItemActions>
                                             </Item>
                                         ))}
                                     </div>

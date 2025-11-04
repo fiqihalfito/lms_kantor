@@ -1,6 +1,6 @@
 import { db } from "database/connect";
-import { mMemberTeam, mTeam, mUser, tDokumen, tStatusBaca } from "database/schema/schema";
-import { and, eq, sql } from "drizzle-orm";
+import { mMemberTeam, mSubBidang, mTeam, mUser, tDokumen, tKuis, tKuisProgress, tStatusBaca } from "database/schema/schema";
+import { and, eq, notInArray, sql } from "drizzle-orm";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
 
 // export async function getSubbidangName(idSubbidang: string) {
@@ -18,12 +18,49 @@ export async function getTeamAndMember(idSubBidang: string) {
                             nama: true,
                             idUser: true
                         },
+                        // with: {
+                        //     kuisProgress: {
+                        //         with: {
+                        //             kuis: {
+                        //                 with: {
+                        //                     dokumen: {
+                        //                         columns: {
+                        //                             idDokumen: true,
+                        //                             judul: true
+                        //                         }
+                        //                     }
+                        //                 }
+                        //             }
+                        //         }
+
+                        //     }
+                        // }
                     }
                 }
             }
         }
     })
 
+    // const res = await db.select()
+    //     .from(mUser)
+    //     .fullJoin(tDokumen, eq(mUser.idUser, tDokumen.idDokumen))
+    //     .leftJoin(tKuisProgress, eq(tKuisProgress.idUser, mUser.idUser))
+    //     .leftJoin(mTeam, eq(mTeam.idSubBidang, mSubBidang.idSubBidang))
+    //     .leftJoin(mMemberTeam, eq(mMemberTeam.idUser, mUser.idUser))
+    //     .leftJoin(tKuis, eq(tKuis.idDokumen, tDokumen.idDokumen))
+    //     .where(and(
+    //         eq(mUser.idSubBidang, idSubBidang)
+    //     ))
+
+    return res
+}
+
+export async function getUnskilled(idSkilled: string[]) {
+    const res = await db.select({
+        idDokumen: tDokumen.idDokumen,
+        judulDokumen: tDokumen.judul
+    }).from(tDokumen)
+        .where(notInArray(tDokumen.idDokumen, idSkilled))
     return res
 }
 
