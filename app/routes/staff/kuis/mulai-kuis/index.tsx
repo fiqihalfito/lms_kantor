@@ -16,6 +16,7 @@ import { Form } from "react-router";
 import { Button } from "~/components/ui/button";
 import { formatTimestampId } from "~/lib/utils";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "~/components/ui/empty";
+import { Badge } from "~/components/ui/badge";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 

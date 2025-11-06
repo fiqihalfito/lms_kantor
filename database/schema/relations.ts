@@ -38,7 +38,8 @@ export const mUserRelations = relations(mUser, ({ one, many }) => ({
         fields: [mUser.idTeam],
         references: [mTeam.idTeam]
     }),
-    kuisProgress: many(tKuisProgress)
+    kuisProgress: many(tKuisProgress),
+    statusBaca: many(tStatusBaca)
 
 }));
 

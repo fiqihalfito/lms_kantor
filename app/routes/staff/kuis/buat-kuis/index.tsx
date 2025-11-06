@@ -16,6 +16,7 @@ import { userContext } from "~/lib/context";
 import { EmptyMaster } from "~/components/empty-master";
 import { TableWrapper } from "~/components/table-wrapper";
 import { wait } from "~/lib/utils";
+import { Badge } from "~/components/ui/badge";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -59,6 +60,7 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                 <TableHead>Skill</TableHead>
                                 <TableHead>Uploaded By</TableHead>
                                 <TableHead className="text-center">Jumlah soal</TableHead>
+                                <TableHead className="text-center">Keterangan</TableHead>
                                 <TableHead className="text-center">Lihat</TableHead>
                                 <TableHead className="text-right">Kuis</TableHead>
                             </TableRow>
@@ -72,7 +74,23 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                     {/* <TableCell>{item.layanan?.nama ?? "-"}</TableCell> */}
                                     <TableCell>{item.skill?.namaSkill ?? "-"}</TableCell>
                                     <TableCell>{item.user?.nama}</TableCell>
-                                    <TableCell className="text-center">{item.kuis?.kuisElement ? item.kuis?.kuisElement.length : "-"}</TableCell>
+                                    <TableCell className="text-center">{item.kuis?.kuisElement ? item.kuis.kuisElement.length : "-"}</TableCell>
+                                    <TableCell className="text-center">
+                                        {!!item.kuis?.kuisElement && (
+                                            <>
+                                                {item.kuis?.kuisElement.length < 10 ? (
+                                                    <Badge variant={"destructive"} className="rounded-full">
+                                                        minimal 10 soal
+                                                    </Badge>
+                                                ) : (
+                                                    <Badge className="bg-green-600 rounded-full">
+                                                        published
+                                                    </Badge>
+                                                )}
+                                            </>
+                                        )}
+
+                                    </TableCell>
                                     <TableCell className="text-center space-x-1.5">
                                         <Link to={`preview/${item.idDokumen}`} viewTransition>
                                             <Button size={"icon"} className="cursor-pointer" >

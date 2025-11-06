@@ -277,15 +277,15 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                     <>
                                                         <DropdownMenuSeparator />
                                                         <DropdownMenuGroup>
-                                                            <DropdownMenuItem disabled={d.statusBaca.length === 0 || !Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length === 0} onClick={() => handleMulaiKuis(d.kuis.idKuis)}>
+                                                            <DropdownMenuItem disabled={d.statusBaca[0]?.isRead === false || !Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length < 10} onClick={() => handleMulaiKuis(d.kuis.idKuis)}>
                                                                 Mulai Kuis
                                                                 <DropdownMenuShortcut>
-                                                                    {d.statusBaca.length === 0 ? (
+                                                                    {d.statusBaca[0]?.isRead === false ? (
                                                                         // <Badge variant={"destructive"} className="tracking-wider rounded-full">Baca dulu</Badge>
                                                                         <span className="text-red-600 ">Baca dulu</span>
                                                                     ) : (
                                                                         <>
-                                                                            {!Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length === 0 ? (
+                                                                            {!Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length < 10 ? (
                                                                                 // <Badge variant={"destructive"} className="tracking-wider rounded-full">Belum dibuat</Badge>
                                                                                 <span className="text-red-600 ">Belum dibuat</span>
                                                                             ) : (

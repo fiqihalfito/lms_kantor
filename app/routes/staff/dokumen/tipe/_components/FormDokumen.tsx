@@ -24,7 +24,7 @@ import {
     SelectValue,
 } from "~/components/ui/select"
 import { LoaderCircleIcon, XIcon } from "lucide-react";
-import { Link, useFetcher } from "react-router";
+import { Link, useFetcher, useNavigate } from "react-router";
 import { Input } from "~/components/ui/input";
 import { FIRST_SEGMENT } from "~/lib/route-config";
 import { Button } from "~/components/ui/button";
@@ -60,6 +60,7 @@ export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen
 
     //khusus edit
     // const [reuploadMode, setReuploadMode] = useState(false)
+    const navigate = useNavigate()
 
 
     return (
@@ -70,12 +71,18 @@ export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen
                         <CardTitle>{`${modeMapping[mode].title} Dokumen ${tipeDokumen}`}</CardTitle>
                         <CardDescription>{`${modeMapping[mode].desc}`}</CardDescription>
                         <CardAction>
-                            <Link to={`/${FIRST_SEGMENT}/dokumen/${tipeDokumen}`} viewTransition>
-                                <Button type="button" size={"sm"} className="cursor-pointer flex items-center" variant={"outline"}>
-                                    Batal
-                                    <XIcon className="size-5" />
-                                </Button>
-                            </Link>
+                            {/* <Link to={`/${FIRST_SEGMENT}/dokumen/${tipeDokumen}`} viewTransition> */}
+                            <Button
+                                type="button"
+                                size={"sm"}
+                                className="cursor-pointer flex items-center"
+                                variant={"outline"}
+                                onClick={() => navigate(-1)}
+                            >
+                                Batal
+                                <XIcon className="size-5" />
+                            </Button>
+                            {/* </Link> */}
                         </CardAction>
                     </CardHeader>
                     <CardContent className="flex-1">
