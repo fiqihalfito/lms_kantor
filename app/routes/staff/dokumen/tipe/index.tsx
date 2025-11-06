@@ -247,7 +247,7 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                     <MoreVerticalIcon />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent className="w-96" align="end">
+                                            <DropdownMenuContent className="sm:min-w-60" align="end">
                                                 {/* <DropdownMenuLabel>Menu Aksi</DropdownMenuLabel> */}
                                                 <DropdownMenuGroup>
                                                     <DropdownMenuItem asChild>
@@ -273,29 +273,34 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                     </DropdownMenuItem>
 
                                                 </DropdownMenuGroup>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuGroup>
-                                                    <DropdownMenuItem disabled={d.statusBaca.length === 0 || !Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length === 0} onClick={() => handleMulaiKuis(d.kuis.idKuis)}>
-                                                        Mulai Kuis
-                                                        <DropdownMenuShortcut>
-                                                            {d.statusBaca.length === 0 ? (
-                                                                // <Badge variant={"destructive"} className="tracking-wider rounded-full">Baca dulu</Badge>
-                                                                <span className="text-red-600 ">Baca dulu</span>
-                                                            ) : (
-                                                                <>
-                                                                    {!Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length === 0 ? (
-                                                                        // <Badge variant={"destructive"} className="tracking-wider rounded-full">Belum dibuat</Badge>
-                                                                        <span className="text-red-600 ">Belum dibuat</span>
+                                                {params.tipeDokumen === "Knowledge" && (
+                                                    <>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuGroup>
+                                                            <DropdownMenuItem disabled={d.statusBaca.length === 0 || !Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length === 0} onClick={() => handleMulaiKuis(d.kuis.idKuis)}>
+                                                                Mulai Kuis
+                                                                <DropdownMenuShortcut>
+                                                                    {d.statusBaca.length === 0 ? (
+                                                                        // <Badge variant={"destructive"} className="tracking-wider rounded-full">Baca dulu</Badge>
+                                                                        <span className="text-red-600 ">Baca dulu</span>
                                                                     ) : (
-                                                                        <NotebookPenIcon />
+                                                                        <>
+                                                                            {!Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length === 0 ? (
+                                                                                // <Badge variant={"destructive"} className="tracking-wider rounded-full">Belum dibuat</Badge>
+                                                                                <span className="text-red-600 ">Belum dibuat</span>
+                                                                            ) : (
+                                                                                <NotebookPenIcon />
+                                                                            )}
+                                                                        </>
                                                                     )}
-                                                                </>
-                                                            )}
 
-                                                        </DropdownMenuShortcut>
-                                                    </DropdownMenuItem>
+                                                                </DropdownMenuShortcut>
+                                                            </DropdownMenuItem>
 
-                                                </DropdownMenuGroup>
+                                                        </DropdownMenuGroup>
+                                                    </>
+                                                )}
+
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuGroup>
                                                     <DropdownMenuItem variant="destructive" asChild disabled={currentLoginIdUser !== d.idUser}>
