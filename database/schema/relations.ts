@@ -6,11 +6,11 @@ import {
     tDokumen,
     mUser,
     mTeam,
-    mMemberTeam,
     tKuis,
     tKuisElement,
     tKuisProgress,
     tStatusBaca,
+    mSkill,
     // tDokumenTeam,
 } from "./schema";
 
@@ -30,9 +30,13 @@ export const mUserRelations = relations(mUser, ({ one, many }) => ({
     }),
     dokumen: many(tDokumen),
     // memberTeams: many(mMemberTeam),
-    memberTeams: one(mMemberTeam, {
-        fields: [mUser.idUser],
-        references: [mMemberTeam.idUser]
+    // memberTeams: one(mMemberTeam, {
+    //     fields: [mUser.idUser],
+    //     references: [mMemberTeam.idUser]
+    // }),
+    team: one(mTeam, {
+        fields: [mUser.idTeam],
+        references: [mTeam.idTeam]
     }),
     kuisProgress: many(tKuisProgress)
 
@@ -53,25 +57,27 @@ export const mTeamRelations = relations(mTeam, ({ one, many }) => ({
         fields: [mTeam.idSubBidang],
         references: [mSubBidang.idSubBidang],
     }),
-    members: many(mMemberTeam),
+    // members: many(mMemberTeam),
     // dokumenTeam: one(tDokumenTeam, {
     //     fields: [mTeam.idTeam],
     //     references: [tDokumenTeam.idTeam]
     // })
-    dokumen: many(tDokumen)
+    user: many(mUser),
+    dokumen: many(tDokumen),
+    skill: many(mSkill)
 }));
 
 // ===================== MemberTeam Relations =====================
-export const mMemberTeamRelations = relations(mMemberTeam, ({ one }) => ({
-    team: one(mTeam, {
-        fields: [mMemberTeam.idTeam],
-        references: [mTeam.idTeam],
-    }),
-    user: one(mUser, {
-        fields: [mMemberTeam.idUser],
-        references: [mUser.idUser],
-    }),
-}));
+// export const mMemberTeamRelations = relations(mMemberTeam, ({ one }) => ({
+//     team: one(mTeam, {
+//         fields: [mMemberTeam.idTeam],
+//         references: [mTeam.idTeam],
+//     }),
+//     user: one(mUser, {
+//         fields: [mMemberTeam.idUser],
+//         references: [mUser.idUser],
+//     }),
+// }));
 
 // ===================== Dokumen Relations =====================
 export const tDokumenRelations = relations(tDokumen, ({ one, many }) => ({
@@ -99,6 +105,10 @@ export const tDokumenRelations = relations(tDokumen, ({ one, many }) => ({
     team: one(mTeam, {
         fields: [tDokumen.idTeam],
         references: [mTeam.idTeam]
+    }),
+    skill: one(mSkill, {
+        fields: [tDokumen.idSkill],
+        references: [mSkill.idSkill]
     })
 }));
 
@@ -122,6 +132,14 @@ export const tStatusBacaRelations = relations(tStatusBaca, ({ one }) => ({
     userBaca: one(mUser, {
         fields: [tStatusBaca.idUser],
         references: [mUser.idUser]
+    })
+}))
+
+export const mSkillRelations = relations(mSkill, ({ many, one }) => ({
+    dokumen: many(tDokumen),
+    team: one(mTeam, {
+        fields: [mSkill.idTeam],
+        references: [mTeam.idTeam]
     })
 }))
 

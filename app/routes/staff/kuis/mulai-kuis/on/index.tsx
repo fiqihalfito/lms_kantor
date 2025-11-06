@@ -27,7 +27,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     })
 
 
-    return redirect(`/${FIRST_SEGMENT}/kuis/mulai-kuis`)
+    return redirect(`/${FIRST_SEGMENT}/kuis/skor`)
 }
 
 export async function loader({ request, params }: Route.LoaderArgs) {

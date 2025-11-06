@@ -1,7 +1,7 @@
 
 import { db } from "database/connect";
-import { mLayanan, mMemberTeam, tDokumen } from "database/schema/schema";
-import { eq } from "drizzle-orm";
+import { mLayanan, mSkill, tDokumen } from "database/schema/schema";
+import { and, eq } from "drizzle-orm";
 import * as z from "zod";
 
 export const tInsertNewDokumenValidation = z.object({
@@ -11,13 +11,14 @@ export const tInsertNewDokumenValidation = z.object({
         })
         .min(1, "Judul tidak boleh kosong"),
     layanan: z.preprocess(val => val === "" ? null : val, z.string().nullable()).optional(),
+    skill: z.preprocess(val => val === "" ? null : val, z.string().nullable()).optional(),
     file: z
         .file({ error: "File wajib diupload" })
         .mime(["application/pdf"], { error: "hanya upload pdf" })
         .max(5 * 1024 * 1024, { error: "max 5 mb" }), // file diambil dari hasil parse
 });
 
-export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, tipe, idUser, idTeam }: typeof tDokumen.$inferInsert) {
+export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, tipe, idUser, idTeam, idSkill }: typeof tDokumen.$inferInsert) {
     const newIDDokumen = await db.insert(tDokumen).values({
         filename: filename,
         judul: judul,
@@ -25,7 +26,8 @@ export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, 
         idSubBidang: idSubBidang,
         tipe: tipe,
         idUser: idUser,
-        idTeam: idTeam
+        idTeam: idTeam,
+        idSkill: idSkill
     }).returning({ idDokumen: tDokumen.idDokumen })
 
     return newIDDokumen
@@ -44,12 +46,22 @@ export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, 
 //         })
 // }
 
-export async function checkWhichTeam(idUser: string) {
-    const res = await db.select().from(mMemberTeam).where(eq(mMemberTeam.idUser, idUser))
-    return res
-}
+// export async function checkWhichTeam(idUser: string) {
+//     const res = await db.select().from(mMemberTeam).where(eq(mMemberTeam.idUser, idUser))
+//     return res
+// }
 
 export async function getListLayananDropdown(idSubBidang: string) {
     const res = await db.select().from(mLayanan).where(eq(mLayanan.idSubBidang, idSubBidang)).orderBy(mLayanan.nama)
+    return res
+}
+
+export async function getListSkillDropdown(idSubBidang: string, idTeam?: string | null) {
+    const res = await db.select().from(mSkill)
+        .where(and(
+            eq(mSkill.idSubBidang, idSubBidang),
+            idTeam ? eq(mSkill.idTeam, idTeam) : undefined
+        ))
+        .orderBy(mSkill.namaSkill)
     return res
 }

@@ -28,18 +28,19 @@ import { Link, useFetcher } from "react-router";
 import { Input } from "~/components/ui/input";
 import { FIRST_SEGMENT } from "~/lib/route-config";
 import { Button } from "~/components/ui/button";
-import type { mLayanan, tDokumen } from "database/schema/schema";
+import type { mLayanan, mSkill, tDokumen } from "database/schema/schema";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
 
 
 type FormDokumenProp = {
     defaultValues?: typeof tDokumen.$inferSelect,
-    listLayanan: typeof mLayanan.$inferSelect[],
+    listLayanan?: typeof mLayanan.$inferSelect[],
+    listSkill?: typeof mSkill.$inferSelect[],
     tipeDokumen: TIPE_DOKUMEN,
     mode: "insert" | "update"
 }
 
-export function FormDokumen({ defaultValues, listLayanan, tipeDokumen, mode }: FormDokumenProp) {
+export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen, mode }: FormDokumenProp) {
 
     const fetcher = useFetcher({ key: "form_dokumen" })
     const errors = fetcher.data?.errors
@@ -95,7 +96,7 @@ export function FormDokumen({ defaultValues, listLayanan, tipeDokumen, mode }: F
                                 ) : null}
                             </Field>
 
-                            {(tipeDokumen !== "SOP") && (
+                            {(tipeDokumen === "IK") && (
                                 <Field>
                                     <FieldLabel htmlFor="layanan">
                                         Layanan
@@ -111,8 +112,33 @@ export function FormDokumen({ defaultValues, listLayanan, tipeDokumen, mode }: F
                                         <SelectContent className="z-9999">
                                             <SelectGroup>
                                                 <SelectLabel>Layanan</SelectLabel>
-                                                {listLayanan.map((l, i) => (
+                                                {listLayanan?.map((l, i) => (
                                                     <SelectItem value={l.idLayanan}>{l.nama}</SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </Field>
+                            )}
+
+                            {(tipeDokumen === "Knowledge") && (
+                                <Field>
+                                    <FieldLabel htmlFor="skill">
+                                        Skill
+                                    </FieldLabel>
+                                    <Select
+                                        name="skill"
+                                        defaultValue={defaultValues?.idSkill ?? undefined}
+                                        required={tipeDokumen === "Knowledge"}
+                                    >
+                                        <SelectTrigger id="skill">
+                                            <SelectValue placeholder="Skill" />
+                                        </SelectTrigger>
+                                        <SelectContent className="z-9999">
+                                            <SelectGroup>
+                                                <SelectLabel>Skill</SelectLabel>
+                                                {listSkill?.map((l, i) => (
+                                                    <SelectItem value={l.idSkill}>{l.namaSkill}</SelectItem>
                                                 ))}
                                             </SelectGroup>
                                         </SelectContent>

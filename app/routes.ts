@@ -68,6 +68,11 @@ export default [
                     route("delete", "routes/staff/master/layanan/delete/index.tsx"),
                     route("edit/:idLayanan", "routes/staff/master/layanan/edit/index.tsx"),
                 ]),
+                route("skill", "routes/staff/master/skill/index.tsx", [
+                    route("new", "routes/staff/master/skill/new/index.tsx"),
+                    route("delete", "routes/staff/master/skill/delete/index.tsx"),
+                    route("edit/:idSkill", "routes/staff/master/skill/edit/index.tsx"),
+                ]),
                 route("user", "routes/staff/master/user/index.tsx", [
                     route("new", "routes/staff/master/user/new/index.tsx"),
                     route("delete", "routes/staff/master/user/delete/index.tsx"),

@@ -56,7 +56,8 @@ export async function action({ request, params }: Route.ActionArgs) {
         idSubBidang: user[0].idSubBidang,
         idUser: user[0].idUser,
         nama: user[0].nama,
-        namaSubbidang: namaSubbidang!
+        namaSubbidang: namaSubbidang!,
+        idTeam: user[0].idTeam,
     }
 
     const headers = await saveSession(request, sessionUser)
@@ -87,11 +88,11 @@ export default function LoginPage({ actionData, }: Route.ComponentProps) {
                 </div>
             </div>
             <div className="bg-muted relative hidden lg:block">
-                <img
+                {/* <img
                     src="/placeholder.svg"
                     alt="Image"
                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-                />
+                /> */}
             </div>
         </div>
     )

@@ -1,6 +1,6 @@
 import { db } from "database/connect";
 import { tDokumen } from "database/schema/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 
 export async function getDokumenUploadBySelf(idUser: string) {
@@ -8,13 +8,17 @@ export async function getDokumenUploadBySelf(idUser: string) {
         with: {
             layanan: true,
             user: true,
+            skill: true,
             kuis: {
                 with: {
                     kuisElement: true
                 }
             }
         },
-        where: eq(tDokumen.idUser, idUser)
+        where: and(
+            eq(tDokumen.idUser, idUser),
+            eq(tDokumen.tipe, "Knowledge"),
+        )
     })
     return res
 }

@@ -55,7 +55,8 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                 <TableHead className="w-[100px]">No</TableHead>
                                 <TableHead>Judul Dokumen</TableHead>
                                 <TableHead>Tipe</TableHead>
-                                <TableHead>Layanan</TableHead>
+                                {/* <TableHead>Layanan</TableHead> */}
+                                <TableHead>Skill</TableHead>
                                 <TableHead>Uploaded By</TableHead>
                                 <TableHead className="text-center">Jumlah soal</TableHead>
                                 <TableHead className="text-center">Lihat</TableHead>
@@ -68,7 +69,8 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                     <TableCell className="font-medium">{i + 1}</TableCell>
                                     <TableCell>{item.judul}</TableCell>
                                     <TableCell>{item.tipe}</TableCell>
-                                    <TableCell>{item.layanan?.nama ?? "-"}</TableCell>
+                                    {/* <TableCell>{item.layanan?.nama ?? "-"}</TableCell> */}
+                                    <TableCell>{item.skill?.namaSkill ?? "-"}</TableCell>
                                     <TableCell>{item.user?.nama}</TableCell>
                                     <TableCell className="text-center">{item.kuis?.kuisElement ? item.kuis?.kuisElement.length : "-"}</TableCell>
                                     <TableCell className="text-center space-x-1.5">

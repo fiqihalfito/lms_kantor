@@ -18,7 +18,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 }
 
 
-export default function IndexMemberTeamPage({ loaderData }: Route.ComponentProps) {
+export default function IndexMemberTeamPage({ loaderData, params }: Route.ComponentProps) {
 
     const { teams } = loaderData
 
@@ -41,7 +41,7 @@ export default function IndexMemberTeamPage({ loaderData }: Route.ComponentProps
                     <h6 className="font-medium mb-4 text-sm text-muted-foreground ml-2">Available Team</h6>
                     <ItemGroup className="gap-y-2">
                         {teams.map((x, i) => (
-                            <Item key={i} variant="outline" size="sm" asChild>
+                            <Item key={i} variant="outline" size="sm" className={cn(params.idTeam === x.idTeam && "bg-slate-400/20 hover:bg-slate-500")} asChild >
                                 <NavLink to={x.idTeam}>
                                     {({ isPending, isActive }) => (
                                         <>

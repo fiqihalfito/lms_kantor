@@ -107,9 +107,9 @@ export default function MemberTeamMaster({ loaderData }: Route.ComponentProps) {
                         </TableHeader>
                         <TableBody>
                             {members.map((member, i) => (
-                                <TableRow key={member.m_member_team.idMemberTeam}>
+                                <TableRow key={member.idUser}>
                                     <TableCell className="font-medium">{i + 1}</TableCell>
-                                    <TableCell>{member.m_user.nama}</TableCell>
+                                    <TableCell>{member.nama}</TableCell>
                                     <TableCell className="text-right space-x-1.5">
 
 
@@ -127,9 +127,9 @@ export default function MemberTeamMaster({ loaderData }: Route.ComponentProps) {
                                                     {otherTeam.map((o, i) => (
                                                         <DropdownMenuItem onClick={() => handleSubmit({
                                                             destinationTeam: o.idTeam,
-                                                            idUser: member.m_user.idUser,
-                                                            namaUser: member.m_user.nama!,
-                                                            namaDestinationTeam: o.nama!
+                                                            idUser: member.idUser,
+                                                            namaUser: member.nama!,
+                                                            namaDestinationTeam: o.idTeam
                                                         })}>
                                                             {o.nama}
                                                             <DropdownMenuShortcut>

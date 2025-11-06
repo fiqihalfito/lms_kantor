@@ -66,7 +66,7 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
     const { currentSubbidang, teamAndMember, jumlahDokumen, jumlahPembaca } = loaderData
     const totalMembers = teamAndMember.reduce((total, team) => {
         // Add the number of members in the current team to the total
-        return total + team.members.length;
+        return total + team.user.length;
     }, 0); // Start the initial total at 0
 
 
@@ -199,7 +199,7 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                                     <div className="flex items-center justify-between">
                                         <CardTitle>{tim.nama}</CardTitle>
                                         <Badge className=" rounded-full ">
-                                            {tim.members.length} Anggota
+                                            {tim.user.length} Anggota
                                         </Badge>
                                     </div>
 
@@ -208,14 +208,14 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-1.5">
-                                        {tim.members.map((member, i) => (
-                                            <Item variant="outline" size="sm" key={member.idMemberTeam}>
+                                        {tim.user.map((member, i) => (
+                                            <Item variant="outline" size="sm" key={member.idUser}>
                                                 <ItemMedia variant={"icon"}>
                                                     {/* <BadgeCheckIcon className="size-5" /> */}
                                                     {i + 1}
                                                 </ItemMedia>
                                                 <ItemContent>
-                                                    <ItemTitle>{member.user?.nama}</ItemTitle>
+                                                    <ItemTitle>{member.nama}</ItemTitle>
                                                 </ItemContent>
                                                 <ItemActions>
                                                     {/* <ChevronRightIcon className="size-4" /> */}

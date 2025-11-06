@@ -1,4 +1,4 @@
-import type { getAllLayanan, getAllTeams } from "../_services"
+import type { getAllLayanan, getAllSkill, getAllTeams } from "../_services"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import {
     Select,
@@ -17,19 +17,23 @@ import { Separator } from "~/components/ui/separator";
 import { Badge } from "~/components/ui/badge";
 import { useState } from "react";
 import { BadgeXIcon, FunnelIcon } from "lucide-react";
+import type { TIPE_DOKUMEN } from "~/lib/constants";
 
 type FilterType = {
     filterData: {
-        layanan: Awaited<ReturnType<typeof getAllLayanan>>,
+        layanan?: Awaited<ReturnType<typeof getAllLayanan>>,
+        skill?: Awaited<ReturnType<typeof getAllSkill>>,
         teams: Awaited<ReturnType<typeof getAllTeams>>
     },
     activeFilter: {
         team?: string | null,
         layanan?: string | null,
+        skill?: string | null,
     }
+    tipe: Exclude<TIPE_DOKUMEN, "SOP">
 }
 
-export function Filter({ filterData, activeFilter }: FilterType) {
+export function Filter({ filterData, activeFilter, tipe }: FilterType) {
 
     const [searchParams, setSearchParams] = useSearchParams()
     const [filterOpen, setFilterOpen] = useState(false)
@@ -78,21 +82,41 @@ export function Filter({ filterData, activeFilter }: FilterType) {
                                     </SelectContent>
                                 </Select>
                             </Field>
-                            <Field>
-                                <FieldLabel htmlFor="layanan">
-                                    Layanan
-                                </FieldLabel>
-                                <Select defaultValue={activeFilter.layanan ?? undefined} name="layananFilter">
-                                    <SelectTrigger id="layanan">
-                                        <SelectValue placeholder="layanan" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {filterData.layanan.map((l, i) => (
-                                            <SelectItem value={l.idLayanan}>{l.nama}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </Field>
+                            {tipe === "IK" && (
+                                <Field>
+                                    <FieldLabel htmlFor="layanan">
+                                        Layanan
+                                    </FieldLabel>
+                                    <Select defaultValue={activeFilter.layanan ?? undefined} name="layananFilter">
+                                        <SelectTrigger id="layanan">
+                                            <SelectValue placeholder="layanan" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {filterData.layanan?.map((l, i) => (
+                                                <SelectItem value={l.idLayanan}>{l.nama}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </Field>
+                            )}
+                            {tipe === "Knowledge" && (
+                                <Field>
+                                    <FieldLabel htmlFor="skill">
+                                        Skill
+                                    </FieldLabel>
+                                    <Select defaultValue={activeFilter.skill ?? undefined} name="skillFilter">
+                                        <SelectTrigger id="skill">
+                                            <SelectValue placeholder="Skill" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {filterData.skill?.map((l, i) => (
+                                                <SelectItem value={l.idSkill}>{l.namaSkill}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </Field>
+                            )}
+
                         </div>
                         <div className="flex justify-end gap-x-2">
                             <Button
@@ -132,7 +156,16 @@ export function Filter({ filterData, activeFilter }: FilterType) {
                     Layanan
                     <Separator orientation="vertical" className="mx-2" />
                     <Badge variant={"default"}>
-                        {filterData.layanan.find(l => l.idLayanan === activeFilter.layanan)?.nama}
+                        {filterData.layanan?.find(l => l.idLayanan === activeFilter.layanan)?.nama}
+                    </Badge>
+                </Button>
+            )}
+            {activeFilter.skill && (
+                <Button variant={"outline"} className="border-dashed font-medium " size={"sm"}>
+                    Skill
+                    <Separator orientation="vertical" className="mx-2" />
+                    <Badge variant={"default"}>
+                        {filterData.skill?.find(l => l.idSkill === activeFilter.skill)?.namaSkill}
                     </Badge>
                 </Button>
             )}

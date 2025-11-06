@@ -1,5 +1,5 @@
 import { db } from "database/connect";
-import { mMemberTeam, mTeam, mUser } from "database/schema/schema";
+import { mTeam, mUser } from "database/schema/schema";
 import { asc, eq, ne } from "drizzle-orm";
 
 
@@ -12,9 +12,9 @@ export async function getAllMemberTeamByIdTeam(idTeam: string) {
     // })
     const res = await db
         .select()
-        .from(mMemberTeam)
-        .innerJoin(mUser, eq(mMemberTeam.idUser, mUser.idUser))
-        .where(eq(mMemberTeam.idTeam, idTeam))
+        .from(mUser)
+        // .innerJoin(mUser, eq(mMemberTeam.idUser, mUser.idUser))
+        .where(eq(mUser.idTeam, idTeam))
         .orderBy(asc(mUser.nama));
 
     return res

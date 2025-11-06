@@ -28,6 +28,11 @@ export const kuisFK = {
     idKuis: uuid("id_kuis").references(() => tKuis.idKuis, { onDelete: "cascade" })
 }
 
+export const skillFK = {
+    idSkill: uuid("id_skill").references(() => mSkill.idSkill, { onDelete: "cascade" })
+}
+
+
 
 // ===========================================================================
 
@@ -36,7 +41,8 @@ export const mUser = pgTable('m_user', {
     email: text('email').unique(),
     nama: text('nama'),
     password: text('password'),
-    ...subBidangFK
+    ...subBidangFK,
+    ...teamFK
 })
 
 export const mSubBidang = pgTable('m_subbidang', {
@@ -57,11 +63,11 @@ export const mTeam = pgTable('m_team', {
     ...subBidangFK,
 })
 
-export const mMemberTeam = pgTable('m_member_team', {
-    idMemberTeam: uuid("id_member_team").defaultRandom().primaryKey(),
-    ...teamFK,
-    ...userFK,
-})
+// export const mMemberTeam = pgTable('m_member_team', {
+//     idMemberTeam: uuid("id_member_team").defaultRandom().primaryKey(),
+//     ...teamFK,
+//     ...userFK,
+// })
 
 
 export const tDokumen = pgTable('t_dokumen', {
@@ -69,21 +75,13 @@ export const tDokumen = pgTable('t_dokumen', {
     judul: text('judul'),
     tipe: varchar('tipe'),
     filename: text('filename'),
-    ...layananFK,
+    ...layananFK, // untuk IK
     ...subBidangFK,
     ...userFK,
-    ...teamFK,
+    ...teamFK, // null kalau SOP, lainnya wajib
+    ...skillFK, // untuk Knowledge
     ...timestamps,
 })
-
-// export const tDokumenTeam = pgTable('t_dokumen_team', {
-//     idDokumenTeam: uuid("id_dokumen_team").defaultRandom().primaryKey(),
-//     ...dokumenFK,
-//     ...teamFK
-// }, (t) => [
-//     // Pastikan 1 dokumen tidak bisa di-link ke tim yang sama dua kali
-//     unique().on(t.idDokumen, t.idTeam)
-// ])
 
 export const tStatusBaca = pgTable('t_status_baca', {
     idStatusBaca: uuid("id_status_baca").defaultRandom().primaryKey(),
@@ -95,6 +93,13 @@ export const tStatusBaca = pgTable('t_status_baca', {
 }, (t) => [
     unique().on(t.idUser, t.idDokumen)
 ])
+
+export const mSkill = pgTable('m_skill', {
+    idSkill: uuid("id_skill").defaultRandom().primaryKey(),
+    namaSkill: text("nama_skill").notNull(),
+    ...teamFK,
+    ...subBidangFK
+})
 
 // === Kuis =================================
 export const tKuis = pgTable('t_kuis', {

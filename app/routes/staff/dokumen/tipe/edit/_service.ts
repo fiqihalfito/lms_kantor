@@ -9,7 +9,7 @@ export async function getDokumenDataById(idDokumen: string) {
     return res
 }
 
-export async function updateDokumen(idDokumen: string, { filename, idLayanan, idSubBidang, judul, tipe, idUser }: typeof tDokumen.$inferInsert) {
+export async function updateDokumen(idDokumen: string, { filename, idLayanan, idSubBidang, judul, tipe, idUser, idTeam, idSkill }: typeof tDokumen.$inferInsert) {
     await db.update(tDokumen).set({
         filename: filename,
         judul: judul,
@@ -17,6 +17,8 @@ export async function updateDokumen(idDokumen: string, { filename, idLayanan, id
         idSubBidang: idSubBidang,
         tipe: tipe,
         idUser: idUser,
+        idTeam: idTeam,
+        idSkill: idSkill,
         updatedAt: new Date().toISOString()
     }).where(eq(tDokumen.idDokumen, idDokumen))
 }
@@ -28,6 +30,7 @@ export const tUpdateDokumenValidation = z.object({
         })
         .min(1, "Judul tidak boleh kosong"),
     layanan: z.preprocess(val => val === "" ? null : val, z.string().nullable()).optional(),
+    skill: z.preprocess(val => val === "" ? null : val, z.string().nullable()).optional(),
     file: z
         .file()
         .mime(["application/pdf"], { error: "hanya upload pdf" })

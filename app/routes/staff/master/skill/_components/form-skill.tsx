@@ -14,37 +14,49 @@ import {
     FieldGroup,
     FieldLabel,
 } from "~/components/ui/field"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "~/components/ui/select"
 import { XIcon } from "lucide-react";
 import { Link, useFetcher } from "react-router";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
+import type { getListTeam } from "../new/_service";
 
 
-type FormTeamProp = {
+type FormSkillProp = {
     defaultValues?: {
-        namaTeam: string | null,
+        namaSkill: string | null,
+        idTeam: string | null
     },
-    mode: "insert" | "update"
+    mode: "insert" | "update",
+    listTeam: Awaited<ReturnType<typeof getListTeam>>
 }
 
-export function FormTeam({ defaultValues, mode }: FormTeamProp) {
+export function FormSkill({ defaultValues, mode, listTeam }: FormSkillProp) {
 
-    const fetcher = useFetcher({ key: "form_team" })
+    const fetcher = useFetcher({ key: "form_skill" })
     const errors = fetcher.data?.errors
     const uploading = fetcher.state !== "idle"
 
 
     const modeMapping: Record<typeof mode, any> = {
         insert: {
-            title: "Tambah team baru",
-            desc: `team baru`
+            title: "Tambah Skill baru",
+            desc: `skill baru`
         },
         update: {
-            title: "Edit nama team",
-            desc: `perbarui nama team`
+            title: "Edit nama skill",
+            desc: `perbarui nama skill`
         }
     }
+
+
 
 
     return (
@@ -66,18 +78,36 @@ export function FormTeam({ defaultValues, mode }: FormTeamProp) {
                     <CardContent className="flex-1">
                         <FieldGroup>
                             <Field>
-                                <FieldLabel htmlFor="namaTeam">
-                                    Nama Team
+                                <FieldLabel htmlFor="namaSkill">
+                                    Nama Skill
                                 </FieldLabel>
                                 <Input
-                                    id="namaTeam"
-                                    placeholder="nama user"
-                                    name="namaTeam"
-                                    defaultValue={defaultValues?.namaTeam ?? undefined}
+                                    id="namaSkill"
+                                    placeholder="nama skill"
+                                    name="namaSkill"
+                                    defaultValue={defaultValues?.namaSkill ?? undefined}
                                     required
                                 />
-                                {errors?.namaTeam ? (
-                                    <FieldError>{errors.namaTeam}!</FieldError>
+                                {errors?.namaLayanan ? (
+                                    <FieldError>{errors.namaLayanan}!</FieldError>
+                                ) : null}
+                            </Field>
+                            <Field>
+                                <FieldLabel htmlFor="team">
+                                    Team
+                                </FieldLabel>
+                                <Select defaultValue={defaultValues?.idTeam ?? undefined} required name="idTeam">
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Pilih Team" />
+                                    </SelectTrigger>
+                                    <SelectContent className="z-99">
+                                        {listTeam.map((team, i) => (
+                                            <SelectItem key={team.idTeam} value={team.idTeam}>{team.nama}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {errors?.idTeam ? (
+                                    <FieldError>{errors.idTeam}!</FieldError>
                                 ) : null}
                             </Field>
 

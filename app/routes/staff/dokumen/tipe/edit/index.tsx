@@ -1,7 +1,7 @@
 import { userContext } from "~/lib/context";
 import { FormDokumen } from "../_components/FormDokumen";
 import type { Route } from "./+types/index";
-import { getListLayananDropdown } from "../add/_service";
+import { getListLayananDropdown, getListSkillDropdown } from "../add/_service";
 import {
     getDokumenDataById,
     tUpdateDokumenValidation,
@@ -72,6 +72,8 @@ export async function action({
         judul: validated.data.judul,
         tipe: params.tipeDokumen,
         idUser: user?.idUser!,
+        idSkill: validated.data.skill
+        // idTeam
     })
 
     const headers = await setFlashSession(request, {
@@ -85,17 +87,28 @@ export async function action({
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
-    const listLayananDropdown = await getListLayananDropdown(user?.idSubBidang!) // diambil dari add service
+    let listLayananDropdown
+    if (params.tipeDokumen === "IK") {
+        listLayananDropdown = await getListLayananDropdown(user?.idSubBidang!) //dari add service
+    }
+
+    let listSkillDropdown
+    if (params.tipeDokumen === "Knowledge") {
+        listSkillDropdown = await getListSkillDropdown(user?.idSubBidang!, user?.idTeam) // dari add service
+    }
+
     const dokumenData = await getDokumenDataById(params.idDokumen)
 
-    return { listLayananDropdown, dokumenData }
+
+    return { listLayananDropdown, listSkillDropdown, dokumenData }
+
 }
 
 export default function EditDokumenPage({ params, loaderData }: Route.ComponentProps) {
 
-    const { listLayananDropdown, dokumenData } = loaderData
+    const { listLayananDropdown, listSkillDropdown, dokumenData } = loaderData
 
     return (
-        <FormDokumen tipeDokumen={params.tipeDokumen as TIPE_DOKUMEN} listLayanan={listLayananDropdown} defaultValues={dokumenData[0]} mode="update" />
+        <FormDokumen tipeDokumen={params.tipeDokumen as TIPE_DOKUMEN} listLayanan={listLayananDropdown} listSkill={listSkillDropdown} defaultValues={dokumenData[0]} mode="update" />
     )
 }

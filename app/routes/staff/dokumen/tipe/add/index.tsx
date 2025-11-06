@@ -41,7 +41,7 @@ import {
     parseFormData,
 
 } from "@remix-run/form-data-parser";
-import { checkWhichTeam, getListLayananDropdown, saveNewDokumen, tInsertNewDokumenValidation } from "./_service";
+import { getListLayananDropdown, getListSkillDropdown, saveNewDokumen, tInsertNewDokumenValidation } from "./_service";
 import { FIRST_SEGMENT } from "~/lib/route-config";
 import { userContext } from "~/lib/context";
 import { Button } from "~/components/ui/button";
@@ -99,8 +99,8 @@ export async function action({
     if (params.tipeDokumen === "SOP") {
         idTeam = null
     } else {
-        const team = await checkWhichTeam(user?.idUser!)
-        idTeam = team.length > 0 ? team[0].idTeam : null
+        // const team = await checkWhichTeam(user?.idUser!)
+        idTeam = user?.idTeam
     }
 
     const newDokumen = await saveNewDokumen({
@@ -110,18 +110,10 @@ export async function action({
         judul: validated.data.judul,
         tipe: params.tipeDokumen,
         idUser: user?.idUser!,
-        idTeam: idTeam
+        idTeam: idTeam,
+        idSkill: validated.data.skill
     })
 
-    // insert to team condition
-    // let idTeam
-    // if (params.tipeDokumen === "SOP") {
-    //     idTeam = null
-    // } else {
-    //     const team = await checkWhichTeam(user?.idUser!)
-    //     idTeam = team.length > 0 ? team[0].idTeam : null
-    // }
-    // await saveDokumentoTeam(idTeam, newDokumen[0].idDokumen)
 
     const headers = await setFlashSession(request, {
         type: "success",
@@ -136,20 +128,34 @@ export async function action({
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
-    const listLayananDropdown = await getListLayananDropdown(user?.idSubBidang!)
+    let listLayananDropdown
+    if (params.tipeDokumen === "IK") {
+        listLayananDropdown = await getListLayananDropdown(user?.idSubBidang!)
+    }
 
-    return { listLayananDropdown }
+    let listSkillDropdown
+    if (params.tipeDokumen === "Knowledge") {
+        listSkillDropdown = await getListSkillDropdown(user?.idSubBidang!, user?.idTeam)
+    }
+
+
+
+    return { listLayananDropdown, listSkillDropdown }
 }
 
 
 export default function AddNewDokumen({ params, loaderData }: Route.ComponentProps) {
 
-    const { listLayananDropdown } = loaderData
+    const { listLayananDropdown, listSkillDropdown } = loaderData
 
 
 
 
     return (
-        <FormDokumen tipeDokumen={params.tipeDokumen as TIPE_DOKUMEN} listLayanan={listLayananDropdown} mode="insert" />
+        <FormDokumen
+            tipeDokumen={params.tipeDokumen as TIPE_DOKUMEN}
+            listLayanan={listLayananDropdown}
+            listSkill={listSkillDropdown}
+            mode="insert" />
     )
 }

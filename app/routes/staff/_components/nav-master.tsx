@@ -1,5 +1,5 @@
 
-import { ChevronRight, LayoutGridIcon, ShapesIcon, SquareUserRoundIcon, UsersRoundIcon, type LucideIcon } from "lucide-react"
+import { ChevronRight, LayoutGridIcon, PyramidIcon, ShapesIcon, SquareUserRoundIcon, UsersRoundIcon, type LucideIcon } from "lucide-react"
 import { NavLink } from "react-router"
 
 import {
@@ -55,6 +55,12 @@ const items: {
             title: "Member Team",
             url: `/${FIRST_SEGMENT}/master/member_team`,
             icon: SquareUserRoundIcon,
+            isActive: true,
+        },
+        {
+            title: "Skill",
+            url: `/${FIRST_SEGMENT}/master/skill`,
+            icon: PyramidIcon,
             isActive: true,
         },
     ]

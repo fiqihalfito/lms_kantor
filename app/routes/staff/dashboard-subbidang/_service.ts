@@ -1,5 +1,5 @@
 import { db } from "database/connect";
-import { mMemberTeam, mSubBidang, mTeam, mUser, tDokumen, tKuis, tKuisProgress, tStatusBaca } from "database/schema/schema";
+import { mSubBidang, mTeam, mUser, tDokumen, tKuis, tKuisProgress, tStatusBaca } from "database/schema/schema";
 import { and, eq, notInArray, sql } from "drizzle-orm";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
 
@@ -11,32 +11,29 @@ import type { TIPE_DOKUMEN } from "~/lib/constants";
 export async function getTeamAndMember(idSubBidang: string) {
     const res = await db.query.mTeam.findMany({
         with: {
-            members: {
-                with: {
-                    user: {
-                        columns: {
-                            nama: true,
-                            idUser: true
-                        },
-                        // with: {
-                        //     kuisProgress: {
-                        //         with: {
-                        //             kuis: {
-                        //                 with: {
-                        //                     dokumen: {
-                        //                         columns: {
-                        //                             idDokumen: true,
-                        //                             judul: true
-                        //                         }
-                        //                     }
-                        //                 }
-                        //             }
-                        //         }
+            user: {
+                columns: {
+                    nama: true,
+                    idUser: true
+                },
+                // with: {
+                //     kuisProgress: {
+                //         with: {
+                //             kuis: {
+                //                 with: {
+                //                     dokumen: {
+                //                         columns: {
+                //                             idDokumen: true,
+                //                             judul: true
+                //                         }
+                //                     }
+                //                 }
+                //             }
+                //         }
 
-                        //     }
-                        // }
-                    }
-                }
+                //     }
+                // }
+
             }
         }
     })

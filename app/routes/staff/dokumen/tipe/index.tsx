@@ -25,7 +25,7 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from "~/components/ui/empty"
-import { checkWhichTeam, getAllDokumenByTipe, getAllLayanan, getAllTeams } from "./_services";
+import { getAllDokumenByTipe, getAllLayanan, getAllSkill, getAllTeams } from "./_services";
 import { Button } from "~/components/ui/button";
 import { EyeIcon, FilePlusIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { data, Link, Outlet, useFetcher, useSubmit } from "react-router";
@@ -47,6 +47,7 @@ import { MyAlert } from "~/components/alert-custom";
 import { Badge } from "~/components/ui/badge";
 import { Filter } from "./_components/filter";
 import { Search } from "./_components/search";
+import type { TIPE_DOKUMEN } from "~/lib/constants";
 
 
 
@@ -57,20 +58,22 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     // find idTeam if exists
     let idTeam = null;
     if (params.tipeDokumen !== "SOP") {
-        const userTeam = await checkWhichTeam(user?.idUser!)
-        idTeam = userTeam.length > 0 ? userTeam[0].idTeam : null
+        // const userTeam = await checkWhichTeam(user?.idUser!)
+        idTeam = user?.idTeam
     }
 
     // url search param
     const url = new URL(request.url);
     const teamFilter = url.searchParams.get("teamFilter");
     const layananFilter = url.searchParams.get("layananFilter");
+    const skillFilter = url.searchParams.get("skillFilter");
     const searchFilter = url.searchParams.get("search");
 
     const activeFilter = {
         team: teamFilter ?? idTeam,
         layanan: layananFilter || null,
-        search: searchFilter || null
+        skill: skillFilter || null,
+        search: searchFilter || null,
     }
 
 
@@ -83,16 +86,19 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
         {
             idTeam: activeFilter.team,
             idLayanan: activeFilter.layanan,
+            idSkill: activeFilter.skill,
             search: activeFilter.search
         }
     )
 
     // filter master data
     const teams = await getAllTeams(user?.idSubBidang!)
-    const layanan = await getAllLayanan(user?.idSubBidang!)
+    const layanan = params.tipeDokumen === "IK" ? await getAllLayanan(user?.idSubBidang!) : undefined
+    const skill = params.tipeDokumen === "Knowledge" ? await getAllSkill(user?.idSubBidang!, activeFilter.team) : undefined
     const filterData = {
         teams,
-        layanan
+        layanan,
+        skill
     }
 
 
@@ -126,7 +132,6 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
     const mulaiKuisSubmit = useSubmit()
-
     const handleMulaiKuis = (idKuis: string) => {
         mulaiKuisSubmit(null, {
             action: `/${FIRST_SEGMENT}/kuis/mulai-kuis/init/${idKuis}`,
@@ -167,6 +172,7 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                     <Filter
                         filterData={filterData}
                         activeFilter={activeFilter}
+                        tipe={params.tipeDokumen as Exclude<TIPE_DOKUMEN, "SOP">}
                     />
                 )}
             </div>
@@ -182,13 +188,14 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                             <TableRow>
                                 <TableHead className="w-[100px]">No</TableHead>
                                 <TableHead>Judul Dokumen</TableHead>
-                                {(params.tipeDokumen === "IK" || params.tipeDokumen === "Knowledge") && <TableHead>Layanan</TableHead>}
+                                {(params.tipeDokumen === "IK") && <TableHead>Layanan</TableHead>}
+                                {(params.tipeDokumen === "Knowledge") && <TableHead>Skill</TableHead>}
                                 {/* <TableHead>Tipe Dokumen</TableHead> */}
                                 <TableHead>Uploaded By</TableHead>
                                 <TableHead>Created At</TableHead>
                                 <TableHead>Updated At</TableHead>
                                 <TableHead>Baca</TableHead>
-                                <TableHead>Kuis</TableHead>
+                                {params.tipeDokumen === "Knowledge" && <TableHead>Kuis</TableHead>}
                                 {/* <TableHead>Aksi</TableHead> */}
                                 <TableHead className="text-right">Aksi</TableHead>
                             </TableRow>
@@ -198,7 +205,8 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                 <TableRow key={d.idDokumen}>
                                     <TableCell className="font-medium">{i + 1}</TableCell>
                                     <TableCell>{d.judul}</TableCell>
-                                    {(params.tipeDokumen === "IK" || params.tipeDokumen === "Knowledge") && <TableCell>{d.layanan?.nama ?? "-"}</TableCell>}
+                                    {(params.tipeDokumen === "IK") && <TableCell>{d.layanan?.nama ?? "-"}</TableCell>}
+                                    {(params.tipeDokumen === "Knowledge") && <TableCell>{d.skill?.namaSkill ?? "-"}</TableCell>}
                                     <TableCell>{d.user?.nama}</TableCell>
                                     <TableCell>{formatTimestampId(d.createdAt, { withZoneLabel: true })}</TableCell>
                                     <TableCell>{d.updatedAt ? formatTimestampId(d.updatedAt, { withZoneLabel: true }) : "-"}</TableCell>
@@ -209,13 +217,16 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                             <Badge variant={"destructive"} className="rounded-full">Not Yet</Badge>
                                         )}
                                     </TableCell>
-                                    <TableCell>
-                                        {d.kuis?.kuisProgress[0]?.idKuisProgress && d.kuis?.kuisProgress[0]?.isSelesai === true ? (
-                                            <Badge className="bg-green-600 rounded-full">Done</Badge>
-                                        ) : (
-                                            <Badge variant={"destructive"} className="rounded-full">Not Yet</Badge>
-                                        )}
-                                    </TableCell>
+                                    {params.tipeDokumen === "Knowledge" && (
+                                        <TableCell>
+                                            {d.kuis?.kuisProgress[0]?.idKuisProgress && d.kuis?.kuisProgress[0]?.isSelesai === true ? (
+                                                <Badge className="bg-green-600 rounded-full">Done</Badge>
+                                            ) : (
+                                                <Badge variant={"destructive"} className="rounded-full">Not Yet</Badge>
+                                            )}
+                                        </TableCell>
+                                    )}
+
                                     <TableCell className="text-right space-x-1.5">
                                         {/* <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/preview/${d.idDokumen}`} viewTransition>
                                             <Button size={"icon"} className="cursor-pointer" >

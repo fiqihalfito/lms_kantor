@@ -1,8 +1,9 @@
 // seed.ts (complete with all tables)
 import { db } from "./connect";
 import {
-    mLayanan, mSubBidang, tDokumen, mUser, mTeam, mMemberTeam,
-    tStatusBaca, tKuis, tKuisProgress, tKuisElement
+    mLayanan, mSubBidang, tDokumen, mUser, mTeam,
+    tStatusBaca, tKuis, tKuisProgress, tKuisElement,
+    mSkill
 } from "./schema/schema";
 import { sql } from "drizzle-orm";
 
@@ -18,8 +19,8 @@ async function main() {
             ${tKuis}, 
             ${tStatusBaca}, 
             ${tDokumen}, 
-            ${mMemberTeam}, 
             ${mTeam}, 
+            ${mSkill}, 
             ${mUser}, 
             ${mLayanan}, 
             ${mSubBidang} 
@@ -35,6 +36,8 @@ async function main() {
     ];
     await db.insert(mSubBidang).values(subBidang);
     const mapSlug = Object.fromEntries(subBidang.map((s) => [s.idSubBidang, s.slug]));
+
+
 
     // 2️⃣ Insert layanan dengan UUID hardcoded
     console.log("🔧 Seeding layanan...");
@@ -61,6 +64,47 @@ async function main() {
     // Mapping layanan
     const mapLayanan = Object.fromEntries(layananData.map((l) => [l.nama!, l.idLayanan]));
 
+    // 4️⃣ Insert Team dengan UUID hardcoded
+    console.log("👨‍👩‍👧‍👦 Seeding teams...");
+    const teamData = [
+        { idTeam: "aaaaaaaa-aaaa-4000-8000-000000000001", nama: "DBA", idSubBidang: "s1" },
+        { idTeam: "aaaaaaaa-aaaa-4000-8000-000000000002", nama: "Devops", idSubBidang: "s1" },
+    ];
+    await db.insert(mTeam).values(teamData);
+
+    const mapTeam = Object.fromEntries(teamData.map((t) => [t.nama!, t.idTeam]));
+
+    // 1️⃣ Insert skill
+    console.log("👨‍👩‍👧‍👦 Seeding skill...");
+    const skillData = [
+        {
+            idSkill: "a9bce9a3-5d3f-4db7-9e41-9f8a6cfb92c1",
+            idTeam: mapTeam["DBA"],
+            namaSkill: "PostgreSQL",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "bc42e7d8-90e0-4f7f-97b0-0f7c5cbaf1e7",
+            idTeam: mapTeam["DBA"],
+            namaSkill: "SQL Server",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "d3fba0e6-9b26-4b76-953f-59d847dc5f24",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Kubernetes",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "e60c18f0-2e52-4e11-a9bb-b8438c2f9f90",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Git",
+            idSubBidang: "s1",
+        },
+    ];
+    await db.insert(mSkill).values(skillData);
+    const mapSkill = Object.fromEntries(skillData.map((s) => [s.namaSkill!, s.idSkill]));
+
     // 3️⃣ Insert users dengan UUID hardcoded
     console.log("👤 Seeding users...");
     const userS1Names = [
@@ -84,7 +128,8 @@ async function main() {
             email: `${slug}@${mapSlug["s1"]}.example.com`,
             nama,
             idSubBidang: "s1",
-            password: "123"
+            password: "123",
+            idTeam: idx <= 17 ? mapTeam["DBA"] : mapTeam["Devops"]
         };
     });
 
@@ -100,34 +145,26 @@ async function main() {
     // Mapping user
     const mapUser = Object.fromEntries([...usersS1, ...usersOther].map((u) => [u.email!, u.idUser]));
 
-    // 4️⃣ Insert Team dengan UUID hardcoded
-    console.log("👨‍👩‍👧‍👦 Seeding teams...");
-    const teamData = [
-        { idTeam: "aaaaaaaa-aaaa-4000-8000-000000000001", nama: "DBA", idSubBidang: "s1" },
-        { idTeam: "aaaaaaaa-aaaa-4000-8000-000000000002", nama: "Devops", idSubBidang: "s1" },
-    ];
-    await db.insert(mTeam).values(teamData);
 
-    const mapTeam = Object.fromEntries(teamData.map((t) => [t.nama!, t.idTeam]));
 
     // 5️⃣ Insert Member Team dengan UUID hardcoded
-    console.log("🤝 Seeding team members...");
-    const dbaUsers = usersS1.slice(0, 18);
-    const devopsUsers = usersS1.slice(18);
+    // console.log("🤝 Seeding team members...");
+    // const dbaUsers = usersS1.slice(0, 18);
+    // const devopsUsers = usersS1.slice(18);
 
-    const dbaMembers = dbaUsers.map((user, idx) => ({
-        idMemberTeam: `bbbbbbbb-bbbb-4000-8000-${String(idx).padStart(12, '0')}`,
-        idTeam: mapTeam["DBA"],
-        idUser: mapUser[user.email],
-    }));
+    // const dbaMembers = dbaUsers.map((user, idx) => ({
+    //     idMemberTeam: `bbbbbbbb-bbbb-4000-8000-${String(idx).padStart(12, '0')}`,
+    //     idTeam: mapTeam["DBA"],
+    //     idUser: mapUser[user.email],
+    // }));
 
-    const devopsMembers = devopsUsers.map((user, idx) => ({
-        idMemberTeam: `cccccccc-cccc-4000-8000-${String(idx).padStart(12, '0')}`,
-        idTeam: mapTeam["Devops"],
-        idUser: mapUser[user.email],
-    }));
+    // const devopsMembers = devopsUsers.map((user, idx) => ({
+    //     idMemberTeam: `cccccccc-cccc-4000-8000-${String(idx).padStart(12, '0')}`,
+    //     idTeam: mapTeam["Devops"],
+    //     idUser: mapUser[user.email],
+    // }));
 
-    await db.insert(mMemberTeam).values([...dbaMembers, ...devopsMembers]);
+    // await db.insert(mMemberTeam).values([...dbaMembers, ...devopsMembers]);
 
     // 6️⃣ Insert dokumen dengan UUID hardcoded
     console.log("📄 Seeding dokumen...");
@@ -141,6 +178,7 @@ async function main() {
             idSubBidang: "s1",
             idUser: mapUser[usersS1[0].email],
             idTeam: mapTeam["DBA"],
+            idSkill: mapSkill["PostgreSQL"]
         },
         {
             idDokumen: "dddddddd-dddd-4000-8000-000000000002",
@@ -151,6 +189,7 @@ async function main() {
             idSubBidang: "s1",
             idUser: mapUser[usersS1[1].email],
             idTeam: mapTeam["DBA"],
+            idSkill: mapSkill["SQL Server"]
         },
         {
             idDokumen: "dddddddd-dddd-4000-8000-000000000003",
@@ -161,6 +200,7 @@ async function main() {
             idSubBidang: "s2",
             idUser: mapUser[`alex.${mapSlug["s2"]}@example.com`],
             idTeam: null,
+            idSkill: mapSkill["PostgreSQL"]
         },
         {
             idDokumen: "dddddddd-dddd-4000-8000-000000000004",
@@ -171,6 +211,7 @@ async function main() {
             idSubBidang: "s3",
             idUser: mapUser[`chandra.${mapSlug["s3"]}@example.com`],
             idTeam: null,
+            idSkill: mapSkill["PostgreSQL"]
         },
     ];
 
