@@ -1,6 +1,6 @@
 import { userContext } from "~/lib/context";
 import type { Route } from "./+types";
-import { checkKuisProgressExist, registerKuisProgress, resetKuis } from "./_service";
+import { checkKuisProgressExist, getIdSkillFromDokumenByIdKuis, registerKuisProgress, resetKuis } from "./_service";
 import { redirect } from "react-router";
 import { FIRST_SEGMENT } from "~/lib/route-config";
 
@@ -15,6 +15,7 @@ export async function action({ request, params, context }: Route.LoaderArgs) {
         return redirect(`/${FIRST_SEGMENT}/kuis/mulai-kuis/on/${kuisProgressExist[0].idKuisProgress}/kuis/${params.idKuis}`)
     }
 
-    const kuisProgress = await registerKuisProgress(params.idKuis, user?.idUser!)
+    const idSkillFromDokumen = await getIdSkillFromDokumenByIdKuis(params.idKuis)
+    const kuisProgress = await registerKuisProgress(params.idKuis, user?.idUser!, idSkillFromDokumen)
     return redirect(`/${FIRST_SEGMENT}/kuis/mulai-kuis/on/${kuisProgress[0].idKuisProgress}/kuis/${params.idKuis}`)
 }

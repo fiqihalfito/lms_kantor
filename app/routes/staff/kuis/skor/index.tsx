@@ -64,10 +64,10 @@ export default function SkorPage({ loaderData }: Route.ComponentProps) {
                             {kuisSudahDikerjakan.map((item, i) => (
                                 <TableRow key={item.idKuis}>
                                     <TableCell className="font-medium">{i + 1}</TableCell>
-                                    <TableCell>{item.kuis?.dokumen.judul}</TableCell>
+                                    <TableCell>{item.kuis?.dokumen?.judul}</TableCell>
                                     {/* <TableCell>{item.dokumen.tipe}</TableCell> */}
                                     {/* <TableCell>{item.dokumen.layanan?.nama ?? "-"}</TableCell> */}
-                                    <TableCell>{item?.kuis?.dokumen.user?.nama ?? "-"}</TableCell>
+                                    <TableCell>{item?.kuis?.dokumen?.user?.nama ?? "-"}</TableCell>
                                     <TableCell>{formatTimestampId(item.createdAt)}</TableCell>
                                     <TableHead>{item.kuis?.kuisElement.length}</TableHead>
                                     <TableHead>{`${item.jumlahBenar}/${item.kuis?.kuisElement.length}`}</TableHead>

@@ -80,7 +80,7 @@ export default function UjianPage({ params, loaderData }: Route.ComponentProps) 
             <div className="flex items-center justify-center text-center">
                 <div className="space-y-0.5">
                     <h1 className="text-3xl font-semibold tracking-tight">Ujian</h1>
-                    <p className="text-muted-foreground">Materi ujian berasal dari [{dokumen?.dokumen.judul}]</p>
+                    <p className="text-muted-foreground">Materi ujian berasal dari [{dokumen?.dokumen?.judul}]</p>
                 </div>
             </div>
             <Separator />

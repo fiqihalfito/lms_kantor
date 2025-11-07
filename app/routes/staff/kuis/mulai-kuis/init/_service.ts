@@ -1,11 +1,12 @@
 import { db } from "database/connect";
-import { tKuisElement, tKuisProgress } from "database/schema/schema";
+import { tDokumen, tKuisElement, tKuisProgress } from "database/schema/schema";
 import { and, eq } from "drizzle-orm";
 
-export async function registerKuisProgress(idKuis: string, idUser: string) {
+export async function registerKuisProgress(idKuis: string, idUser: string, idSkill: string | null) {
     const res = await db.insert(tKuisProgress).values({
         idKuis: idKuis,
         idUser: idUser,
+        idSkill: idSkill
     }).returning()
     return res
 }
@@ -25,4 +26,9 @@ export async function resetKuis(idKuisProgress: string) {
         isSelesai: false,
         jumlahBenar: 0
     }).where(eq(tKuisProgress.idKuisProgress, idKuisProgress))
+}
+
+export async function getIdSkillFromDokumenByIdKuis(idKuis: string) {
+    const dokumen = await db.select().from(tDokumen).where(eq(tDokumen.idKuis, idKuis))
+    return dokumen[0].idSkill
 }

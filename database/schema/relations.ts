@@ -95,8 +95,8 @@ export const tDokumenRelations = relations(tDokumen, ({ one, many }) => ({
         references: [mUser.idUser],
     }),
     kuis: one(tKuis, {
-        fields: [tDokumen.idDokumen],
-        references: [tKuis.idDokumen]
+        fields: [tDokumen.idKuis],
+        references: [tKuis.idKuis]
     }),
     statusBaca: many(tStatusBaca),
     // dokumenTeam: one(tDokumenTeam, {
@@ -141,14 +141,15 @@ export const mSkillRelations = relations(mSkill, ({ many, one }) => ({
     team: one(mTeam, {
         fields: [mSkill.idTeam],
         references: [mTeam.idTeam]
-    })
+    }),
+    kuisProgress: many(tKuisProgress)
 }))
 
 // ================ Kuis Relations ==========================
 export const tKuisRelations = relations(tKuis, ({ one, many }) => ({
     dokumen: one(tDokumen, {
-        fields: [tKuis.idDokumen],
-        references: [tDokumen.idDokumen]
+        fields: [tKuis.idKuis],
+        references: [tDokumen.idKuis]
     }),
     kuisElement: many(tKuisElement),
     // kuisProgressOne: one(tKuisProgress, {
@@ -173,5 +174,9 @@ export const tKuisProgressRelations = relations(tKuisProgress, ({ one, many }) =
     user: one(mUser, {
         fields: [tKuisProgress.idUser],
         references: [mUser.idUser]
+    }),
+    skill: one(mSkill, {
+        fields: [tKuisProgress.idSkill],
+        references: [mSkill.idSkill]
     })
 }));

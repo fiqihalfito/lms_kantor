@@ -8,14 +8,17 @@ export async function getDokumenDataById(idDokumen: string) {
     return res
 }
 
-export async function getCurrentKuis(idDokumen: string) {
-    const res = await db.select().from(tKuis).where(eq(tKuis.idDokumen, idDokumen))
+export async function getCurrentKuis(idKuis: string) {
+    const res = await db.select().from(tKuis).where(eq(tKuis.idKuis, idKuis))
     return res
 }
 
 export async function createKuis(idSubBidang: string, idDokumen: string) {
-    const res = await db.insert(tKuis).values({ idDokumen: idDokumen, idSubBidang: idSubBidang }).returning({ idKuis: tKuis.idKuis })
-    return res
+    const idKuisBaru = await db.insert(tKuis).values({ idSubBidang: idSubBidang }).returning({ idKuis: tKuis.idKuis })
+    await db.update(tDokumen).set({
+        idKuis: idKuisBaru[0].idKuis
+    }).where(eq(tDokumen.idDokumen, idDokumen))
+    return idKuisBaru[0].idKuis
 }
 
 export async function getSoal(idKuis: string) {

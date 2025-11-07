@@ -1,23 +1,45 @@
 import { db } from "database/connect";
-import { mUser, tDokumen, tKuisProgress } from "database/schema/schema";
+import { mSkill, mUser, tDokumen, tKuisProgress } from "database/schema/schema";
 import { and, eq, notInArray } from "drizzle-orm";
 
-export async function getAllSkill(idUser: string) {
-    const res = await db.query.tKuisProgress.findMany({
+export async function getAllSkill(idUser: string, idTeam: string) {
+    const res = await db.query.mSkill.findMany({
         with: {
-            kuis: {
+            kuisProgress: {
+                where: and(
+                    eq(tKuisProgress.idUser, idUser),
+                    eq(tKuisProgress.isSelesai, true)
+                ),
                 with: {
-                    dokumen: {
-                        columns: {
-                            idDokumen: true,
-                            judul: true
+                    kuis: {
+                        with: {
+                            dokumen: {
+                                columns: {
+                                    judul: true
+                                }
+                            }
                         }
                     }
                 }
             }
         },
-        where: eq(tKuisProgress.idUser, idUser)
+        where: eq(mSkill.idTeam, idTeam)
     })
+    // const res = await db.query.tKuisProgress.findMany({
+    //     with: {
+    //         kuis: {
+    //             with: {
+    //                 dokumen: {
+    //                     columns: {
+    //                         idDokumen: true,
+    //                         judul: true
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     },
+    //     where: eq(tKuisProgress.idUser, idUser)
+    // })
 
     return res
 }

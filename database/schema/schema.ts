@@ -80,6 +80,7 @@ export const tDokumen = pgTable('t_dokumen', {
     ...userFK,
     ...teamFK, // null kalau SOP, lainnya wajib
     ...skillFK, // untuk Knowledge
+    ...kuisFK,
     ...timestamps,
 })
 
@@ -104,7 +105,7 @@ export const mSkill = pgTable('m_skill', {
 // === Kuis =================================
 export const tKuis = pgTable('t_kuis', {
     idKuis: uuid("id_kuis").defaultRandom().primaryKey(),
-    idDokumen: uuid("id_dokumen").unique().notNull().references(() => tDokumen.idDokumen, { onDelete: "cascade" }),
+    // idDokumen: uuid("id_dokumen").unique().notNull().references(() => tDokumen.idDokumen, { onDelete: "cascade" }),
     ...subBidangFK,
     ...timestamps
 })
@@ -113,6 +114,7 @@ export const tKuisProgress = pgTable('t_kuis_progress', {
     idKuisProgress: uuid("id_kuis_progress").defaultRandom().primaryKey(),
     ...kuisFK,
     ...userFK, // orang yang jawab soal
+    ...skillFK,
     jumlahBenar: integer("jumlah_benar").default(0),
     jawabanSet: text("jawaban_set"),
     isSelesai: boolean("is_selesai").default(false),

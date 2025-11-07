@@ -1,6 +1,6 @@
 import { Separator } from "~/components/ui/separator";
 import type { Route } from "./+types";
-import { createKuis, getCurrentKuis, getDokumenDataById, getSoal } from "./_service";
+import { createKuis, getDokumenDataById, getSoal } from "./_service";
 import { data, Link, NavLink, Outlet, useLocation } from "react-router";
 import { Button } from "~/components/ui/button";
 import { ChevronLeft, ChevronRightIcon, CircleOffIcon, FilePlusIcon } from "lucide-react";
@@ -17,13 +17,19 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     const { headers, flashData } = await getFlashSession(request)
 
     const dokumen = await getDokumenDataById(params.idDokumen)
-    const currentKuis = await getCurrentKuis(dokumen[0].idDokumen)
-    let idKuis: string | undefined = currentKuis[0]?.idKuis
-    if (currentKuis.length === 0) {
-        const kuis = await createKuis(user?.idSubBidang!, dokumen[0].idDokumen)
-        idKuis = kuis[0].idKuis
+    let idKuis = dokumen[0]?.idKuis
+    if (!idKuis) {
+        idKuis = await createKuis(user?.idSubBidang!, dokumen[0].idDokumen)
     }
     const soal = await getSoal(idKuis)
+
+    // const currentKuis = await getCurrentKuis(dokumen[0].idKuis)
+    // let idKuis: string | undefined = currentKuis[0]?.idKuis
+    // if (currentKuis.length === 0) {
+    //     const kuis = await createKuis(user?.idSubBidang!, dokumen[0].idDokumen)
+    //     idKuis = kuis[0].idKuis
+    // }
+
 
     return data({ dokumen, soal, idKuis, flashData }, { headers })
 }
