@@ -3,7 +3,8 @@ import { db } from "./connect";
 import {
     mLayanan, mSubBidang, tDokumen, mUser, mTeam,
     tStatusBaca, tKuis, tKuisProgress, tKuisElement,
-    mSkill
+    mSkill,
+    mSubSkill
 } from "./schema/schema";
 import { sql } from "drizzle-orm";
 
@@ -104,6 +105,22 @@ async function main() {
     ];
     await db.insert(mSkill).values(skillData);
     const mapSkill = Object.fromEntries(skillData.map((s) => [s.namaSkill!, s.idSkill]));
+
+    // insert subskill
+    console.log("👨‍👩‍👧‍👦 Seeding subskill...");
+
+    const subskillData: typeof mSubSkill.$inferInsert[] = [
+        {
+            namaSubSkill: "Replication",
+            idSkill: mapSkill["PostgreSQL"]
+        },
+        {
+            namaSubSkill: "Backup Restore",
+            idSkill: mapSkill["PostgreSQL"]
+        },
+    ]
+    await db.insert(mSubSkill).values(subskillData);
+    const mapSubSkill = Object.fromEntries(subskillData.map((s) => [s.namaSubSkill!, s.idSubSkill]));
 
     // 3️⃣ Insert users dengan UUID hardcoded
     console.log("👤 Seeding users...");

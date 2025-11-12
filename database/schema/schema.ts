@@ -102,6 +102,12 @@ export const mSkill = pgTable('m_skill', {
     ...subBidangFK
 })
 
+export const mSubSkill = pgTable('m_subskill', {
+    idSubSkill: uuid("id_subskill").defaultRandom().primaryKey(),
+    namaSubSkill: text("nama_subskill").notNull(),
+    ...skillFK,
+})
+
 // === Kuis =================================
 export const tKuis = pgTable('t_kuis', {
     idKuis: uuid("id_kuis").defaultRandom().primaryKey(),

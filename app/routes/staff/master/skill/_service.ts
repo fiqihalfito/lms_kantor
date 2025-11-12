@@ -11,6 +11,12 @@ export async function getAllSkill(idSubBidang: string, filterTeam?: string | nul
                 columns: {
                     nama: true
                 }
+            },
+            subSkill: {
+                columns: {
+                    idSubSkill: true,
+                    namaSubSkill: true
+                }
             }
         },
         where: filterTeam ? eq(mSkill.idTeam, filterTeam) : undefined

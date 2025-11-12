@@ -11,6 +11,7 @@ import {
     tKuisProgress,
     tStatusBaca,
     mSkill,
+    mSubSkill,
     // tDokumenTeam,
 } from "./schema";
 
@@ -142,7 +143,15 @@ export const mSkillRelations = relations(mSkill, ({ many, one }) => ({
         fields: [mSkill.idTeam],
         references: [mTeam.idTeam]
     }),
-    kuisProgress: many(tKuisProgress)
+    kuisProgress: many(tKuisProgress),
+    subSkill: many(mSubSkill)
+}))
+
+export const mSubSkillRelations = relations(mSubSkill, ({ many, one }) => ({
+    skill: one(mSkill, {
+        fields: [mSubSkill.idSkill],
+        references: [mSkill.idSkill]
+    })
 }))
 
 // ================ Kuis Relations ==========================
