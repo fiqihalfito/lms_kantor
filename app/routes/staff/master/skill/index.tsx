@@ -12,7 +12,7 @@ import {
     TableRow,
 } from "~/components/ui/table"
 import { TableWrapper } from "~/components/table-wrapper";
-import { getAllSkill } from "./_service";
+import { getTeamAndSkill } from "./_service";
 import { userContext } from "~/lib/context";
 import { EmptyMaster } from "~/components/empty-master";
 import {
@@ -35,6 +35,7 @@ import { Input } from "~/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "~/components/ui/item";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -43,18 +44,18 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     // filter
     const url = new URL(request.url)
     const filterTeam = url.searchParams.get("team")
-    const skills = await getAllSkill(user?.idSubBidang!, filterTeam)
+    const teamAndSkill = await getTeamAndSkill(user?.idSubBidang!, filterTeam)
 
     // masterFilter
     const listTeam = await getListTeam(user?.idSubBidang!)
 
     const { headers, flashData } = await getFlashSession(request)
-    return data({ skills, flashData, listTeam, filterTeam }, { headers })
+    return data({ teamAndSkill, flashData, listTeam, filterTeam }, { headers })
 }
 
 export default function SkillMaster({ loaderData }: Route.ComponentProps) {
 
-    const { skills, listTeam, flashData, filterTeam } = loaderData
+    const { teamAndSkill, listTeam, flashData, filterTeam } = loaderData
 
 
 
@@ -148,72 +149,135 @@ export default function SkillMaster({ loaderData }: Route.ComponentProps) {
 
             {flashData ? <MyAlert title={flashData.message} status={flashData.type} className="w-1/2" /> : null}
 
-            {skills.length === 0 ? (
+            {teamAndSkill.length === 0 ? (
                 <EmptyMaster Icon={OctagonXIcon} title="Skill" />
             ) : (
                 <div className="flex flex-col gap-2">
                     <div>
                         <FilterSkill listTeam={listTeam} currentFilterTeam={filterTeam} />
                     </div>
-                    <div className="border rounded-md px-4 py-0 w-1/2">
-                        <Accordion type="single" collapsible>
-                            {skills.map((s, i) => (
-                                <AccordionItem value={s.idSkill}>
-                                    <AccordionTrigger>
-                                        <Item variant="outline" size={"sm"} className="w-full">
-                                            <ItemContent>
-                                                <ItemTitle>{s.namaSkill}</ItemTitle>
-                                                <ItemDescription>
-                                                    {s.team?.nama}
-                                                </ItemDescription>
-                                            </ItemContent>
-                                            <ItemActions>
-                                                {/* <Button variant="outline" size="sm">
-                                        Action
-                                    </Button> */}
-                                                <Button size={"icon"} className="cursor-pointer" asChild >
-                                                    <Link to={`edit/${s.idSkill}`} viewTransition>
-                                                        <PencilIcon />
-                                                    </Link>
-                                                </Button>
-
-                                                <AlertDialogDeleteButton idSkill={s.idSkill} nama={s.namaSkill!} />
-                                            </ItemActions>
-                                        </Item>
-
-                                    </AccordionTrigger>
-                                    <AccordionContent>
-                                        {s.subSkill.length === 0 ? (
-                                            <p className="text-muted-foreground ml-4">Belum ada subskill</p>
-                                        ) : (
-                                            <div className="flex flex-col gap-1.5 pl-8">
-                                                {s.subSkill.map((ss, i) => (
-                                                    <Item variant="outline" size={"sm"} className="w-full">
-                                                        <ItemContent>
-                                                            <ItemTitle>{ss.namaSubSkill}</ItemTitle>
-                                                        </ItemContent>
-                                                        {/* <ItemActions>
-                                    <Button variant="outline" size="sm">
-                                        Action
+                    <div className="grid grid-cols-2 gap-4">
+                        {teamAndSkill.map((t, i) => (
+                            <div className="p-4 border rounded-md shadow">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h2 className="text-xs text-muted-foreground">Team</h2>
+                                        <h1 className="font-semibold text-lg ">{t.nama}</h1>
+                                    </div>
+                                    <Button className="cursor-pointer" size={"sm"} variant={"outline"} asChild >
+                                        <Link to={`new`} viewTransition>
+                                            <CircleFadingPlusIcon className="size-5" />
+                                            Tambah Skill
+                                        </Link>
                                     </Button>
-                                </ItemActions> */}
-                                                    </Item>
-                                                ))}
+                                </div>
+                                {t.skill.length === 0 ? (
+                                    <EmptyList text="Belum ada skill" />
+                                ) : (
+                                    <div className="flex flex-col gap-4">
+                                        {t.skill.map((s, i) => (
+                                            <div className="px-4 py-4 border rounded-sm shadow">
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div>
+                                                        <h3 className="text-xs text-muted-foreground">Skill</h3>
+                                                        <h2 className="font-medium">{s.namaSkill}</h2>
+                                                    </div>
+                                                    <div className="flex items-center gap-x-1.5">
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button size={"icon-sm"} variant={"outline"}>
+                                                                    <CircleFadingPlusIcon className="size-5" />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                <p>Tambah SubSkill</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button size={"icon-sm"} variant={"outline"} className="cursor-pointer" asChild >
+                                                                    <Link to={``} viewTransition>
+                                                                        <PencilIcon />
+                                                                    </Link>
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                <p>Edit Skill</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button size={"icon-sm"} variant={"destructive"} className="cursor-pointer" asChild >
+                                                                    <Link to={``} viewTransition>
+                                                                        <TrashIcon />
+                                                                    </Link>
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                <p>Hapus SubSkill</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </div>
+
+                                                </div>
+                                                {s.subSkill.length === 0 ? (
+                                                    <EmptyList text="Belum ada subskill" />
+                                                ) : (
+                                                    <div className="flex flex-col gap-2">
+                                                        {s.subSkill.map((ss, i) => (
+                                                            <div className="border rounded-sm px-2 py-2 text-sm flex items-center justify-between">
+                                                                <span className="ml-2">{ss.namaSubSkill}</span>
+                                                                <div className="flex items-center gap-x-1.5">
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger asChild>
+                                                                            <Button size={"icon-sm"} variant={"outline"} className="cursor-pointer" asChild >
+                                                                                <Link to={``} viewTransition>
+                                                                                    <PencilIcon />
+                                                                                </Link>
+                                                                            </Button>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent>
+                                                                            <p>Edit SubSkill</p>
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger asChild>
+                                                                            <Button size={"icon-sm"} variant={"destructive"} className="cursor-pointer" asChild >
+                                                                                <Link to={``} viewTransition>
+                                                                                    <TrashIcon />
+                                                                                </Link>
+                                                                            </Button>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent>
+                                                                            <p>Hapus SubSkill</p>
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-
-
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
                     </div>
+
                 </div>
-            )}
+            )
+            }
 
 
 
-        </div>
+        </div >
+    )
+}
+
+function EmptyList({ text }: { text: string }) {
+    return (
+        <p className="text-muted-foreground text-sm">{text}</p>
     )
 }
 
