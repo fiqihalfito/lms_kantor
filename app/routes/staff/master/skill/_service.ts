@@ -1,6 +1,7 @@
 import { db } from "database/connect";
-import { mSkill, mTeam } from "database/schema/schema";
+import { mSkill, mSubSkill, mTeam, mUser } from "database/schema/schema";
 import { eq } from "drizzle-orm";
+import { createUpdateSchema } from "drizzle-zod";
 
 
 export async function getTeamAndSkill(idSubBidang: string, filterTeam?: string | null) {
@@ -25,11 +26,42 @@ export async function getTeamAndSkill(idSubBidang: string, filterTeam?: string |
         with: {
             skill: {
                 with: {
-                    subSkill: true
+                    subSkill: {
+                        with: {
+                            pic: {
+                                columns: {
+                                    idUser: true,
+                                    nama: true
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
         where: filterTeam ? eq(mTeam.idTeam, filterTeam) : undefined
     })
     return res
+}
+
+export async function getAllUsers(idSubBidang: string) {
+    const res = await db.select({
+        namaUser: mUser.nama,
+        idUser: mUser.idUser,
+        idTeam: mUser.idTeam
+    })
+        .from(mUser)
+        .where(eq(mUser.idSubBidang, idSubBidang))
+        .orderBy(mUser.nama)
+    return res
+}
+
+export async function updateSubSkill(idSubSkill: string, subSkillData: typeof mSubSkill.$inferInsert) {
+
+    const subskillUpdateSchema = createUpdateSchema(mSubSkill)
+    const parsed = subskillUpdateSchema.parse(subSkillData)
+
+    await db.update(mSubSkill)
+        .set(parsed)
+        .where(eq(mSubSkill.idSubSkill, idSubSkill))
 }

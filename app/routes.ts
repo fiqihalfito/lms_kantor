@@ -72,6 +72,9 @@ export default [
                     route("new", "routes/staff/master/skill/new/index.tsx"),
                     route("delete", "routes/staff/master/skill/delete/index.tsx"),
                     route("edit/:idSkill", "routes/staff/master/skill/edit/index.tsx"),
+                    ...prefix(":idSubSkill", [
+                        route("edit", "routes/staff/master/skill/action/edit-subskill.tsx")
+                    ])
                 ]),
                 route("user", "routes/staff/master/user/index.tsx", [
                     route("new", "routes/staff/master/user/new/index.tsx"),

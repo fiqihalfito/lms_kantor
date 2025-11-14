@@ -39,6 +39,7 @@
         "dotenv": "^17.2.2",
         "drizzle-orm": "^0.44.5",
         "drizzle-seed": "^0.3.1",
+        "drizzle-zod": "^0.8.3",
         "isbot": "^5.1.27",
         "lucide-react": "^0.544.0",
         "minio": "^8.0.6",

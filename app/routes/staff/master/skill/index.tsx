@@ -1,18 +1,9 @@
 import { data, Link, Outlet, useFetcher } from "react-router";
 import type { Route } from "./+types/index";
 import { Button } from "~/components/ui/button";
-import { CircleFadingPlusIcon, Grid2X2PlusIcon, OctagonXIcon, PencilIcon, PlusCircleIcon, TrashIcon } from "lucide-react";
+import { CircleFadingPlusIcon, OctagonXIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { Separator } from "~/components/ui/separator";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "~/components/ui/table"
-import { TableWrapper } from "~/components/table-wrapper";
-import { getTeamAndSkill } from "./_service";
+import { getAllUsers, getTeamAndSkill } from "./_service";
 import { userContext } from "~/lib/context";
 import { EmptyMaster } from "~/components/empty-master";
 import {
@@ -30,12 +21,8 @@ import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
 import { getListTeam } from "./new/_service";
 import { FilterSkill } from "./_components/filter-skill";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
-import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "~/components/ui/item";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
+import { FormSubSkill } from "./_components/form-subskill";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -49,13 +36,16 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     // masterFilter
     const listTeam = await getListTeam(user?.idSubBidang!)
 
+    // masterForm
+    const allUsers = await getAllUsers(user?.idSubBidang!)
+
     const { headers, flashData } = await getFlashSession(request)
-    return data({ teamAndSkill, flashData, listTeam, filterTeam }, { headers })
+    return data({ teamAndSkill, flashData, listTeam, filterTeam, allUsers }, { headers })
 }
 
 export default function SkillMaster({ loaderData }: Route.ComponentProps) {
 
-    const { teamAndSkill, listTeam, flashData, filterTeam } = loaderData
+    const { teamAndSkill, listTeam, flashData, filterTeam, allUsers } = loaderData
 
 
 
@@ -158,7 +148,7 @@ export default function SkillMaster({ loaderData }: Route.ComponentProps) {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         {teamAndSkill.map((t, i) => (
-                            <div className="p-4 border rounded-md shadow">
+                            <div key={t.idTeam} className="p-4 border rounded-md shadow">
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
                                         <h2 className="text-xs text-muted-foreground">Team</h2>
@@ -176,7 +166,7 @@ export default function SkillMaster({ loaderData }: Route.ComponentProps) {
                                 ) : (
                                     <div className="flex flex-col gap-4">
                                         {t.skill.map((s, i) => (
-                                            <div className="px-4 py-4 border rounded-sm shadow">
+                                            <div key={s.idSkill} className="px-4 py-4 border rounded-sm shadow">
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div>
                                                         <h3 className="text-xs text-muted-foreground">Skill</h3>
@@ -225,10 +215,13 @@ export default function SkillMaster({ loaderData }: Route.ComponentProps) {
                                                 ) : (
                                                     <div className="flex flex-col gap-2">
                                                         {s.subSkill.map((ss, i) => (
-                                                            <div className="border rounded-sm px-2 py-2 text-sm flex items-center justify-between">
-                                                                <span className="ml-2">{ss.namaSubSkill}</span>
+                                                            <div key={ss.idSubSkill} className="border rounded-sm px-2 py-2 text-sm flex items-center justify-between">
+                                                                <div className="ml-2">
+                                                                    <span >{ss.namaSubSkill}</span>
+                                                                    <p className="text-xs text-muted-foreground">PIC: {ss.pic?.nama}</p>
+                                                                </div>
                                                                 <div className="flex items-center gap-x-1.5">
-                                                                    <Tooltip>
+                                                                    {/* <Tooltip>
                                                                         <TooltipTrigger asChild>
                                                                             <Button size={"icon-sm"} variant={"outline"} className="cursor-pointer" asChild >
                                                                                 <Link to={``} viewTransition>
@@ -239,7 +232,17 @@ export default function SkillMaster({ loaderData }: Route.ComponentProps) {
                                                                         <TooltipContent>
                                                                             <p>Edit SubSkill</p>
                                                                         </TooltipContent>
-                                                                    </Tooltip>
+                                                                    </Tooltip> */}
+                                                                    <FormSubSkill
+                                                                        allUsers={allUsers}
+                                                                        idTeam={t.idTeam}
+                                                                        mode="update"
+                                                                        idSubSkill={ss.idSubSkill}
+                                                                        dv={{
+                                                                            namaSubSkill: ss.namaSubSkill,
+                                                                            idUser: ss.idUser
+                                                                        }}
+                                                                    />
                                                                     <Tooltip>
                                                                         <TooltipTrigger asChild>
                                                                             <Button size={"icon-sm"} variant={"destructive"} className="cursor-pointer" asChild >

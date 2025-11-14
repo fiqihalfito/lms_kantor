@@ -40,7 +40,8 @@ export const mUserRelations = relations(mUser, ({ one, many }) => ({
         references: [mTeam.idTeam]
     }),
     kuisProgress: many(tKuisProgress),
-    statusBaca: many(tStatusBaca)
+    statusBaca: many(tStatusBaca),
+    subskill: many(mSubSkill)
 
 }));
 
@@ -151,6 +152,10 @@ export const mSubSkillRelations = relations(mSubSkill, ({ many, one }) => ({
     skill: one(mSkill, {
         fields: [mSubSkill.idSkill],
         references: [mSkill.idSkill]
+    }),
+    pic: one(mUser, {
+        fields: [mSubSkill.idUser],
+        references: [mUser.idUser]
     })
 }))
 

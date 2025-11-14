@@ -106,21 +106,7 @@ async function main() {
     await db.insert(mSkill).values(skillData);
     const mapSkill = Object.fromEntries(skillData.map((s) => [s.namaSkill!, s.idSkill]));
 
-    // insert subskill
-    console.log("👨‍👩‍👧‍👦 Seeding subskill...");
 
-    const subskillData: typeof mSubSkill.$inferInsert[] = [
-        {
-            namaSubSkill: "Replication",
-            idSkill: mapSkill["PostgreSQL"]
-        },
-        {
-            namaSubSkill: "Backup Restore",
-            idSkill: mapSkill["PostgreSQL"]
-        },
-    ]
-    await db.insert(mSubSkill).values(subskillData);
-    const mapSubSkill = Object.fromEntries(subskillData.map((s) => [s.namaSubSkill!, s.idSubSkill]));
 
     // 3️⃣ Insert users dengan UUID hardcoded
     console.log("👤 Seeding users...");
@@ -161,6 +147,24 @@ async function main() {
 
     // Mapping user
     const mapUser = Object.fromEntries([...usersS1, ...usersOther].map((u) => [u.email!, u.idUser]));
+
+    // insert subskill
+    console.log("👨‍👩‍👧‍👦 Seeding subskill...");
+
+    const subskillData: typeof mSubSkill.$inferInsert[] = [
+        {
+            namaSubSkill: "Replication",
+            idSkill: mapSkill["PostgreSQL"],
+            idUser: mapUser[usersS1[0].email]
+        },
+        {
+            namaSubSkill: "Backup Restore",
+            idSkill: mapSkill["PostgreSQL"],
+            idUser: mapUser[usersS1[1].email]
+        },
+    ]
+    await db.insert(mSubSkill).values(subskillData);
+    const mapSubSkill = Object.fromEntries(subskillData.map((s) => [s.namaSubSkill!, s.idSubSkill]));
 
 
 

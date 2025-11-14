@@ -34,7 +34,6 @@ export function FilterSkill({ listTeam, currentFilterTeam }: FilterSkillType) {
     //   }
     // }, [currentFilterTeam])
 
-    console.log("reset", currentFilterTeam ?? undefined);
 
 
     return (
@@ -51,7 +50,7 @@ export function FilterSkill({ listTeam, currentFilterTeam }: FilterSkillType) {
                         <SelectGroup>
                             <SelectLabel>Team</SelectLabel>
                             {listTeam.map((team, i) => (
-                                <SelectItem value={team.idTeam}>{team.nama}</SelectItem>
+                                <SelectItem key={team.idTeam} value={team.idTeam}>{team.nama}</SelectItem>
                             ))}
                         </SelectGroup>
 
