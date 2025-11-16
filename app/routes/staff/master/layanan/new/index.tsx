@@ -4,7 +4,7 @@ import type { Route } from "./+types/index";
 import { mInsertNewLayananValidation, saveNewLayanan } from "./_service";
 import { data, redirect } from "react-router";
 import * as z from "zod";
-import { setFlashSession } from "~/lib/session.server";
+import { redirectWithSuccess } from "remix-toast";
 
 export async function action({ request, context }: Route.ActionArgs) {
 
@@ -21,13 +21,14 @@ export async function action({ request, context }: Route.ActionArgs) {
 
     await saveNewLayanan(user?.idSubBidang!, validated.data.namaLayanan)
 
-    const flashHeaders = await setFlashSession(request, {
-        type: "success",
-        message: `Layanan ${validated.data.namaLayanan} berhasil disimpan`
-    })
-    return redirect("..", {
-        headers: flashHeaders
-    })
+    // const flashHeaders = await setFlashSession(request, {
+    //     type: "success",
+    //     message: `Layanan ${validated.data.namaLayanan} berhasil disimpan`
+    // })
+    // return redirect("..", {
+    //     headers: flashHeaders
+    // })
+    return redirectWithSuccess("..", `Layanan ${validated.data.namaLayanan} berhasil disimpan`)
 }
 
 export default function NewLayanan({ }: Route.ComponentProps) {

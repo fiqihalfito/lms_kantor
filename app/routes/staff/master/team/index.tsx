@@ -26,22 +26,24 @@ import {
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import { Spinner } from "~/components/ui/spinner";
-import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
+import { getToast } from "remix-toast";
+import { useToastEffect } from "~/hooks/use-toast";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
     const teams = await getAllTeam(user?.idSubBidang!)
 
-    const { headers, flashData } = await getFlashSession(request)
-    return data({ teams, flashData }, { headers })
+    const { headers, toast } = await getToast(request)
+    return data({ teams, toast }, { headers })
 }
 
 export default function TeamMaster({ loaderData }: Route.ComponentProps) {
 
-    const { teams, flashData } = loaderData
+    const { teams, toast } = loaderData
 
+    useToastEffect(toast)
 
 
     return (
@@ -63,7 +65,6 @@ export default function TeamMaster({ loaderData }: Route.ComponentProps) {
 
             <Outlet />
 
-            {flashData ? <MyAlert title={flashData.message} status={flashData.type} className="w-1/2" /> : null}
 
             {teams.length === 0 ? (
                 <EmptyMaster Icon={OctagonXIcon} title="Team" />

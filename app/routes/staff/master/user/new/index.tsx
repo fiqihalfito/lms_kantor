@@ -4,7 +4,7 @@ import type { Route } from "./+types/index";
 import { getUserByEmail, mInsertNewUserValidation, saveNewUser } from "./_service";
 import { data, redirect } from "react-router";
 import * as z from "zod";
-import { setFlashSession } from "~/lib/session.server";
+import { redirectWithSuccess } from "remix-toast";
 
 export async function action({ request, context }: Route.ActionArgs) {
 
@@ -36,13 +36,15 @@ export async function action({ request, context }: Route.ActionArgs) {
         password: "123"
     })
 
-    const flashHeaders = await setFlashSession(request, {
-        type: "success",
-        message: `User ${validated.data.namaUser} berhasil disimpan`
-    })
-    return redirect("..", {
-        headers: flashHeaders
-    })
+    // const flashHeaders = await setFlashSession(request, {
+    //     type: "success",
+    //     message: `User ${validated.data.namaUser} berhasil disimpan`
+    // })
+    // return redirect("..", {
+    //     headers: flashHeaders
+    // })
+
+    return redirectWithSuccess("..", `User ${validated.data.namaUser} berhasil disimpan`)
 }
 
 export default function NewLayanan({ }: Route.ComponentProps) {

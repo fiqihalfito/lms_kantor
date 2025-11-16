@@ -1,7 +1,7 @@
 import { redirect } from "react-router";
 import type { Route } from "./+types/index";
 import { deleteUser } from "./_service";
-import { setFlashSession } from "~/lib/session.server";
+import { redirectWithSuccess } from "remix-toast";
 
 export async function action({ request, params }: Route.ActionArgs) {
 
@@ -13,11 +13,12 @@ export async function action({ request, params }: Route.ActionArgs) {
     if (action === "delete") {
         let deletedNamaUser = await deleteUser(idUser)
 
-        const flashHeaders = await setFlashSession(request, {
-            type: "success",
-            message: `Layanan ${deletedNamaUser[0].namaUser} berhasil dihapus`
-        })
-        return redirect("..", { headers: flashHeaders })
+        // const flashHeaders = await setFlashSession(request, {
+        //     type: "success",
+        //     message: `Layanan ${deletedNamaUser[0].namaUser} berhasil dihapus`
+        // })
+        // return redirect("..", { headers: flashHeaders })
+        return redirectWithSuccess("..", `User ${deletedNamaUser[0].namaUser} berhasil dihapus`)
     }
 
 

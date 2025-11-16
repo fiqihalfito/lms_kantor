@@ -26,23 +26,24 @@ import {
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import { Spinner } from "~/components/ui/spinner";
-import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
+import { getToast } from "remix-toast";
+import { useToastEffect } from "~/hooks/use-toast";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
     const users = await getAllUser(user?.idSubBidang!)
 
-    const { headers, flashData } = await getFlashSession(request)
-    return data({ users, flashData }, { headers })
+    const { headers, toast } = await getToast(request)
+    return data({ users, toast }, { headers })
 }
 
 export default function UserMaster({ loaderData }: Route.ComponentProps) {
 
-    const { users, flashData } = loaderData
+    const { users, toast } = loaderData
 
-
+    useToastEffect(toast)
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-8 pt-2">
@@ -63,7 +64,6 @@ export default function UserMaster({ loaderData }: Route.ComponentProps) {
 
             <Outlet />
 
-            {flashData ? <MyAlert title={flashData.message} status={flashData.type} className="w-2/3" /> : null}
 
             {users.length === 0 ? (
                 <EmptyMaster Icon={OctagonXIcon} title="Users" />

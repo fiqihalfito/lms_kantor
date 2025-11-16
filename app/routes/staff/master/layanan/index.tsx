@@ -26,23 +26,25 @@ import {
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import { Spinner } from "~/components/ui/spinner";
-import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
+import { getToast } from "remix-toast";
+import { useToastEffect } from "~/hooks/use-toast";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
     const layanans = await getAllLayanan(user?.idSubBidang!)
 
-    const { headers, flashData } = await getFlashSession(request)
-    return data({ layanans, flashData }, { headers })
+    // const { headers, flashData } = await getFlashSession(request)
+    const { headers, toast } = await getToast(request)
+    return data({ layanans, toast }, { headers })
 }
 
 export default function LayananMaster({ loaderData }: Route.ComponentProps) {
 
-    const { layanans, flashData } = loaderData
+    const { layanans, toast } = loaderData
 
-
+    useToastEffect(toast)
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-8 pt-2">
@@ -63,7 +65,6 @@ export default function LayananMaster({ loaderData }: Route.ComponentProps) {
 
             <Outlet />
 
-            {flashData ? <MyAlert title={flashData.message} status={flashData.type} className="w-1/2" /> : null}
 
             {layanans.length === 0 ? (
                 <EmptyMaster Icon={OctagonXIcon} title="Layanan" />

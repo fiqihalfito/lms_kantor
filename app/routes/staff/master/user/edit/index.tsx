@@ -3,7 +3,7 @@ import type { Route } from "./+types/index";
 import { getUserByEmail, getUserById, mUpdateUserValidation, updateUser } from "./_service";
 import z from "zod";
 import { data, redirect } from "react-router";
-import { setFlashSession } from "~/lib/session.server";
+import { redirectWithSuccess } from "remix-toast";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
 
@@ -37,11 +37,12 @@ export async function action({ request, params }: Route.ActionArgs) {
         email: validated.data.email
     })
 
-    const flashHeaders = await setFlashSession(request, {
-        type: "success",
-        message: `Berhasil diubah ke [${validated.data.namaUser}] dan email [${validated.data.email}]`
-    })
-    return redirect("..", { headers: flashHeaders })
+    // const flashHeaders = await setFlashSession(request, {
+    //     type: "success",
+    //     message: `Berhasil diubah ke [${validated.data.namaUser}] dan email [${validated.data.email}]`
+    // })
+    // return redirect("..", { headers: flashHeaders })
+    return redirectWithSuccess("..", `Berhasil diubah ke [${validated.data.namaUser}] dan email [${validated.data.email}]`)
 }
 
 export default function EditLayanan({ loaderData }: Route.ComponentProps) {

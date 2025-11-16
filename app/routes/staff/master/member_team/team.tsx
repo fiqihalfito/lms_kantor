@@ -25,7 +25,6 @@ import {
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import { Spinner } from "~/components/ui/spinner";
-import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
 import {
     DropdownMenu,
@@ -37,6 +36,8 @@ import {
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { useCallback } from "react";
+import { getToast } from "remix-toast";
+import { useToastEffect } from "~/hooks/use-toast";
 
 export async function loader({ request, context, params }: Route.LoaderArgs) {
 
@@ -46,13 +47,15 @@ export async function loader({ request, context, params }: Route.LoaderArgs) {
     const nameTeam = await getTeamName(params.idTeam)
     const otherTeam = await getOtherTeamDataExceptThisTeam(params.idTeam)
 
-    const { headers, flashData } = await getFlashSession(request)
-    return data({ members, flashData, nameTeam: nameTeam[0].namaTeam, otherTeam }, { headers })
+    const { headers, toast } = await getToast(request)
+    return data({ members, toast, nameTeam: nameTeam[0].namaTeam, otherTeam }, { headers })
 }
 
 export default function MemberTeamMaster({ loaderData }: Route.ComponentProps) {
 
-    const { members, flashData, nameTeam, otherTeam } = loaderData
+    const { members, toast, nameTeam, otherTeam } = loaderData
+
+    useToastEffect(toast)
 
     const submit = useSubmit()
     const handleSubmit = useCallback(({
@@ -90,7 +93,6 @@ export default function MemberTeamMaster({ loaderData }: Route.ComponentProps) {
 
             <Separator />
 
-            {flashData ? <MyAlert title={flashData.message} status={flashData.type} className="w-1/2" /> : null}
 
             {members.length === 0 ? (
                 <EmptyMaster Icon={OctagonXIcon} title="Member team" />
