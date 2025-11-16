@@ -17,9 +17,8 @@ import {
     removeTempFileIfValidationFail, uploadToMinioTemp
 } from "~/lib/minio.server";
 import * as z from "zod"
-import { data, redirect } from "react-router";
-import { FIRST_SEGMENT } from "~/lib/route-config";
-import { setFlashSession } from "~/lib/session.server";
+import { data } from "react-router";
+import { redirectWithSuccess } from "remix-toast";
 
 export async function action({
     request,
@@ -76,12 +75,7 @@ export async function action({
         // idTeam
     })
 
-    const headers = await setFlashSession(request, {
-        type: "success",
-        message: `Dokumen ${validated.data.judul} berhasil diupdate`
-    })
-
-    return redirect(`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}`, { headers })
+    return redirectWithSuccess(`..`, `Dokumen ${validated.data.judul} berhasil diupdate`)
 }
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {

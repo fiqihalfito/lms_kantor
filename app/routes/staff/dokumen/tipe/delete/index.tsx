@@ -1,7 +1,6 @@
 import { wait } from "~/lib/utils";
 import type { Route } from "./+types/index";
 import { deleteDokumen, getJudulDokumen } from "./_service";
-import { setFlashSession } from "~/lib/session.server";
 import { data, redirect, useNavigate } from "react-router";
 
 import {
@@ -14,15 +13,18 @@ import {
 import { useFetcher } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
+import { redirectWithSuccess } from "remix-toast";
 
 export async function action({ request, params }: Route.ActionArgs) {
 
     let deletedJudul = await deleteDokumen(params.idDokumen)
-    const headers = await setFlashSession(request, {
-        type: "success",
-        message: "Berhasil menghapus dokumen " + deletedJudul
-    })
-    return redirect(`..`, { headers })
+    // const headers = await setFlashSession(request, {
+    //     type: "success",
+    //     message: "Berhasil menghapus dokumen " + deletedJudul
+    // })
+    // return redirect(`..`, { headers })
+    return redirectWithSuccess(`..`, "Berhasil menghapus dokumen " + deletedJudul)
+
 }
 
 export async function loader({ request, params }: Route.LoaderArgs) {

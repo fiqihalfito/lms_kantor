@@ -82,14 +82,6 @@ export async function action({
         idSkill: validated.data.skill
     })
 
-
-    // const headers = await setFlashSession(request, {
-    //     type: "success",
-    //     message: `Dokumen ${validated.data.judul} berhasil ditambahkan`
-    // })
-
-    // return redirect(`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}`, { headers })
-
     return redirectWithSuccess(`..`, `Dokumen ${validated.data.judul} berhasil ditambahkan`)
 
 
@@ -98,9 +90,6 @@ export async function action({
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
-
-    console.log("context user", user);
-
 
     let listLayananDropdown
     if (params.tipeDokumen === "IK") {
