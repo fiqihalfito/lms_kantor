@@ -4,11 +4,10 @@ import { and, eq } from "drizzle-orm";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
 import "dotenv/config"
-import type { UserDataForSession } from "./session.server";
 
 
 
-export let authenticator = new Authenticator<UserDataForSession[]>();
+export let authenticator = new Authenticator<string | null>();
 
 authenticator.use(
     new FormStrategy(async ({ form, request }) => {
@@ -21,16 +20,16 @@ authenticator.use(
 
 
         // And finally, you can find, or create, the user
-        let user = await getUserByEmailandPassword(email, password);
+        let idUser = await getIdUserByEmailandPassword(email, password);
 
         // And return the user as the Authenticator expects it
-        return user
+        return idUser
     })
 );
 
-export async function getUserByEmailandPassword(email: string, password: string) {
+export async function getIdUserByEmailandPassword(email: string, password: string) {
     const res = await db.select().from(mUser).where(and(eq(mUser.email, email), eq(mUser.password, password)))
-    return res
+    return res.length > 0 ? res[0].idUser : null
 }
 
 

@@ -9,7 +9,5 @@ export const middleware: Route.MiddlewareFunction[] = [
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
-
-
     return { user }
 }

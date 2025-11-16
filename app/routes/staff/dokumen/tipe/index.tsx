@@ -42,12 +42,13 @@ import {
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { useEffect, useState } from "react";
-import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
 import { Badge } from "~/components/ui/badge";
 import { Filter } from "./_components/filter";
 import { Search } from "./_components/search";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
+import { useToastEffect } from "~/hooks/use-toast";
+import { getToast } from "remix-toast";
 
 
 
@@ -101,14 +102,15 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
         skill
     }
 
+    // get toast
+    const { toast, headers } = await getToast(request)
 
-    const { flashData, headers } = await getFlashSession(request)
     return data({
         dokumens,
         filterData,
-        flashData,
         currentLoginIdUser: user?.idUser,
-        activeFilter
+        activeFilter,
+        toast
     },
         { headers }
     )
@@ -119,7 +121,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 
 export default function DokumenIndex({ loaderData, params }: Route.ComponentProps) {
 
-    const { dokumens, flashData, currentLoginIdUser, filterData, activeFilter } = loaderData
+    const { dokumens, toast, currentLoginIdUser, filterData, activeFilter } = loaderData
 
     const tipeMapping: Record<any, any> = {
         descPage: {
@@ -132,12 +134,16 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
     const mulaiKuisSubmit = useSubmit()
-    const handleMulaiKuis = (idKuis: string) => {
+    const handleMulaiKuis = (idKuis: string | null) => {
+        if (idKuis === null) return
+
         mulaiKuisSubmit(null, {
             action: `/${FIRST_SEGMENT}/kuis/mulai-kuis/init/${idKuis}`,
             method: "post"
         })
     }
+
+    useToastEffect(toast)
 
 
 
@@ -163,7 +169,7 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
 
             <Outlet />
 
-            {flashData && <MyAlert status={flashData.type} title={flashData.message} />}
+            {/* {flashData && <MyAlert status={flashData.type} title={flashData.message} />} */}
 
 
             <div className="flex gap-4">
@@ -228,17 +234,6 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                     )}
 
                                     <TableCell className="text-right space-x-1.5">
-                                        {/* <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/preview/${d.idDokumen}`} viewTransition>
-                                            <Button size={"icon"} className="cursor-pointer" >
-                                                <EyeIcon />
-                                            </Button>
-                                        </Link>
-
-                                        <Link to={`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}/edit/${d.idDokumen}`} viewTransition>
-                                            <Button size={"icon"} className="cursor-pointer" >
-                                                <PencilIcon />
-                                            </Button>
-                                        </Link> */}
 
                                         <DropdownMenu modal={false}>
                                             <DropdownMenuTrigger asChild>
@@ -263,7 +258,6 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                             Edit
                                                             <DropdownMenuShortcut>
                                                                 {currentLoginIdUser !== d.idUser ? (
-                                                                    // <Badge variant={"destructive"} className="tracking-wider rounded-full">Dilarang</Badge>
                                                                     <span className="text-red-600 text-xs">dilarang</span>
                                                                 ) : (
                                                                     <PencilIcon />
@@ -277,7 +271,7 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                     <>
                                                         <DropdownMenuSeparator />
                                                         <DropdownMenuGroup>
-                                                            <DropdownMenuItem disabled={d.statusBaca[0]?.isRead === false || !Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length < 10} onClick={() => handleMulaiKuis(d.kuis.idKuis)}>
+                                                            <DropdownMenuItem disabled={d.statusBaca[0]?.isRead === false || d.kuis === null || d?.kuis?.kuisElement?.length < 10} onClick={() => handleMulaiKuis(d.idKuis)}>
                                                                 Mulai Kuis
                                                                 <DropdownMenuShortcut>
                                                                     {d.statusBaca[0]?.isRead === false ? (
@@ -285,7 +279,7 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                                                         <span className="text-red-600 ">Baca dulu</span>
                                                                     ) : (
                                                                         <>
-                                                                            {!Boolean(d.kuis?.idKuis) || d?.kuis?.kuisElement?.length < 10 ? (
+                                                                            {d.kuis === null || d?.kuis?.kuisElement?.length < 10 ? (
                                                                                 // <Badge variant={"destructive"} className="tracking-wider rounded-full">Belum dibuat</Badge>
                                                                                 <span className="text-red-600 ">Belum dibuat</span>
                                                                             ) : (

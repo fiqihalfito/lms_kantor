@@ -1,35 +1,5 @@
 import type { Route } from "./+types/index";
-import {
-    Card,
-    CardAction,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "~/components/ui/card"
-import {
-    Field,
-    FieldDescription,
-    FieldError,
-    FieldGroup,
-    FieldLabel,
-    FieldLegend,
-    FieldSeparator,
-    FieldSet,
-} from "~/components/ui/field"
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "~/components/ui/select"
-import { LoaderCircleIcon, XIcon } from "lucide-react";
-import { data, Link, redirect, useFetcher } from "react-router";
-import { Input } from "~/components/ui/input";
+import { data } from "react-router";
 import * as z from "zod";
 import {
     moveToRealBucket,
@@ -42,12 +12,10 @@ import {
 
 } from "@remix-run/form-data-parser";
 import { getListLayananDropdown, getListSkillDropdown, saveNewDokumen, tInsertNewDokumenValidation } from "./_service";
-import { FIRST_SEGMENT } from "~/lib/route-config";
 import { userContext } from "~/lib/context";
-import { Button } from "~/components/ui/button";
 import { FormDokumen } from "../_components/FormDokumen";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
-import { setFlashSession } from "~/lib/session.server";
+import { redirectWithSuccess } from "remix-toast";
 
 export async function action({
     request,
@@ -115,12 +83,14 @@ export async function action({
     })
 
 
-    const headers = await setFlashSession(request, {
-        type: "success",
-        message: `Dokumen ${validated.data.judul} berhasil ditambahkan`
-    })
+    // const headers = await setFlashSession(request, {
+    //     type: "success",
+    //     message: `Dokumen ${validated.data.judul} berhasil ditambahkan`
+    // })
 
-    return redirect(`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}`, { headers })
+    // return redirect(`/${FIRST_SEGMENT}/dokumen/${params.tipeDokumen}`, { headers })
+
+    return redirectWithSuccess(`..`, `Dokumen ${validated.data.judul} berhasil ditambahkan`)
 
 
 }
@@ -128,6 +98,10 @@ export async function action({
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
+
+    console.log("context user", user);
+
+
     let listLayananDropdown
     if (params.tipeDokumen === "IK") {
         listLayananDropdown = await getListLayananDropdown(user?.idSubBidang!)
