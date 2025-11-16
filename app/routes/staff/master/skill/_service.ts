@@ -56,6 +56,11 @@ export async function getAllUsers(idSubBidang: string) {
     return res
 }
 
+export async function getListTeam(idSubBidang: string) {
+    const res = await db.select().from(mTeam).where(eq(mTeam.idSubBidang, idSubBidang))
+    return res
+}
+
 export async function updateSubSkill(idSubSkill: string, subSkillData: typeof mSubSkill.$inferInsert) {
 
     const subskillUpdateSchema = createUpdateSchema(mSubSkill)

@@ -1,8 +1,8 @@
-import { setFlashSession } from "~/lib/session.server";
 import { FormKuis } from "../_components/FormKuis";
 import type { Route } from "./+types/index";
 import { redirect } from "react-router";
 import { saveNewSoal, tInsertKuisElementValidation } from "./_service";
+import { redirectWithSuccess } from "remix-toast";
 
 export async function action({ request, params }: Route.ActionArgs) {
 
@@ -25,12 +25,13 @@ export async function action({ request, params }: Route.ActionArgs) {
         jawaban: validated.data?.jawaban
     })
 
-    const flashHeaders = await setFlashSession(request, {
-        type: "success",
-        message: "Berhasil menambahkan soal"
-    })
+    // const flashHeaders = await setFlashSession(request, {
+    //     type: "success",
+    //     message: "Berhasil menambahkan soal"
+    // })
 
-    return redirect("..", { headers: flashHeaders })
+    // return redirect("..", { headers: flashHeaders })
+    return redirectWithSuccess("..", `Berhasil menambahkan soal`)
 }
 
 

@@ -1,14 +1,5 @@
 import { createCookieSessionStorage } from "react-router";
 
-// export type FlashData = {
-//     type: "success" | "error";
-//     message: string;
-// };
-
-// let SESSION_FLASH_KEY = "flashMessage"
-// export type SessionFlashMessage = {
-//     [SESSION_FLASH_KEY]: FlashData
-// }
 
 export type SessionUser = string
 export let SESSION_KEY = 'idUser'
@@ -18,7 +9,6 @@ export const sessionStorage = createCookieSessionStorage<
     {
         [SESSION_KEY]: SessionUser
     }
-// SessionFlashMessage
 >({
     cookie: {
         name: '__session',

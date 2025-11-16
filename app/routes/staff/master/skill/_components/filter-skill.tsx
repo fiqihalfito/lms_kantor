@@ -8,12 +8,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "~/components/ui/select"
-import type { getListTeam } from "../new/_service"
-import { useEffect } from "react"
-import { Field, FieldGroup, FieldLabel, FieldSet } from "~/components/ui/field"
-import { Label } from "~/components/ui/label"
 import { Button } from "~/components/ui/button"
 import { XCircleIcon } from "lucide-react"
+import type { getListTeam } from "../_service"
 
 type FilterSkillType = {
     listTeam: Awaited<ReturnType<typeof getListTeam>>,
@@ -25,14 +22,6 @@ export function FilterSkill({ listTeam, currentFilterTeam }: FilterSkillType) {
     const submit = useSubmit();
 
     const [searchParams, setSearchParams] = useSearchParams()
-
-    // useEffect(() => {
-    //   first
-
-    //   return () => {
-    //     second
-    //   }
-    // }, [currentFilterTeam])
 
 
 
@@ -64,9 +53,6 @@ export function FilterSkill({ listTeam, currentFilterTeam }: FilterSkillType) {
                 )}
 
             </div>
-
-
-
 
         </Form>
 

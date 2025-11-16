@@ -7,7 +7,7 @@ import { FIRST_SEGMENT } from "~/lib/route-config";
 export async function action({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
-    const kuisProgressExist = await checkKuisProgressExist(params.idKuis, user?.idUser!)
+    const kuisProgressExist = await checkKuisProgressExist(params.idKuis, user.idUser)
     if (kuisProgressExist.length > 0) {
         if (kuisProgressExist[0].isSelesai) {
             await resetKuis(kuisProgressExist[0].idKuisProgress)

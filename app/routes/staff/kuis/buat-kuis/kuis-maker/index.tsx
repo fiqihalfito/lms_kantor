@@ -6,15 +6,15 @@ import { Button } from "~/components/ui/button";
 import { ChevronLeft, ChevronRightIcon, CircleOffIcon, FilePlusIcon } from "lucide-react";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "~/components/ui/item";
 import { FIRST_SEGMENT } from "~/lib/route-config";
-import { getFlashSession } from "~/lib/session.server";
 import { MyAlert } from "~/components/alert-custom";
 import { Spinner } from "~/components/ui/spinner";
 import { userContext } from "~/lib/context";
+import { getToast } from "remix-toast";
+import { useToastEffect } from "~/hooks/use-toast";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
-    const { headers, flashData } = await getFlashSession(request)
 
     const dokumen = await getDokumenDataById(params.idDokumen)
     let idKuis = dokumen[0]?.idKuis
@@ -31,16 +31,18 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     // }
 
 
-    return data({ dokumen, soal, idKuis, flashData }, { headers })
+    const { headers, toast } = await getToast(request)
+    return data({ dokumen, soal, idKuis, toast }, { headers })
 }
 
 
 export default function KuisMaker({ params, loaderData }: Route.ComponentProps) {
 
-    const { dokumen, soal, idKuis, flashData } = loaderData
+    const { dokumen, soal, idKuis, toast } = loaderData
     let location = useLocation()
     let currentPathname = location.pathname
 
+    useToastEffect(toast)
 
 
     return (
@@ -88,7 +90,7 @@ export default function KuisMaker({ params, loaderData }: Route.ComponentProps) 
                         </div>
                     ) : (
                         <ItemGroup className="gap-4">
-                            {flashData ? <MyAlert title={flashData.message} status={flashData.type} className="w-1/2x" /> : null}
+                            {/* {flashData ? <MyAlert title={flashData.message} status={flashData.type} className="w-1/2x" /> : null} */}
                             {soal.map((s, i) => (
                                 <Item variant="outline" key={s.idKuisElement} className="hover:bg-secondary">
                                     <ItemMedia variant="icon">

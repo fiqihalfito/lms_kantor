@@ -1,13 +1,13 @@
+// delete skill component
+
 import { TrashIcon } from "lucide-react"
+import { useEffect, useState } from "react"
 import { useFetcher } from "react-router"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "~/components/ui/alert-dialog"
 import { Button } from "~/components/ui/button"
 import { Spinner } from "~/components/ui/spinner"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip"
 
-type DeleteSubSkillType = {
-    idSubSkill: string
-}
 
 export function DeleteSubSkill({
     idSubSkill,
@@ -20,12 +20,21 @@ export function DeleteSubSkill({
 }) {
 
     const fetcher = useFetcher({ key: "delete_subskill" })
-
     const isDeleting = fetcher.state !== "idle"
+
+    const [open, setOpen] = useState(false)
+
+
+    useEffect(() => {
+        if (fetcher.state === "idle" && fetcher.data?.ok) {
+            setOpen(false)
+        }
+    }, [fetcher.state, fetcher.data])
+
 
 
     return (
-        <AlertDialog>
+        <AlertDialog open={open} onOpenChange={setOpen}>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <AlertDialogTrigger asChild>

@@ -1,3 +1,5 @@
+// action delete subskill
+
 import { dataWithError, dataWithSuccess } from "remix-toast";
 import { deleteSubSkill } from "../_service";
 import type { Route } from "./+types/delete-subskill";

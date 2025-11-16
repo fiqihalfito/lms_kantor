@@ -1,4 +1,4 @@
-import type { getAllUsers, getTeamAndSkill } from "../_service"
+import type { getAllUsers, getListTeam, getTeamAndSkill } from "../_service"
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { CircleFadingPlusIcon, OctagonXIcon, PencilIcon, TrashIcon } from "lucide-react";
@@ -6,7 +6,6 @@ import { EmptyMaster } from "~/components/empty-master";
 import { FilterSkill } from "./filter-skill";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
 import { FormSubSkill } from "./form-subskill";
-import type { getListTeam } from "../new/_service";
 import { DeleteSubSkill } from "./delete-subskill";
 import { FormSkill } from "./form-skill";
 import { DeleteSkill } from "./delete-skill";

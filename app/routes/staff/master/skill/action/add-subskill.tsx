@@ -1,12 +1,12 @@
+// action add subskill
+
 import { insertSubSkill } from "../_service";
 import type { Route } from "./+types/add-subskill";
 import z from "zod";
-import { wait } from "~/lib/utils";
 import { dataWithError, dataWithSuccess } from "remix-toast";
 
 export async function action({ request, params }: Route.ActionArgs) {
 
-    // await wait(3000)
 
     const formData = await request.formData()
     const newSubSkill = Object.fromEntries(formData)

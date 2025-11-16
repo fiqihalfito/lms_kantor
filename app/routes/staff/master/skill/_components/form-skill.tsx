@@ -1,3 +1,4 @@
+// form add or edit skill
 
 import {
     Card,
@@ -26,7 +27,6 @@ import { Link, useFetcher } from "react-router";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
-import type { getListTeam } from "../new/_service";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip"
 import {
     Dialog,

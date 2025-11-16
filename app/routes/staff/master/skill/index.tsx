@@ -3,9 +3,8 @@ import type { Route } from "./+types/index";
 import { Button } from "~/components/ui/button";
 import { CircleFadingPlusIcon } from "lucide-react";
 import { Separator } from "~/components/ui/separator";
-import { getAllUsers, getTeamAndSkill } from "./_service";
+import { getAllUsers, getListTeam, getTeamAndSkill } from "./_service";
 import { userContext } from "~/lib/context";
-import { getListTeam } from "./new/_service";
 import { getToast } from "remix-toast";
 import { ListSkillSubSkill } from "./_components/list-skill-subskill";
 import { useToastEffect } from "~/hooks/use-toast";
@@ -23,7 +22,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     const teamAndSkill = await getTeamAndSkill(user?.idSubBidang!, filterTeam)
 
     // masterFilter
-    const listTeam = await getListTeam(user?.idSubBidang!)
+    const listTeam = await getListTeam(user.idSubBidang)
 
     // masterForm
     const allUsers = await getAllUsers(user?.idSubBidang!)
