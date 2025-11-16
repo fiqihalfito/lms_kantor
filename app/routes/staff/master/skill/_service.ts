@@ -1,7 +1,7 @@
 import { db } from "database/connect";
 import { mSkill, mSubSkill, mTeam, mUser } from "database/schema/schema";
 import { eq } from "drizzle-orm";
-import { createUpdateSchema } from "drizzle-zod";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 
 
 export async function getTeamAndSkill(idSubBidang: string, filterTeam?: string | null) {
@@ -64,4 +64,41 @@ export async function updateSubSkill(idSubSkill: string, subSkillData: typeof mS
     await db.update(mSubSkill)
         .set(parsed)
         .where(eq(mSubSkill.idSubSkill, idSubSkill))
+}
+
+export async function insertSubSkill(subSkillData: typeof mSubSkill.$inferInsert) {
+
+    const subskillInsertSchema = createInsertSchema(mSubSkill)
+    const parsed = subskillInsertSchema.parse(subSkillData)
+
+    await db.insert(mSubSkill)
+        .values(parsed)
+}
+
+export async function deleteSubSkill(idSubSkill: string) {
+    const res = await db.delete(mSubSkill).where(eq(mSubSkill.idSubSkill, idSubSkill)).returning()
+    return res
+}
+
+export async function insertSkill(skillData: typeof mSkill.$inferInsert) {
+    const skillInsertSchema = createInsertSchema(mSkill)
+    const parsed = skillInsertSchema.parse(skillData)
+
+    await db.insert(mSkill)
+        .values(parsed)
+}
+
+export async function deleteSkill(idSkill: string) {
+    const res = await db.delete(mSkill).where(eq(mSkill.idSkill, idSkill)).returning()
+    return res
+}
+
+export async function updateSkill(idSkill: string, skillData: Partial<typeof mSkill.$inferInsert>) {
+
+    const skillUpdateSchema = createUpdateSchema(mSkill)
+    const parsed = skillUpdateSchema.parse(skillData)
+
+    await db.update(mSkill)
+        .set(parsed)
+        .where(eq(mSkill.idSkill, idSkill))
 }

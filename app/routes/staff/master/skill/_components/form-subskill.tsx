@@ -16,22 +16,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Form, useFetcher } from "react-router"
 import { useEffect, useRef, useState } from "react"
 import { Spinner } from "~/components/ui/spinner"
-import { toast } from "sonner"
+import { toast as notify } from "sonner"
+import type { ToastMessage } from "remix-toast"
 
 type modeType = "insert" | "update"
 
 type FormSubSkillType = {
     allUsers: Awaited<ReturnType<typeof getAllUsers>>,
     idTeam: string,
-    idSubSkill: string,
+    idSkill?: string,
+    idSubSkill?: string,
+    namaSkill?: string,
     dv?: {
         namaSubSkill: string,
         idUser: string | null
     },
-    mode: modeType
+    mode: modeType,
 }
 
-export function FormSubSkill({ allUsers, idTeam, idSubSkill, mode, dv }: FormSubSkillType) {
+export function FormSubSkill({ allUsers, idTeam, idSkill, idSubSkill, namaSkill, mode, dv }: FormSubSkillType) {
 
     const [open, setOpen] = useState(false)
 
@@ -47,16 +50,16 @@ export function FormSubSkill({ allUsers, idTeam, idSubSkill, mode, dv }: FormSub
     }
     const modeMap: modeMapType = {
         insert: {
-            tooltipContent: "Tambah SubSkill",
+            tooltipContent: `Tambah SubSkill ${namaSkill}`,
             icon: <CircleFadingPlusIcon className="size-5" />,
-            dialogTitle: "Tambah SubSkill",
-            action: `new-subskill`
+            dialogTitle: `Tambah SubSkill ${namaSkill}`,
+            action: `${idSkill}/subskill/new`
         },
         update: {
             tooltipContent: "Edit SubSkill",
             icon: <PencilIcon />,
             dialogTitle: "Edit SubSkill",
-            action: `${idSubSkill}/edit`
+            action: `${idSkill}/subskill/${idSubSkill}/edit`
         }
     }
 
@@ -65,26 +68,12 @@ export function FormSubSkill({ allUsers, idTeam, idSubSkill, mode, dv }: FormSub
     const submitting = fetcher.state !== "idle"
 
     // 🔥 Tutup dialog hanya ketika submit berhasil
-    const handled = useRef(false)
 
     useEffect(() => {
-        const ok = fetcher.data?.ok
-
-        // Jangan jalankan kalau:
-        // - tidak ada ok
-        // - sudah pernah dijalankan sebelumnya
-        if (ok && !handled.current) {
-            handled.current = true
-
+        if (fetcher.state === "idle" && fetcher.data?.ok) {
             setOpen(false)
-            toast(fetcher.data?.message, { position: "top-center" })
         }
-
-        // Reset ketika submit baru dimulai
-        if (fetcher.state === "submitting") {
-            handled.current = false
-        }
-    }, [fetcher.data, fetcher.state])
+    }, [fetcher.state, fetcher.data])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -100,7 +89,7 @@ export function FormSubSkill({ allUsers, idTeam, idSubSkill, mode, dv }: FormSub
                     <p>{modeMap[mode].tooltipContent}</p>
                 </TooltipContent>
             </Tooltip>
-            <DialogContent className="gap-6">
+            <DialogContent className="gap-6" >
                 <DialogHeader>
                     <DialogTitle>
                         {modeMap[mode].dialogTitle}
@@ -115,7 +104,7 @@ export function FormSubSkill({ allUsers, idTeam, idSubSkill, mode, dv }: FormSub
                         {/* <Input type="hidden" name="idSubSkill" defaultValue={dv?.idSubSkill} /> */}
                         <Field>
                             <FieldLabel htmlFor="namaSubSkill">Nama SubSkill</FieldLabel>
-                            <Input id="namaSubSkill" placeholder="Nama Skill" name="namaSubSkill" defaultValue={dv?.namaSubSkill} required />
+                            <Input id="namaSubSkill" placeholder="Nama SubSkill" name="namaSubSkill" defaultValue={dv?.namaSubSkill} required />
                             {/* <FieldDescription>This appears on invoices and emails.</FieldDescription> */}
                             {errors?.namaSubSkill && <FieldError>{errors.namaSubSkill}</FieldError>}
                         </Field>

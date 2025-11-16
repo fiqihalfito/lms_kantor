@@ -69,12 +69,24 @@ export default [
                     route("edit/:idLayanan", "routes/staff/master/layanan/edit/index.tsx"),
                 ]),
                 route("skill", "routes/staff/master/skill/index.tsx", [
-                    route("new", "routes/staff/master/skill/new/index.tsx"),
-                    route("delete", "routes/staff/master/skill/delete/index.tsx"),
-                    route("edit/:idSkill", "routes/staff/master/skill/edit/index.tsx"),
-                    ...prefix(":idSubSkill", [
-                        route("edit", "routes/staff/master/skill/action/edit-subskill.tsx")
-                    ])
+                    ...prefix("team/:idTeam", [
+                        route("new", "routes/staff/master/skill/action/add-skill.tsx"),
+                    ]),
+                    ...prefix(":idSkill", [
+                        route("delete", "routes/staff/master/skill/action/delete-skill.tsx"),
+                        route("edit", "routes/staff/master/skill/action/edit-skill.tsx"),
+
+                        ...prefix("subskill", [
+                            route("new", "routes/staff/master/skill/action/add-subskill.tsx"),
+                            ...prefix(":idSubSkill", [
+                                route("edit", "routes/staff/master/skill/action/edit-subskill.tsx"),
+                                route("delete", "routes/staff/master/skill/action/delete-subskill.tsx")
+                            ])
+                        ])
+                    ]),
+
+
+
                 ]),
                 route("user", "routes/staff/master/user/index.tsx", [
                     route("new", "routes/staff/master/user/new/index.tsx"),

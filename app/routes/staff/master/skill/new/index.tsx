@@ -1,5 +1,5 @@
 import { userContext } from "~/lib/context";
-import { FormSkill } from "../_components/form-skill";
+import { FormSkill } from "../_components/form-skill-old";
 import type { Route } from "./+types/index";
 import { getListTeam, mInsertNewSkillValidation, saveNewSkill } from "./_service";
 import { data, redirect } from "react-router";

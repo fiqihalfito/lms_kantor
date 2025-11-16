@@ -21,112 +21,136 @@ import {
     SelectTrigger,
     SelectValue,
 } from "~/components/ui/select"
-import { XIcon } from "lucide-react";
+import { CircleFadingPlusIcon, PencilIcon, XIcon } from "lucide-react";
 import { Link, useFetcher } from "react-router";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
 import type { getListTeam } from "../new/_service";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "~/components/ui/dialog"
+import { useEffect, useState } from "react";
 
+type modeType = "insert" | "update"
 
 type FormSkillProp = {
+    idSkill?: string,
+    idTeam?: string,
+    namaTeam?: string,
     defaultValues?: {
         namaSkill: string | null,
-        idTeam: string | null
     },
     mode: "insert" | "update",
-    listTeam: Awaited<ReturnType<typeof getListTeam>>
+    // listTeam: Awaited<ReturnType<typeof getListTeam>>
 }
 
-export function FormSkill({ defaultValues, mode, listTeam }: FormSkillProp) {
+export function FormSkill({ defaultValues, mode, idSkill, idTeam, namaTeam }: FormSkillProp) {
+
+    const [open, setOpen] = useState(false)
 
     const fetcher = useFetcher({ key: "form_skill" })
     const errors = fetcher.data?.errors
     const uploading = fetcher.state !== "idle"
 
-
-    const modeMapping: Record<typeof mode, any> = {
+    type modeMapType = {
+        [k in modeType]: {
+            tooltipContent: string,
+            icon: React.ReactNode,
+            dialogTitle: string,
+            action: string
+        }
+    }
+    const modeMap: modeMapType = {
         insert: {
-            title: "Tambah Skill baru",
-            desc: `skill baru`
+            tooltipContent: `Tambah Skill ${namaTeam}`,
+            icon: <CircleFadingPlusIcon className="size-5" />,
+            dialogTitle: `Tambah Skill ${namaTeam}`,
+            action: `team/${idTeam}/new`
         },
         update: {
-            title: "Edit nama skill",
-            desc: `perbarui nama skill`
+            tooltipContent: "Edit SubSkill",
+            icon: <PencilIcon />,
+            dialogTitle: "Edit SubSkill",
+            action: `${idSkill}/edit`
         }
     }
 
-
+    useEffect(() => {
+        if (fetcher.state === "idle" && fetcher.data?.ok) {
+            setOpen(false)
+        }
+    }, [fetcher.state, fetcher.data])
 
 
     return (
-        <div className="fixed inset-0  bg-black/50 z-99">
-            <fetcher.Form method="post" className="h-screen w-screen flex items-center justify-center" encType="multipart/form-data">
-                <Card className="w-1/4">
-                    <CardHeader className="">
-                        <CardTitle>{`${modeMapping[mode].title}`}</CardTitle>
-                        <CardDescription>{`${modeMapping[mode].desc}`}</CardDescription>
-                        <CardAction>
-                            <Link to={`..`} viewTransition>
-                                <Button type="button" size={"sm"} className="cursor-pointer flex items-center" variant={"outline"}>
-                                    Batal
-                                    <XIcon className="size-5" />
-                                </Button>
-                            </Link>
-                        </CardAction>
-                    </CardHeader>
-                    <CardContent className="flex-1">
-                        <FieldGroup>
-                            <Field>
-                                <FieldLabel htmlFor="namaSkill">
-                                    Nama Skill
-                                </FieldLabel>
-                                <Input
-                                    id="namaSkill"
-                                    placeholder="nama skill"
-                                    name="namaSkill"
-                                    defaultValue={defaultValues?.namaSkill ?? undefined}
-                                    required
-                                />
-                                {errors?.namaLayanan ? (
-                                    <FieldError>{errors.namaLayanan}!</FieldError>
-                                ) : null}
-                            </Field>
-                            <Field>
-                                <FieldLabel htmlFor="team">
-                                    Team
-                                </FieldLabel>
-                                <Select defaultValue={defaultValues?.idTeam ?? undefined} required name="idTeam">
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Pilih Team" />
-                                    </SelectTrigger>
-                                    <SelectContent className="z-99">
-                                        {listTeam.map((team, i) => (
-                                            <SelectItem key={team.idTeam} value={team.idTeam}>{team.nama}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {errors?.idTeam ? (
-                                    <FieldError>{errors.idTeam}!</FieldError>
-                                ) : null}
-                            </Field>
-
-                        </FieldGroup>
-                    </CardContent>
-                    <CardFooter className="flex justify-end">
-                        <Button type="submit" className="cursor-pointer" disabled={uploading}>
-                            {uploading ? (
-                                <span className="flex items-center gap-x-2">
-                                    {/* <LoaderCircleIcon className="animate-spin" /> */}
-                                    <Spinner />
-                                    Menyimpan ...
-                                </span>
-
-                            ) : "Simpan"}
+        <Dialog open={open} onOpenChange={setOpen}>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <DialogTrigger asChild>
+                        <Button size={mode === "insert" ? "sm" : "icon-sm"} variant={"outline"} className="cursor-pointer">
+                            {modeMap[mode].icon}
+                            {mode === "insert" && "Tambah Skill"}
                         </Button>
-                    </CardFooter>
-                </Card>
-            </fetcher.Form>
-        </div >
+                    </DialogTrigger>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{modeMap[mode].tooltipContent}</p>
+                </TooltipContent>
+            </Tooltip>
+            <DialogContent className="gap-6" >
+                <DialogHeader>
+                    <DialogTitle>
+                        {modeMap[mode].dialogTitle}
+                    </DialogTitle>
+                </DialogHeader>
+                <fetcher.Form method="post" action={modeMap[mode].action}>
+                    <FieldGroup>
+                        <Field>
+                            <FieldLabel htmlFor="namaSkill">
+                                Nama Skill
+                            </FieldLabel>
+                            <Input
+                                id="namaSkill"
+                                placeholder="nama skill"
+                                name="namaSkill"
+                                defaultValue={defaultValues?.namaSkill ?? undefined}
+                                required
+                            />
+                            {errors?.namaSkill ? (
+                                <FieldError>{errors.namaSkill}!</FieldError>
+                            ) : null}
+                        </Field>
+                        <Field orientation="horizontal" >
+                            <Button
+                                type="submit"
+                                className="ml-auto cursor-pointer"
+                                disabled={uploading}
+                            >
+                                {uploading ? (
+                                    <>
+                                        <Spinner />
+                                        Menyimpan ...
+                                    </>
+                                ) : (
+                                    <>
+                                        Simpan
+                                    </>
+                                )}
+                            </Button>
+                        </Field>
+                    </FieldGroup>
+                </fetcher.Form>
+            </DialogContent>
+        </Dialog>
+
+
+
     )
 }

@@ -1,4 +1,4 @@
-import { FormSkill } from "../_components/form-skill";
+import { FormSkill } from "../_components/form-skill-old";
 import type { Route } from "./+types/index";
 import { getSkillById, mUpdateSkillValidation, updateSkill } from "./_service";
 import z from "zod";
