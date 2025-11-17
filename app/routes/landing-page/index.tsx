@@ -31,7 +31,7 @@ export default function LandingPage() {
           Learning Management System
         </h1>
         <p className="mt-6 md:text-lg">
-          Aplikasi Pembelajaran Bidang Aplikasi PLN - Korporat dan Pelayanan Pelanggan
+          Aplikasi Pembelajaran Bidang Digitalisasi PLN 2
         </p>
         <div className="mt-12 flex items-center justify-center gap-4">
           <Link to={"/auth/login"}>

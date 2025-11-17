@@ -40,9 +40,9 @@ import { BackToMainFromMaster } from "./back-to-main-from-master"
 const data = {
   teams: [
     {
-      name: "Acme Inc",
+      name: "Digitalisasi PLN 2",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "PLN ICON PLUS",
     },
     {
       name: "Acme Corp.",
