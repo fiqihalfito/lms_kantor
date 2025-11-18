@@ -11,23 +11,14 @@ import {
     TableHeader,
     TableRow,
 } from "~/components/ui/table"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "~/components/ui/popover"
 import { Button } from "~/components/ui/button";
-import { Form, NavLink, Outlet, useSearchParams, useSubmit } from "react-router";
+import { NavLink, Outlet, useSearchParams } from "react-router";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
 import { useEffect, useState } from "react";
-import { Badge } from "~/components/ui/badge";
-import { Field, FieldLabel } from "~/components/ui/field";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { BadgeXIcon, CircleSlashIcon, FunnelIcon, ListRestartIcon, SearchIcon } from "lucide-react";
+import { CircleSlashIcon, ListRestartIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { Spinner } from "~/components/ui/spinner";
 import { Progress } from "~/components/ui/progress";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "~/components/ui/input-group";
 import {
     Empty,
     EmptyContent,

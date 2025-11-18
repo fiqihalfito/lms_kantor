@@ -61,6 +61,10 @@ export default [
 
             ]),
 
+            ...prefix("skill", [
+                index("routes/staff/skill/index.tsx")
+            ]),
+
             ...prefix("master", [
                 index("routes/staff/master/index.tsx"),
                 route("layanan", "routes/staff/master/layanan/index.tsx", [

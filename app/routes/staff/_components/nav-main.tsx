@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronRight, LayoutDashboardIcon, type LucideIcon } from "lucide-react"
+import { ChevronRight, FlagIcon, FlagTriangleLeftIcon, FlagTriangleRightIcon, LayoutDashboardIcon, type LucideIcon } from "lucide-react"
 import { NavLink, useLocation } from "react-router"
 
 import {
@@ -76,71 +76,26 @@ const items: {
         },
       ],
     },
-    // {
-    //   title: "Models",
-    //   url: "#",
-    //   icon: Bot,
-    //   items: [
-    //     {
-    //       title: "Genesis",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Explorer",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Quantum",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Documentation",
-    //   url: "#",
-    //   icon: BookOpen,
-    //   items: [
-    //     {
-    //       title: "Introduction",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Get Started",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Tutorials",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Changelog",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Settings",
-    //   url: "#",
-    //   icon: Settings2,
-    //   items: [
-    //     {
-    //       title: "General",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Team",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Billing",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Limits",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
+    {
+      title: "Skill",
+      url: "#",
+      icon: FlagIcon,
+      isActive: true,
+      items: [
+        {
+          title: "PIC Subskill",
+          url: `/${FIRST_SEGMENT}/skill`,
+        },
+        // {
+        //   title: `Mulai Kuis`,
+        //   url: `/${FIRST_SEGMENT}/kuis/mulai-kuis`,
+        // },
+        // {
+        //   title: `Skor`,
+        //   url: `/${FIRST_SEGMENT}/kuis/skor`,
+        // },
+      ],
+    },
   ]
 
 export function NavMain() {

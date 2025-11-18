@@ -7,7 +7,7 @@ import {
 import { saveSession, type SessionUser } from "~/lib/session.server";
 
 import * as z from "zod";
-import { data, redirect } from "react-router";
+import { data, Link, redirect } from "react-router";
 import { loginMiddleware } from "~/lib/middleware.server";
 
 
@@ -63,12 +63,13 @@ export default function LoginPage({ actionData, }: Route.ComponentProps) {
         <div className="grid min-h-svh lg:grid-cols-2">
             <div className="flex flex-col gap-4 p-6 md:p-10">
                 <div className="flex justify-center gap-2 md:justify-start">
-                    <a href="#" className="flex items-center gap-2 font-medium">
+                    <Link to="/" className="flex items-center gap-2 font-medium">
                         <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
                             <GalleryVerticalEndIcon className="size-4" />
                         </div>
-                        Acme Inc.
-                    </a>
+                        {/* Acme Inc. */}
+                        Digitalisasi PLN 2
+                    </Link>
                 </div>
                 <div className="flex flex-1 items-center justify-center">
                     <div className="w-full max-w-xs">
