@@ -109,9 +109,9 @@ export const tDokumenRelations = relations(tDokumen, ({ one, many }) => ({
         fields: [tDokumen.idTeam],
         references: [mTeam.idTeam]
     }),
-    skill: one(mSkill, {
-        fields: [tDokumen.idSkill],
-        references: [mSkill.idSkill]
+    subskill: one(mSubSkill, {
+        fields: [tDokumen.idSubSkill],
+        references: [mSubSkill.idSubSkill]
     })
 }));
 
@@ -139,7 +139,7 @@ export const tStatusBacaRelations = relations(tStatusBaca, ({ one }) => ({
 }))
 
 export const mSkillRelations = relations(mSkill, ({ many, one }) => ({
-    dokumen: many(tDokumen),
+    // dokumen: many(tDokumen),
     team: one(mTeam, {
         fields: [mSkill.idTeam],
         references: [mTeam.idTeam]
@@ -156,6 +156,10 @@ export const mSubSkillRelations = relations(mSubSkill, ({ many, one }) => ({
     pic: one(mUser, {
         fields: [mSubSkill.idUser],
         references: [mUser.idUser]
+    }),
+    dokumen: one(tDokumen, {
+        fields: [mSubSkill.idSubSkill],
+        references: [tDokumen.idSubSkill]
     })
 }))
 

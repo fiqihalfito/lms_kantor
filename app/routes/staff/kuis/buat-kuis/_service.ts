@@ -8,7 +8,7 @@ export async function getDokumenUploadBySelf(idUser: string) {
         with: {
             layanan: true,
             user: true,
-            skill: true,
+            subskill: true,
             kuis: {
                 with: {
                     kuisElement: true

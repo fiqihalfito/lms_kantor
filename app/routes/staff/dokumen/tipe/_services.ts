@@ -9,7 +9,7 @@ export async function getAllDokumenByTipe(
     filter: {
         idTeam?: string | null,
         idLayanan?: string | null,
-        idSkill?: string | null,
+        // idSkill?: string | null,
         search?: string | null
     }
 ) {
@@ -18,7 +18,7 @@ export async function getAllDokumenByTipe(
             subBidang: true,
             user: true,
             layanan: true,
-            skill: true,
+            subskill: true,
             statusBaca: {
                 where: eq(tStatusBaca.idUser, idUser)
             },
@@ -41,7 +41,7 @@ export async function getAllDokumenByTipe(
             filter.idTeam ? eq(tDokumen.idTeam, filter.idTeam) : undefined,
             filter.idLayanan ? eq(tDokumen.idLayanan, filter.idLayanan) : undefined,
             filter.search ? ilike(tDokumen.judul, `%${filter.search}%`) : undefined,
-            filter.idSkill ? eq(tDokumen.idSkill, filter.idSkill) : undefined,
+            // filter.idSkill ? eq(tDokumen.idSubSkill, filter.idSkill) : undefined,
         ),
         orderBy: [desc(tDokumen.createdAt)]
     });

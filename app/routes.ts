@@ -61,8 +61,13 @@ export default [
 
             ]),
 
-            ...prefix("skill", [
-                index("routes/staff/skill/index.tsx")
+            route("skill", "routes/staff/skill/index.tsx", [
+                ...prefix(":idDokumen", [
+                    route("preview-dokumen", "routes/staff/skill/preview-pdf/index.tsx"),
+                ]),
+                ...prefix(":idSubSkill/team/:idTeam", [
+                    route("upload-dokumen", "routes/staff/skill/upload-dokumen/index.tsx"),
+                ]),
             ]),
 
             ...prefix("master", [

@@ -18,7 +18,7 @@ export const tInsertNewDokumenValidation = z.object({
         .max(5 * 1024 * 1024, { error: "max 5 mb" }), // file diambil dari hasil parse
 });
 
-export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, tipe, idUser, idTeam, idSkill }: typeof tDokumen.$inferInsert) {
+export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, tipe, idUser, idTeam, idSubSkill }: typeof tDokumen.$inferInsert) {
     const newIDDokumen = await db.insert(tDokumen).values({
         filename: filename,
         judul: judul,
@@ -27,7 +27,7 @@ export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, 
         tipe: tipe,
         idUser: idUser,
         idTeam: idTeam,
-        idSkill: idSkill
+        idSubSkill: idSubSkill
     }).returning({ idDokumen: tDokumen.idDokumen })
 
     return newIDDokumen

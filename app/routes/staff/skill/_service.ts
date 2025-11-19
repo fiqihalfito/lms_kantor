@@ -11,7 +11,13 @@ export async function getSkillAndSubSkillByPIC(idSubBidang: string, idUser: stri
                 with: {
                     pic: {
                         columns: {
-                            nama: true
+                            nama: true,
+                            idTeam: true
+                        }
+                    },
+                    dokumen: {
+                        with: {
+                            kuis: true
                         }
                     }
                 }

@@ -12,6 +12,8 @@ import {
     TableHeader,
     TableRow,
 } from "~/components/ui/table"
+import { Badge } from "~/components/ui/badge"
+import { OptionSubskill } from "./option-subskill"
 
 type ListSubSkillType = {
     subskill: Awaited<ReturnType<typeof getSkillAndSubSkillByPIC>>[number]["subSkill"]
@@ -26,6 +28,7 @@ export function ListSubSkill({ subskill }: ListSubSkillType) {
                     <TableRow>
                         <TableHead className="w-[100px]">No</TableHead>
                         <TableHead>Subskill</TableHead>
+                        <TableHead>PIC</TableHead>
                         <TableHead>Dokumen</TableHead>
                         <TableHead>Kuis</TableHead>
                         <TableHead className="text-right">Aksi</TableHead>
@@ -36,9 +39,32 @@ export function ListSubSkill({ subskill }: ListSubSkillType) {
                         <TableRow key={ss.idSubSkill}>
                             <TableCell className="font-medium">{i + 1}</TableCell>
                             <TableCell>{ss.namaSubSkill}</TableCell>
-                            <TableCell>{ }</TableCell>
-                            <TableCell>{ }</TableCell>
-                            <TableCell className="text-right">{ }</TableCell>
+                            <TableCell>{ss.pic?.nama}</TableCell>
+                            <TableCell>
+                                {ss.dokumen ? (
+                                    <Badge className="bg-green-500 rounded-full">
+                                        Done
+                                    </Badge>
+                                ) : (
+                                    <Badge variant={"destructive"} className="rounded-full">
+                                        Belum
+                                    </Badge>
+                                )}
+                            </TableCell>
+                            <TableCell>
+                                {ss.dokumen?.kuis ? (
+                                    <Badge className="bg-green-500 rounded-full">
+                                        Done
+                                    </Badge>
+                                ) : (
+                                    <Badge variant={"destructive"} className="rounded-full">
+                                        Belum
+                                    </Badge>
+                                )}
+                            </TableCell>
+                            <TableCell className="text-right">
+                                <OptionSubskill idSubSkill={ss.idSubSkill} idTeam={ss.pic?.idTeam} idDokumen={ss.dokumen?.idDokumen} idKuis={ss.dokumen?.idKuis} />
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

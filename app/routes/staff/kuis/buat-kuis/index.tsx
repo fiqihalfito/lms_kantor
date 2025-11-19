@@ -72,7 +72,7 @@ export default function MyKuis({ loaderData }: Route.ComponentProps) {
                                     <TableCell>{item.judul}</TableCell>
                                     <TableCell>{item.tipe}</TableCell>
                                     {/* <TableCell>{item.layanan?.nama ?? "-"}</TableCell> */}
-                                    <TableCell>{item.skill?.namaSkill ?? "-"}</TableCell>
+                                    <TableCell>{item.subskill?.namaSubSkill ?? "-"}</TableCell>
                                     <TableCell>{item.user?.nama}</TableCell>
                                     <TableCell className="text-center">{item.kuis?.kuisElement ? item.kuis.kuisElement.length : "-"}</TableCell>
                                     <TableCell className="text-center">

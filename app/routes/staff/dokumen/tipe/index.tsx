@@ -87,7 +87,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
         {
             idTeam: activeFilter.team,
             idLayanan: activeFilter.layanan,
-            idSkill: activeFilter.skill,
+            // idSkill: activeFilter.skill,
             search: activeFilter.search
         }
     )
@@ -212,7 +212,7 @@ export default function DokumenIndex({ loaderData, params }: Route.ComponentProp
                                     <TableCell className="font-medium">{i + 1}</TableCell>
                                     <TableCell>{d.judul}</TableCell>
                                     {(params.tipeDokumen === "IK") && <TableCell>{d.layanan?.nama ?? "-"}</TableCell>}
-                                    {(params.tipeDokumen === "Knowledge") && <TableCell>{d.skill?.namaSkill ?? "-"}</TableCell>}
+                                    {(params.tipeDokumen === "Knowledge") && <TableCell>{d.subskill?.namaSubSkill ?? "-"}</TableCell>}
                                     <TableCell>{d.user?.nama}</TableCell>
                                     <TableCell>{formatTimestampId(d.createdAt, { withZoneLabel: true })}</TableCell>
                                     <TableCell>{d.updatedAt ? formatTimestampId(d.updatedAt, { withZoneLabel: true }) : "-"}</TableCell>

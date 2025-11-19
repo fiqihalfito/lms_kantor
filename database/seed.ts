@@ -153,16 +153,18 @@ async function main() {
 
     const subskillData: typeof mSubSkill.$inferInsert[] = [
         {
+            idSubSkill: "c83e6bb9-6f81-4138-a49a-a1c8b738a2d3",
             namaSubSkill: "Replication",
             idSkill: mapSkill["PostgreSQL"],
             idUser: mapUser[usersS1[0].email]
         },
         {
+            idSubSkill: "d92b7b2e-4a10-4f1f-8c53-35f1ad979b4e",
             namaSubSkill: "Backup Restore",
             idSkill: mapSkill["PostgreSQL"],
             idUser: mapUser[usersS1[1].email]
         },
-    ]
+    ];
     await db.insert(mSubSkill).values(subskillData);
     const mapSubSkill = Object.fromEntries(subskillData.map((s) => [s.namaSubSkill!, s.idSubSkill]));
 
@@ -189,7 +191,7 @@ async function main() {
 
     // 6️⃣ Insert dokumen dengan UUID hardcoded
     console.log("📄 Seeding dokumen...");
-    const dokumenData = [
+    const dokumenData: typeof tDokumen.$inferInsert[] = [
         {
             idDokumen: "dddddddd-dddd-4000-8000-000000000001",
             judul: "SOP Backup AMS",
@@ -199,18 +201,18 @@ async function main() {
             idSubBidang: "s1",
             idUser: mapUser[usersS1[0].email],
             idTeam: mapTeam["DBA"],
-            idSkill: mapSkill["PostgreSQL"]
+            idSubSkill: null
         },
         {
             idDokumen: "dddddddd-dddd-4000-8000-000000000002",
-            judul: "Instruksi Kerja ESPPD",
-            tipe: "IK",
+            judul: "Replication PG",
+            tipe: "Knowledge",
             filename: "test-pdf.pdf",
-            idLayanan: mapLayanan["ESPPD"],
+            idLayanan: null,
             idSubBidang: "s1",
             idUser: mapUser[usersS1[1].email],
             idTeam: mapTeam["DBA"],
-            idSkill: mapSkill["SQL Server"]
+            idSubSkill: mapSubSkill["Replication"]
         },
         {
             idDokumen: "dddddddd-dddd-4000-8000-000000000003",
@@ -221,7 +223,7 @@ async function main() {
             idSubBidang: "s2",
             idUser: mapUser[`alex.${mapSlug["s2"]}@example.com`],
             idTeam: null,
-            idSkill: mapSkill["PostgreSQL"]
+            idSubSkill: null
         },
         {
             idDokumen: "dddddddd-dddd-4000-8000-000000000004",
@@ -232,7 +234,7 @@ async function main() {
             idSubBidang: "s3",
             idUser: mapUser[`chandra.${mapSlug["s3"]}@example.com`],
             idTeam: null,
-            idSkill: mapSkill["PostgreSQL"]
+            idSubSkill: null
         },
     ];
 

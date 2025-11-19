@@ -32,6 +32,10 @@ export const skillFK = {
     idSkill: uuid("id_skill").references(() => mSkill.idSkill, { onDelete: "cascade" })
 }
 
+export const subSkillFK = {
+    idSubSkill: uuid("id_subskill").references(() => mSubSkill.idSubSkill, { onDelete: "cascade" })
+}
+
 
 
 // ===========================================================================
@@ -79,10 +83,12 @@ export const tDokumen = pgTable('t_dokumen', {
     ...subBidangFK,
     ...userFK,
     ...teamFK, // null kalau SOP, lainnya wajib
-    ...skillFK, // untuk Knowledge
+    ...subSkillFK, // untuk Knowledge
     ...kuisFK,
     ...timestamps,
-})
+}, (t) => [
+    unique().on(t.idSubSkill)
+])
 
 export const tStatusBaca = pgTable('t_status_baca', {
     idStatusBaca: uuid("id_status_baca").defaultRandom().primaryKey(),

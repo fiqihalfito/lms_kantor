@@ -79,7 +79,7 @@ export async function action({
         tipe: params.tipeDokumen,
         idUser: user?.idUser!,
         idTeam: idTeam,
-        idSkill: validated.data.skill
+        idSubSkill: validated.data.skill
     })
 
     return redirectWithSuccess(`..`, `Dokumen ${validated.data.judul} berhasil ditambahkan`)
