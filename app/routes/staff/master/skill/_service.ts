@@ -1,6 +1,6 @@
 import { db } from "database/connect";
-import { mSkill, mSubSkill, mTeam, mUser } from "database/schema/schema";
-import { eq } from "drizzle-orm";
+import { mSkill, mSubSkill, mTeam, mUser, tDokumen } from "database/schema/schema";
+import { eq, inArray } from "drizzle-orm";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 
 
@@ -106,4 +106,23 @@ export async function updateSkill(idSkill: string, skillData: Partial<typeof mSk
     await db.update(mSkill)
         .set(parsed)
         .where(eq(mSkill.idSkill, idSkill))
+}
+
+export async function getFilenameDokumenBySubSkillId(idSubSkill: string) {
+    const res = await db.select({
+        filename: tDokumen.filename
+    })
+        .from(tDokumen)
+        .where(eq(tDokumen.idSubSkill, idSubSkill))
+    return res[0]?.filename;
+}
+
+export async function getSubSkillByidSkill(idSkill: string) {
+    const res = await db.select().from(mSubSkill).where(eq(mSubSkill.idSkill, idSkill))
+    return res
+}
+
+export async function getManyDokumenBySubSkillIds(idSubSkills: string[]) {
+    const res = await db.select().from(tDokumen).where(inArray(tDokumen.idSubSkill, idSubSkills))
+    return res
 }

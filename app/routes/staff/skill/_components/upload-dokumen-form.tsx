@@ -11,34 +11,25 @@ import {
 } from "~/components/ui/card"
 import {
     Field,
+    FieldDescription,
     FieldError,
     FieldGroup,
     FieldLabel,
 } from "~/components/ui/field"
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "~/components/ui/select"
 import { LoaderCircleIcon, XIcon } from "lucide-react";
-import { Link, useFetcher, useNavigate } from "react-router";
+import { useFetcher, useNavigate } from "react-router";
 import { Input } from "~/components/ui/input";
-import { FIRST_SEGMENT } from "~/lib/route-config";
 import { Button } from "~/components/ui/button";
-import type { mLayanan, mSkill, tDokumen } from "database/schema/schema";
-import type { TIPE_DOKUMEN } from "~/lib/constants";
 
 type UploadDokumenFormType = {
     dv?: {
-        judul: string
-    }
+        judul: string | null,
+        filename: string | null
+    },
+    idDokumen?: string
 }
 
-export function UploadDokumenForm({ dv }: UploadDokumenFormType) {
+export function UploadDokumenForm({ dv, idDokumen }: UploadDokumenFormType) {
 
     const fetcher = useFetcher({ key: "upload_dokumen" })
     const errors = fetcher.data?.errors
@@ -53,7 +44,6 @@ export function UploadDokumenForm({ dv }: UploadDokumenFormType) {
                         <CardTitle>{`Upload Dokumen`}</CardTitle>
                         <CardDescription>{`Upload sumber pembelajaran`}</CardDescription>
                         <CardAction>
-                            {/* <Link to={`/${FIRST_SEGMENT}/dokumen/${tipeDokumen}`} viewTransition> */}
                             <Button
                                 type="button"
                                 size={"sm"}
@@ -64,7 +54,6 @@ export function UploadDokumenForm({ dv }: UploadDokumenFormType) {
                                 Batal
                                 <XIcon className="size-5" />
                             </Button>
-                            {/* </Link> */}
                         </CardAction>
                     </CardHeader>
                     <CardContent className="flex-1">
@@ -85,22 +74,25 @@ export function UploadDokumenForm({ dv }: UploadDokumenFormType) {
                                 ) : null}
                             </Field>
 
-                            {(
-                                <Field>
-                                    <FieldLabel htmlFor="disable-filename">
-                                        Upload Dokumen
-                                    </FieldLabel>
-                                    <Input
-                                        id="file"
-                                        type="file"
-                                        name="file"
-                                        required
-                                    />
-                                    {errors?.file ? (
-                                        <FieldError>{errors.file}!</FieldError>
-                                    ) : null}
-                                </Field>
-                            )}
+                            <Field>
+                                <FieldLabel htmlFor="disable-filename">
+                                    Upload Dokumen
+                                </FieldLabel>
+                                <Input
+                                    id="file"
+                                    type="file"
+                                    name="file"
+                                    required={idDokumen ? false : true}
+                                />
+                                {idDokumen && (
+                                    <FieldDescription>
+                                        filename: {dv?.filename}
+                                    </FieldDescription>
+                                )}
+                                {errors?.file ? (
+                                    <FieldError>{errors.file}!</FieldError>
+                                ) : null}
+                            </Field>
 
 
 

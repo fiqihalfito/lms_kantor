@@ -44,6 +44,10 @@ export async function deleteInRealBucket(bucket: string, filename: string) {
     await minioClient.removeObject(bucket, filename);
 }
 
+export async function deleteManyInRealBucket(bucket: string, filename: string[]) {
+    await minioClient.removeObjects(bucket, filename);
+}
+
 
 export async function getPresignedUrl(bucket: string, filename: string) {
     return await minioClient.presignedGetObject(bucket, filename, 60); // berlaku 60 detik

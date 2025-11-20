@@ -31,6 +31,7 @@ export function ListSubSkill({ subskill }: ListSubSkillType) {
                         <TableHead>PIC</TableHead>
                         <TableHead>Dokumen</TableHead>
                         <TableHead>Kuis</TableHead>
+                        <TableHead>Jumlah Soal</TableHead>
                         <TableHead className="text-right">Aksi</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -62,6 +63,7 @@ export function ListSubSkill({ subskill }: ListSubSkillType) {
                                     </Badge>
                                 )}
                             </TableCell>
+                            <TableCell>{ss.dokumen?.kuis?.kuisElement?.length ?? "-"}</TableCell>
                             <TableCell className="text-right">
                                 <OptionSubskill idSubSkill={ss.idSubSkill} idTeam={ss.pic?.idTeam} idDokumen={ss.dokumen?.idDokumen} idKuis={ss.dokumen?.idKuis} />
                             </TableCell>

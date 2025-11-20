@@ -1,7 +1,7 @@
 import { Separator } from "~/components/ui/separator";
 import type { Route } from "./+types";
 import { createKuis, getDokumenDataById, getSoal } from "./_service";
-import { data, Link, NavLink, Outlet, useLocation } from "react-router";
+import { data, Link, NavLink, Outlet, useLocation, useNavigate, useNavigation } from "react-router";
 import { Button } from "~/components/ui/button";
 import { ChevronLeft, ChevronRightIcon, CircleOffIcon, FilePlusIcon } from "lucide-react";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "~/components/ui/item";
@@ -41,6 +41,9 @@ export default function KuisMaker({ params, loaderData }: Route.ComponentProps) 
     const { dokumen, soal, idKuis, toast } = loaderData
     let location = useLocation()
     let currentPathname = location.pathname
+    const navigate = useNavigate()
+    let navigation = useNavigation();
+    const isNavigating = Boolean(navigation.location);
 
     useToastEffect(toast)
 
@@ -53,8 +56,8 @@ export default function KuisMaker({ params, loaderData }: Route.ComponentProps) 
                     <p className="text-muted-foreground">Soal Soal Kuis dari dokumen "{dokumen[0].judul}"</p>
                 </div>
                 <div className="flex items-center gap-x-2">
-                    <Button variant={"outline"} className="cursor-pointer" size={"lg"} asChild >
-                        <NavLink to={`../..`} relative="path" viewTransition>
+                    <Button variant={"outline"} className="cursor-pointer" size={"lg"} onClick={() => navigate(-1)} >
+                        {/* <NavLink to={`../..`} relative="path" viewTransition>
                             {({ isPending }) => (
                                 <>
                                     {isPending ? <Spinner /> : <ChevronLeft className="size-5" />}
@@ -62,7 +65,9 @@ export default function KuisMaker({ params, loaderData }: Route.ComponentProps) 
                                 </>
                             )}
 
-                        </NavLink>
+                        </NavLink> */}
+                        {isNavigating ? <Spinner /> : <ChevronLeft className="size-5" />}
+                        Kembali
                     </Button>
                     <Button className="cursor-pointer" size={"lg"} asChild >
                         <Link to={`new`} viewTransition>

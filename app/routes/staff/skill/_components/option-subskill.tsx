@@ -1,5 +1,5 @@
 
-import { EyeIcon, FileUpIcon, GithubIcon, MoreHorizontalIcon, PencilLineIcon } from "lucide-react"
+import { EyeIcon, FileUpIcon, GithubIcon, MoreHorizontalIcon, PencilIcon, PencilLineIcon } from "lucide-react"
 import { Link } from "react-router"
 import { Button } from "~/components/ui/button"
 import {
@@ -41,19 +41,30 @@ export function OptionSubskill({ idDokumen, idKuis, idSubSkill, idTeam }: Option
                             </Link>
                         </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem asChild>
-                        <Link to={`${idSubSkill}/team/${idTeam}/upload-dokumen`} viewTransition>
-                            <FileUpIcon className="mr-2" />
-                            <span>Upload</span>
-                        </Link>
-                    </DropdownMenuItem>
+                    {!idDokumen ? (
+                        <DropdownMenuItem asChild>
+                            <Link to={`${idSubSkill}/team/${idTeam}/upload-dokumen`} viewTransition>
+                                <FileUpIcon className="mr-2" />
+                                <span>Upload</span>
+                            </Link>
+                        </DropdownMenuItem>
+                    ) : (
+                        <DropdownMenuItem asChild>
+                            <Link to={`${idSubSkill}/team/${idTeam}/edit-dokumen/${idDokumen}`} viewTransition>
+                                <PencilIcon className="mr-2" />
+                                <span>Edit</span>
+                            </Link>
+                        </DropdownMenuItem>
+                    )}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuLabel>Kuis</DropdownMenuLabel>
-                    <DropdownMenuItem>
-                        <PencilLineIcon className="mr-2" />
-                        <span>Buat Kuis</span>
+                    <DropdownMenuItem asChild>
+                        <Link to={`../kuis/buat-kuis/kuis-maker/${idDokumen}`} viewTransition>
+                            <PencilLineIcon className="mr-2" />
+                            <span>Buat Kuis</span>
+                        </Link>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
             </DropdownMenuContent>

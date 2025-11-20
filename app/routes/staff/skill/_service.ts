@@ -1,5 +1,5 @@
 import { db } from "database/connect";
-import { mSkill, mSubSkill } from "database/schema/schema";
+import { mSkill, mSubSkill, tKuis, tKuisElement } from "database/schema/schema";
 import { eq } from "drizzle-orm";
 
 
@@ -17,7 +17,15 @@ export async function getSkillAndSubSkillByPIC(idSubBidang: string, idUser: stri
                     },
                     dokumen: {
                         with: {
-                            kuis: true
+                            kuis: {
+                                with: {
+                                    kuisElement: {
+                                        columns: {
+                                            idKuisElement: true
+                                        }
+                                    }
+                                },
+                            }
                         }
                     }
                 }

@@ -67,6 +67,7 @@ export default [
                 ]),
                 ...prefix(":idSubSkill/team/:idTeam", [
                     route("upload-dokumen", "routes/staff/skill/upload-dokumen/index.tsx"),
+                    route("edit-dokumen/:idDokumen", "routes/staff/skill/edit-dokumen/index.tsx"),
                 ]),
             ]),
 
