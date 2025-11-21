@@ -24,6 +24,7 @@ export default [
             ]),
 
             ...prefix("dokumen", [
+                route("Knowledge", "routes/staff/dokumen/knowledge/index.tsx"),
                 route(":tipeDokumen", "routes/staff/dokumen/tipe/index.tsx", [
                     route("preview/:idDokumen", "routes/staff/dokumen/tipe/preview-pdf/index.tsx"),
                     route("new", "routes/staff/dokumen/tipe/add/index.tsx"),

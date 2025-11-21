@@ -50,10 +50,10 @@ const items: {
           title: `IK`,
           url: `/${FIRST_SEGMENT}/dokumen/IK`,
         },
-        // {
-        //   title: `Knowledge`,
-        //   url: `/${FIRST_SEGMENT}/dokumen/Knowledge`,
-        // },
+        {
+          title: `Knowledge`,
+          url: `/${FIRST_SEGMENT}/dokumen/Knowledge`,
+        },
       ],
     },
     {

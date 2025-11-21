@@ -56,7 +56,7 @@ export default function KuisMaker({ params, loaderData }: Route.ComponentProps) 
                     <p className="text-muted-foreground">Soal Soal Kuis dari dokumen "{dokumen[0].judul}"</p>
                 </div>
                 <div className="flex items-center gap-x-2">
-                    <Button variant={"outline"} className="cursor-pointer" size={"lg"} onClick={() => navigate(-1)} >
+                    <Button variant={"outline"} className="cursor-pointer" size={"lg"} onClick={() => navigate(`/${FIRST_SEGMENT}/skill`, { viewTransition: true })} >
                         {/* <NavLink to={`../..`} relative="path" viewTransition>
                             {({ isPending }) => (
                                 <>
