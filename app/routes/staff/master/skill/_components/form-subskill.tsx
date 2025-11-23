@@ -32,7 +32,8 @@ type FormSubSkillType = {
     namaSkill?: string,
     dv?: {
         namaSubSkill: string,
-        idUser: string | null
+        idUser: string | null,
+        level: number | null
     },
     mode: modeType,
 }
@@ -112,6 +113,11 @@ export function FormSubSkill({ allUsers, idTeam, idSkill, idSubSkill, namaSkill,
                             <Input id="namaSubSkill" placeholder="Nama SubSkill" name="namaSubSkill" defaultValue={dv?.namaSubSkill} required />
                             {/* <FieldDescription>This appears on invoices and emails.</FieldDescription> */}
                             {errors?.namaSubSkill && <FieldError>{errors.namaSubSkill}</FieldError>}
+                        </Field>
+                        <Field>
+                            <FieldLabel htmlFor="level">Level</FieldLabel>
+                            <Input id="level" placeholder="level" name="level" defaultValue={dv?.level ?? undefined} required />
+                            {errors?.level && <FieldError>{errors.level}</FieldError>}
                         </Field>
                         <Field>
                             <FieldLabel>PIC</FieldLabel>

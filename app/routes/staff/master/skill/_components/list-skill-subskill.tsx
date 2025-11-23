@@ -9,6 +9,7 @@ import { FormSubSkill } from "./form-subskill";
 import { DeleteSubSkill } from "./delete-subskill";
 import { FormSkill } from "./form-skill";
 import { DeleteSkill } from "./delete-skill";
+import { Badge } from "~/components/ui/badge";
 
 type ListSkillSubSkillType = {
     teamAndSkill: Awaited<ReturnType<typeof getTeamAndSkill>>,
@@ -84,8 +85,11 @@ export function ListSkillSubSkill({ teamAndSkill, listTeam, filterTeam, allUsers
                                                             <p className="text-xs text-muted-foreground">list subskill</p>
                                                             {s.subSkill.map((ss, i) => (
                                                                 <div key={ss.idSubSkill} className="border rounded-sm px-2 py-2 text-sm flex items-center justify-between">
-                                                                    <div className="ml-2">
-                                                                        <span >{ss.namaSubSkill}</span>
+                                                                    <div className="ml-2 space-y-1.5">
+                                                                        <div className="flex items-center gap-x-1.5">
+                                                                            <span >{ss.namaSubSkill}</span>
+                                                                            <Badge className="rounded-full" variant="outline">Level {ss.level}</Badge>
+                                                                        </div>
                                                                         <p className="text-xs text-muted-foreground">PIC: {ss.pic?.nama}</p>
                                                                     </div>
                                                                     <div className="flex items-center gap-x-1.5">
@@ -97,22 +101,12 @@ export function ListSkillSubSkill({ teamAndSkill, listTeam, filterTeam, allUsers
                                                                             idSubSkill={ss.idSubSkill}
                                                                             dv={{
                                                                                 namaSubSkill: ss.namaSubSkill,
-                                                                                idUser: ss.idUser
+                                                                                idUser: ss.idUser,
+                                                                                level: ss.level
                                                                             }}
                                                                         />
                                                                         <DeleteSubSkill key={"delete" + ss.idSubSkill} idSkill={s.idSkill} idSubSkill={ss.idSubSkill} nama={ss.namaSubSkill} />
-                                                                        {/* <Tooltip>
-                                                                            <TooltipTrigger asChild>
-                                                                                <Button size={"icon-sm"} variant={"destructive"} className="cursor-pointer" asChild >
-                                                                                    <Link to={``} viewTransition>
-                                                                                        <TrashIcon />
-                                                                                    </Link>
-                                                                                </Button>
-                                                                            </TooltipTrigger>
-                                                                            <TooltipContent>
-                                                                                <p>Hapus SubSkill</p>
-                                                                            </TooltipContent>
-                                                                        </Tooltip> */}
+
                                                                     </div>
                                                                 </div>
                                                             ))}

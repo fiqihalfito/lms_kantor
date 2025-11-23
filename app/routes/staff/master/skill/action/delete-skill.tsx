@@ -1,5 +1,5 @@
 import { dataWithError, dataWithSuccess } from "remix-toast";
-import { deleteSkill, getManyDokumenBySubSkillIds, getSubSkillByidSkill } from "../_service";
+import { deleteManyKuis, deleteSkill, getManyDokumenBySubSkillIds, getSubSkillByidSkill } from "../_service";
 import type { Route } from "./+types/delete-skill";
 import { deleteManyInRealBucket } from "~/lib/minio.server";
 
@@ -8,15 +8,18 @@ import { deleteManyInRealBucket } from "~/lib/minio.server";
 export async function action({ request, params }: Route.ActionArgs) {
 
     try {
-        const deleted = await deleteSkill(params.idSkill)
-
         const subSkills = await getSubSkillByidSkill(params.idSkill)
-
         // menghapus banyak file di minio kalau ada
         if (subSkills.length > 0) {
             const dokumens = await getManyDokumenBySubSkillIds(subSkills.map((sub) => sub.idSubSkill))
+            // delete in minio first
             await deleteManyInRealBucket("dokumen", dokumens.filter((dok) => dok.filename !== null).map((dok) => dok.filename!))
+            // delete kuis
+            await deleteManyKuis(dokumens.filter((dok) => dok.idKuis !== null).map((dok) => dok.idKuis!))
+            // this is where dokumen will be deleted, because parent kuis is deleted
         }
+
+        const deleted = await deleteSkill(params.idSkill)
 
         return dataWithSuccess({ ok: true }, `Skill ${deleted[0].namaSkill} berhasil dihapus`)
     } catch (error) {

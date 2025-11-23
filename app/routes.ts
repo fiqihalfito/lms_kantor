@@ -24,7 +24,15 @@ export default [
             ]),
 
             ...prefix("dokumen", [
-                route("Knowledge", "routes/staff/dokumen/knowledge/index.tsx"),
+                ...prefix("Knowledge", [
+                    index("routes/staff/dokumen/knowledge/index.tsx"),
+                    route("skill/:idSkill", "routes/staff/dokumen/knowledge/skill/index.tsx", [
+                        route("baca/:idDokumen", "routes/staff/dokumen/knowledge/skill/preview-pdf/index.tsx")
+                    ])
+                ]),
+                // route("Knowledge", "routes/staff/dokumen/knowledge/index.tsx", [
+                //     route("baca/:idDokumen", "routes/staff/dokumen/knowledge/preview-pdf/index.tsx")
+                // ]),
                 route(":tipeDokumen", "routes/staff/dokumen/tipe/index.tsx", [
                     route("preview/:idDokumen", "routes/staff/dokumen/tipe/preview-pdf/index.tsx"),
                     route("new", "routes/staff/dokumen/tipe/add/index.tsx"),

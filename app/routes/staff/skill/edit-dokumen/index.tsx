@@ -35,7 +35,6 @@ export async function action({
     try {
 
         const formUploadDokumen = Object.fromEntries(formData)
-        console.log(formUploadDokumen)
         const validated = tUpdateNewDokumenValidation.parse(formUploadDokumen)
 
 
@@ -50,7 +49,7 @@ export async function action({
             }
         }
 
-        const updatedDokumen = await updateDokumen(params.idDokumen, {
+        const updatedDokumenId = await updateDokumen(params.idDokumen, {
             ...(filename ? { filename } : {}),
             judul: validated.judul,
         })

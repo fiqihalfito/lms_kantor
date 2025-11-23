@@ -19,6 +19,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     try {
         await insertSubSkill({
             namaSubSkill: newSubSkill.namaSubSkill as string,
+            level: Number(newSubSkill.level),
             idUser: newSubSkill.idUser ? String(newSubSkill.idUser) : null,
             idSkill: params.idSkill
         })

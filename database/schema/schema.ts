@@ -111,6 +111,7 @@ export const mSkill = pgTable('m_skill', {
 export const mSubSkill = pgTable('m_subskill', {
     idSubSkill: uuid("id_subskill").defaultRandom().primaryKey(),
     namaSubSkill: text("nama_subskill").notNull(),
+    level: integer("level").notNull().default(1),
     ...userFK,
     ...skillFK,
 })
@@ -127,7 +128,7 @@ export const tKuisProgress = pgTable('t_kuis_progress', {
     idKuisProgress: uuid("id_kuis_progress").defaultRandom().primaryKey(),
     ...kuisFK,
     ...userFK, // orang yang jawab soal
-    ...skillFK,
+    ...subSkillFK,
     jumlahBenar: integer("jumlah_benar").default(0),
     jawabanSet: text("jawaban_set"),
     isSelesai: boolean("is_selesai").default(false),

@@ -1,5 +1,5 @@
 import { db } from "database/connect";
-import { mSkill, mSubSkill, mTeam, mUser, tDokumen } from "database/schema/schema";
+import { mSkill, mSubSkill, mTeam, mUser, tDokumen, tKuis } from "database/schema/schema";
 import { eq, inArray } from "drizzle-orm";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 
@@ -125,4 +125,17 @@ export async function getSubSkillByidSkill(idSkill: string) {
 export async function getManyDokumenBySubSkillIds(idSubSkills: string[]) {
     const res = await db.select().from(tDokumen).where(inArray(tDokumen.idSubSkill, idSubSkills))
     return res
+}
+
+export async function getDokumenBySubSkillId(idSubSkill: string) {
+    const res = await db.select().from(tDokumen).where(eq(tDokumen.idSubSkill, idSubSkill))
+    return res
+}
+
+export async function deleteKuis(idKuis: string) {
+    await db.delete(tKuis).where(eq(tKuis.idKuis, idKuis))
+}
+
+export async function deleteManyKuis(idKuis: string[]) {
+    await db.delete(tKuis).where(inArray(tKuis.idKuis, idKuis))
 }

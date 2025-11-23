@@ -1,45 +1,17 @@
-import { db } from "database/connect"
-import { mTeam, tStatusBaca } from "database/schema/schema"
-import { and, eq } from "drizzle-orm"
+import { db } from "database/connect";
+import { and, eq } from "drizzle-orm";
+import { mSkill, mTeam } from "database/schema/schema";
 
-export async function getTeamSkilldanSubskill(idSubBidang: string, idUser: string, filter: {
-    idTeam: string | null
-}) {
-    const res = await db.query.mTeam.findMany({
-        where: and(
-            filter.idTeam ? eq(mTeam.idTeam, filter.idTeam) : undefined,
-            eq(mTeam.idSubBidang, idSubBidang)
-        ),
-        with: {
-            skill: {
-                with: {
-                    subSkill: {
-                        with: {
-                            dokumen: {
-                                with: {
-                                    kuis: {
-                                        with: {
-                                            kuisProgress: true,
-                                            kuisElement: true
-                                        }
-                                    },
-                                    statusBaca: {
-                                        where: eq(tStatusBaca.idUser, idUser)
-                                    }
-                                }
-                            },
-                            pic: {
-                                columns: {
-                                    idUser: true,
-                                    nama: true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    })
+export async function getAllSkill(idSubBidang: string, filter: { idTeam: string | null }) {
+    const res = await db.select().from(mSkill).where(
+        and(
+            eq(mSkill.idSubBidang, idSubBidang),
+            filter.idTeam ? eq(mSkill.idTeam, filter.idTeam) : undefined
+        ))
+    return res
+}
 
+export async function getAllTeam(idSubBidang: string) {
+    const res = await db.select().from(mTeam).where(eq(mTeam.idSubBidang, idSubBidang))
     return res
 }

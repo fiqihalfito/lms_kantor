@@ -1,7 +1,7 @@
 // action delete subskill
 
 import { dataWithError, dataWithSuccess } from "remix-toast";
-import { deleteSubSkill } from "../_service";
+import { deleteKuis, deleteSubSkill, getDokumenBySubSkillId } from "../_service";
 import type { Route } from "./+types/delete-subskill";
 import { getFilenameDokumenBySubSkillId } from "../_service";
 import { deleteInRealBucket } from "~/lib/minio.server";
@@ -11,7 +11,6 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 
     try {
-        const deleted = await deleteSubSkill(params.idSubSkill)
 
         // delete file if exist
         const oldFilename = await getFilenameDokumenBySubSkillId(params.idSubSkill)
@@ -19,7 +18,22 @@ export async function action({ request, params }: Route.ActionArgs) {
             await deleteInRealBucket("dokumen", oldFilename)
         }
 
-        return dataWithSuccess({ ok: true }, `subskill ${deleted[0].namaSubSkill} berhasil dihapus`)
+        // find dokumen by idSubskill and delete idkuis first
+        const dokumen = await getDokumenBySubSkillId(params.idSubSkill)
+        if (dokumen.length > 0) {
+            if (dokumen[0].idKuis) {
+                await deleteKuis(dokumen[0].idKuis)
+            }
+        }
+
+
+
+        // here will delete subskill and dokumen automatically
+        const deletedSubSkill = await deleteSubSkill(params.idSubSkill)
+
+
+
+        return dataWithSuccess({ ok: true }, `subskill ${deletedSubSkill[0].namaSubSkill} berhasil dihapus`)
     } catch (error) {
         return dataWithError({ ok: false }, `Gagal dihapus`)
     }

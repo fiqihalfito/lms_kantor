@@ -18,6 +18,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     try {
         await updateSubSkill(params.idSubSkill, {
             namaSubSkill: update.namaSubSkill as string,
+            level: Number(update.level),
             idUser: update.idUser ? String(update.idUser) : null,
         })
         return dataWithSuccess({ ok: true }, `Subskill ${String(update.namaSubSkill)} berhasil diperbarui`);
