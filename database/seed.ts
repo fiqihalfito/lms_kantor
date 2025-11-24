@@ -6,7 +6,9 @@ import {
     mSkill,
     mSubSkill
 } from "./schema/schema";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
+import { seedSubskill, seedSubskillAdministrasiOS } from "./seed-subskill";
+import { seedBackupAplikasi, seedContainerizationDocker, seedContainerizationKubernetes, seedGitGitlab, seedLinuxServer, seedLogAnalisis, seedLogManagement, seedMonitoring, seedRestoreAplikasi, seedSecurityOS, seedVirtualMachine, seedWebServer, seedWindowsServer } from "./seed-devops";
 
 async function main() {
     console.time("🌱 Seeding completed in");
@@ -85,23 +87,121 @@ async function main() {
             idSubBidang: "s1",
         },
         {
-            idSkill: "bc42e7d8-90e0-4f7f-97b0-0f7c5cbaf1e7",
+            idSkill: "b9bce9a3-5d3f-4db7-9e41-9f8a6cfb92c1",
+            idTeam: mapTeam["DBA"],
+            namaSkill: "MySQL",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "c9bce9a3-5d3f-4db7-9e41-9f8a6cfb92c1",
             idTeam: mapTeam["DBA"],
             namaSkill: "SQL Server",
             idSubBidang: "s1",
         },
         {
-            idSkill: "d3fba0e6-9b26-4b76-953f-59d847dc5f24",
-            idTeam: mapTeam["Devops"],
-            namaSkill: "Kubernetes",
+            idSkill: "d9bce9a3-5d3f-4db7-9e41-9f8a6cfb92c1",
+            idTeam: mapTeam["DBA"],
+            namaSkill: "MongoDB",
             idSubBidang: "s1",
         },
         {
-            idSkill: "e60c18f0-2e52-4e11-a9bb-b8438c2f9f90",
-            idTeam: mapTeam["Devops"],
-            namaSkill: "Git",
+            idSkill: "e9bce9a3-5d3f-4db7-9e41-9f8a6cfb92c1",
+            idTeam: mapTeam["DBA"],
+            namaSkill: "Administrasi Linux",
             idSubBidang: "s1",
         },
+        {
+            idSkill: "d3fba0e6-9b26-4b76-953f-59d847dc5f24",
+            idTeam: mapTeam["DBA"],
+            namaSkill: "Administrasi Windows",
+            idSubBidang: "s1",
+        },
+        // devops
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-000000000001",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Virtual Machine",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-000000000002",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Linux Server",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-000000000003",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Windows Server",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-000000000004",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Web Server",
+            idSubBidang: "s1",
+        },
+
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-000000000005",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Monitoring Server & APM",
+            idSubBidang: "s1",
+        },
+
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-000000000006",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Backup Aplikasi",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-000000000007",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Restore Aplikasi",
+            idSubBidang: "s1",
+        },
+
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-000000000008",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Security OS",
+            idSubBidang: "s1",
+        },
+
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-000000000009",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Containerization Docker",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-00000000000A",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Containerization Kubernetes",
+            idSubBidang: "s1",
+        },
+
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-00000000000B",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Git & Gitlab",
+            idSubBidang: "s1",
+        },
+
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-00000000000C",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Log Management",
+            idSubBidang: "s1",
+        },
+        {
+            idSkill: "11111111-aaaa-4aaa-8aaa-00000000000D",
+            idTeam: mapTeam["Devops"],
+            namaSkill: "Log Analisis",
+            idSubBidang: "s1",
+        },
+
     ];
     await db.insert(mSkill).values(skillData);
     const mapSkill = Object.fromEntries(skillData.map((s) => [s.namaSkill!, s.idSkill]));
@@ -128,7 +228,8 @@ async function main() {
         const slug = nama.toLowerCase().replace(/\s+/g, ".").replace(/[^a-z.]/g, "");
         return {
             idUser: `11111111-1111-4000-8000-${String(idx).padStart(12, '0')}`,
-            email: `${slug}@${mapSlug["s1"]}.example.com`,
+            // email: `${slug}@${mapSlug["s1"]}.iconpln.co.id`,
+            email: `${slug}@iconpln.co.id`,
             nama,
             idSubBidang: "s1",
             password: "123",
@@ -152,42 +253,40 @@ async function main() {
     console.log("👨‍👩‍👧‍👦 Seeding subskill...");
 
     const subskillData: typeof mSubSkill.$inferInsert[] = [
-        {
-            idSubSkill: "c83e6bb9-6f81-4138-a49a-a1c8b738a2d3",
-            namaSubSkill: "Replication",
-            idSkill: mapSkill["PostgreSQL"],
-            idUser: mapUser[usersS1[0].email]
-        },
-        {
-            idSubSkill: "d92b7b2e-4a10-4f1f-8c53-35f1ad979b4e",
-            namaSubSkill: "Backup Restore",
-            idSkill: mapSkill["PostgreSQL"],
-            idUser: mapUser[usersS1[1].email]
-        },
-    ];
+        // JUNIOR = 1
+        // {
+        //     idSubSkill: "8b1b9d56-9f4a-4d42-9f9a-4f6e86db6b81",
+        //     namaSubSkill: "Melakukan Instalasi dan Konfigurasi Dasar",
+        //     idSkill: mapSkill["PostgreSQL"],
+        //     level: 1,
+        //     idUser: mapUser[usersS1[2].email]
+        // },
+
+        ...seedSubskill(mapSkill["PostgreSQL"], mapUser[usersS1[2].email]),
+        ...seedSubskill(mapSkill["MySQL"], mapUser[usersS1[10].email]),
+        ...seedSubskill(mapSkill["SQL Server"], mapUser[usersS1[8].email]),
+        ...seedSubskill(mapSkill["MongoDB"], mapUser[usersS1[3].email]),
+        ...seedSubskillAdministrasiOS(mapSkill["Administrasi Linux"], mapUser[usersS1[11].email]),
+        ...seedSubskillAdministrasiOS(mapSkill["Administrasi Windows"], mapUser[usersS1[17].email]),
+        ...seedVirtualMachine(mapSkill["Virtual Machine"], mapUser[usersS1[24].email]),
+        ...seedLinuxServer(mapSkill["Linux Server"], mapUser[usersS1[24].email]),
+        ...seedWindowsServer(mapSkill["Windows Server"], mapUser[usersS1[24].email]),
+        ...seedWebServer(mapSkill["Web Server"], mapUser[usersS1[24].email]),
+        ...seedMonitoring(mapSkill["Monitoring Server & APM"], mapUser[usersS1[20].email]),
+        ...seedBackupAplikasi(mapSkill["Backup Aplikasi"], mapUser[usersS1[21].email]),
+        ...seedRestoreAplikasi(mapSkill["Restore Aplikasi"], mapUser[usersS1[21].email]),
+        ...seedSecurityOS(mapSkill["Security OS"], mapUser[usersS1[24].email]),
+        ...seedContainerizationDocker(mapSkill["Containerization Docker"], mapUser[usersS1[24].email]),
+        ...seedContainerizationKubernetes(mapSkill["Containerization Kubernetes"], mapUser[usersS1[24].email]),
+        ...seedGitGitlab(mapSkill["Git & Gitlab"], mapUser[usersS1[33].email]),
+        ...seedLogManagement(mapSkill["Log Management"], mapUser[usersS1[36].email]),
+        ...seedLogAnalisis(mapSkill["Log Analisis"], mapUser[usersS1[36].email]),
+    ]
+
     await db.insert(mSubSkill).values(subskillData);
     const mapSubSkill = Object.fromEntries(subskillData.map((s) => [s.namaSubSkill!, s.idSubSkill]));
 
 
-
-    // 5️⃣ Insert Member Team dengan UUID hardcoded
-    // console.log("🤝 Seeding team members...");
-    // const dbaUsers = usersS1.slice(0, 18);
-    // const devopsUsers = usersS1.slice(18);
-
-    // const dbaMembers = dbaUsers.map((user, idx) => ({
-    //     idMemberTeam: `bbbbbbbb-bbbb-4000-8000-${String(idx).padStart(12, '0')}`,
-    //     idTeam: mapTeam["DBA"],
-    //     idUser: mapUser[user.email],
-    // }));
-
-    // const devopsMembers = devopsUsers.map((user, idx) => ({
-    //     idMemberTeam: `cccccccc-cccc-4000-8000-${String(idx).padStart(12, '0')}`,
-    //     idTeam: mapTeam["Devops"],
-    //     idUser: mapUser[user.email],
-    // }));
-
-    // await db.insert(mMemberTeam).values([...dbaMembers, ...devopsMembers]);
 
     // 6️⃣ Insert dokumen dengan UUID hardcoded
     console.log("📄 Seeding dokumen...");
@@ -210,9 +309,31 @@ async function main() {
             filename: "test-pdf.pdf",
             idLayanan: null,
             idSubBidang: "s1",
-            idUser: mapUser[usersS1[1].email],
+            idUser: mapUser[usersS1[0].email],
             idTeam: mapTeam["DBA"],
             idSubSkill: mapSubSkill["Replication"]
+        },
+        {
+            idDokumen: "fddddddd-dddd-4000-8000-000000000002",
+            judul: "Backup Restore PG",
+            tipe: "Knowledge",
+            filename: "test-pdf.pdf",
+            idLayanan: null,
+            idSubBidang: "s1",
+            idUser: mapUser[usersS1[0].email],
+            idTeam: mapTeam["DBA"],
+            idSubSkill: mapSubSkill["Backup Restore"]
+        },
+        {
+            idDokumen: "dddddddd-dddd-4000-8000-000000000025",
+            judul: "WAL PG",
+            tipe: "Knowledge",
+            filename: "test-pdf.pdf",
+            idLayanan: null,
+            idSubBidang: "s1",
+            idUser: mapUser[usersS1[0].email],
+            idTeam: mapTeam["DBA"],
+            idSubSkill: mapSubSkill["WAL"]
         },
         {
             idDokumen: "dddddddd-dddd-4000-8000-000000000003",
@@ -262,66 +383,64 @@ async function main() {
 
     // 8️⃣ Insert kuis
     console.log("📝 Seeding kuis...");
-    const kuisData = [
-        {
-            idKuis: "ffffffff-ffff-4000-8000-000000000001",
-            idDokumen: dokumenData[0].idDokumen,
-            idSubBidang: "s1",
-        },
-    ];
-    await db.insert(tKuis).values(kuisData);
+
+    const knowledgeDokumen = dokumenData.filter(doc => doc.tipe === "Knowledge");
+
+    // Prepare kuis data and a temporary map to link documents to their kuis
+    const kuisToDokumenMap: { [idDokumen: string]: string } = {};
+    const kuisData: typeof tKuis.$inferInsert[] = knowledgeDokumen.map((doc, index) => {
+        const idKuis = `ffffffff-ffff-4000-8000-${String(index + 1).padStart(12, '0')}`;
+        kuisToDokumenMap[doc.idDokumen!] = idKuis; // Map document ID to its quiz ID
+        return {
+            idKuis: idKuis,
+            idSubBidang: doc.idSubBidang!,
+        };
+    });
+
+    if (kuisData.length > 0) {
+        await db.insert(tKuis).values(kuisData);
+    }
+
+    // Update tDokumen with idKuis, using the map created earlier
+    console.log("🔄 Updating dokumen with kuis IDs...");
+    for (const doc of knowledgeDokumen) {
+        if (kuisToDokumenMap[doc.idDokumen!]) {
+            await db.update(tDokumen)
+                .set({ idKuis: kuisToDokumenMap[doc.idDokumen!] })
+                .where(eq(tDokumen.idDokumen, doc.idDokumen!));
+        }
+    }
 
     // 9️⃣ Insert kuis element
     console.log("❓ Seeding kuis element...");
-    const kuisElementData = [
-        {
-            idKuisElement: "11111111-ffff-4000-8000-000000000001",
-            idKuis: kuisData[0].idKuis,
-            soal: "Apa kepanjangan dari AMS?",
-            pilgan: JSON.stringify({
-                A: "Asset Management System",
-                B: "Application Management System",
-                C: "Automated Management System",
-                D: "Advanced Monitoring System"
-            }),
-            jawaban: "A",
-        },
-        {
-            idKuisElement: "11111111-ffff-4000-8000-000000000002",
-            idKuis: kuisData[0].idKuis,
-            soal: "Berapa kali backup harus dilakukan dalam sehari?",
-            pilgan: JSON.stringify({
-                A: "1 kali",
-                B: "2 kali",
-                C: "3 kali",
-                D: "4 kali"
-            }),
-            jawaban: "B",
-        },
-    ];
-    await db.insert(tKuisElement).values(kuisElementData);
+    const kuisElementData: typeof tKuisElement.$inferInsert[] = [];
+
+    knowledgeDokumen.forEach((doc, docIndex) => {
+        const idKuis = kuisToDokumenMap[doc.idDokumen!];
+        if (!idKuis) return;
+
+        for (let i = 1; i <= 3; i++) {
+            kuisElementData.push({
+                idKuisElement: `11111111-ffff-4000-8000-${String(docIndex * 3 + i).padStart(12, '0')}`,
+                idKuis: idKuis,
+                soal: `Pertanyaan ${i} untuk ${doc.judul}`,
+                pilgan: JSON.stringify({
+                    A: "Pilihan A benar",
+                    B: "Pilihan B",
+                    C: "Pilihan C",
+                    D: "Pilihan D"
+                }),
+                jawaban: "A",
+            });
+        }
+    });
+
+    if (kuisElementData.length > 0) {
+        await db.insert(tKuisElement).values(kuisElementData);
+    }
 
     // 🔟 Insert kuis progress
-    console.log("📊 Seeding kuis progress...");
-    const kuisProgressData = [
-        {
-            idKuisProgress: "22222222-ffff-4000-8000-000000000001",
-            idKuis: kuisData[0].idKuis,
-            idUser: mapUser[usersS1[4].email],
-            jumlahBenar: 2,
-            jawabanSet: JSON.stringify({ "1": "A", "2": "B" }),
-            isSelesai: true,
-        },
-        {
-            idKuisProgress: "22222222-ffff-4000-8000-000000000002",
-            idKuis: kuisData[0].idKuis,
-            idUser: mapUser[usersS1[5].email],
-            jumlahBenar: 1,
-            jawabanSet: JSON.stringify({ "1": "A", "2": "C" }),
-            isSelesai: true,
-        },
-    ];
-    await db.insert(tKuisProgress).values(kuisProgressData);
+    console.log("📊 Seeding kuis progress... SKIPPED");
 
     console.timeEnd("🌱 Seeding completed in");
     console.log("✅ Data lengkap: subbidang, layanan, user, team, member team, dokumen, status baca, kuis, kuis element, kuis progress");

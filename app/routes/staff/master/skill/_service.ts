@@ -34,7 +34,8 @@ export async function getTeamAndSkill(idSubBidang: string, filterTeam?: string |
                                     nama: true
                                 }
                             }
-                        }
+                        },
+                        orderBy: [mSubSkill.urutan]
                     }
                 }
             }
@@ -138,4 +139,13 @@ export async function deleteKuis(idKuis: string) {
 
 export async function deleteManyKuis(idKuis: string[]) {
     await db.delete(tKuis).where(inArray(tKuis.idKuis, idKuis))
+}
+
+
+export async function updateUrutanSubSkill(newOrder: { idSubSkill: string, urutan: number }) {
+    await db.update(mSubSkill)
+        .set({
+            urutan: newOrder.urutan
+        })
+        .where(eq(mSubSkill.idSubSkill, newOrder.idSubSkill))
 }

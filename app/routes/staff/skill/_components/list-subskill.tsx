@@ -28,10 +28,11 @@ export function ListSubSkill({ subskill }: ListSubSkillType) {
                     <TableRow>
                         <TableHead className="w-[100px]">No</TableHead>
                         <TableHead>Subskill</TableHead>
-                        <TableHead>PIC</TableHead>
-                        <TableHead>Dokumen</TableHead>
-                        <TableHead>Kuis</TableHead>
-                        <TableHead>Jumlah Soal</TableHead>
+                        <TableHead className="text-center">Level</TableHead>
+                        <TableHead className="text-center">PIC</TableHead>
+                        <TableHead className="text-center">Dokumen</TableHead>
+                        <TableHead className="text-center">Kuis</TableHead>
+                        <TableHead className="text-center">Jumlah Soal</TableHead>
                         <TableHead className="text-right">Aksi</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -40,8 +41,9 @@ export function ListSubSkill({ subskill }: ListSubSkillType) {
                         <TableRow key={ss.idSubSkill}>
                             <TableCell className="font-medium">{i + 1}</TableCell>
                             <TableCell>{ss.namaSubSkill}</TableCell>
-                            <TableCell>{ss.pic?.nama}</TableCell>
-                            <TableCell>
+                            <TableCell className="text-center">{ss.level}</TableCell>
+                            <TableCell className="text-center">{ss.pic?.nama}</TableCell>
+                            <TableCell className="text-center">
                                 {ss.dokumen ? (
                                     <Badge className="bg-green-500 rounded-full">
                                         Done
@@ -52,7 +54,7 @@ export function ListSubSkill({ subskill }: ListSubSkillType) {
                                     </Badge>
                                 )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-center">
                                 {ss.dokumen?.kuis ? (
                                     <Badge className="bg-green-500 rounded-full">
                                         Done
@@ -63,7 +65,7 @@ export function ListSubSkill({ subskill }: ListSubSkillType) {
                                     </Badge>
                                 )}
                             </TableCell>
-                            <TableCell>{ss.dokumen?.kuis?.kuisElement?.length ?? "-"}</TableCell>
+                            <TableCell className="text-center">{ss.dokumen?.kuis?.kuisElement?.length ?? "-"}</TableCell>
                             <TableCell className="text-right">
                                 <OptionSubskill idSubSkill={ss.idSubSkill} idTeam={ss.pic?.idTeam} idDokumen={ss.dokumen?.idDokumen} idKuis={ss.dokumen?.idKuis} />
                             </TableCell>

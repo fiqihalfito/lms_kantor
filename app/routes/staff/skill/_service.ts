@@ -8,6 +8,7 @@ export async function getSkillAndSubSkillByPIC(idSubBidang: string, idUser: stri
         with: {
             subSkill: {
                 where: eq(mSubSkill.idUser, idUser),
+                orderBy: [mSubSkill.level],
                 with: {
                     pic: {
                         columns: {

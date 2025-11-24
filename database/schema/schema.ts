@@ -112,6 +112,7 @@ export const mSubSkill = pgTable('m_subskill', {
     idSubSkill: uuid("id_subskill").defaultRandom().primaryKey(),
     namaSubSkill: text("nama_subskill").notNull(),
     level: integer("level").notNull().default(1),
+    urutan: integer("urutan"),
     ...userFK,
     ...skillFK,
 })

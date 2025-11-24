@@ -94,12 +94,13 @@ export default [
                     ...prefix(":idSkill", [
                         route("delete", "routes/staff/master/skill/action/delete-skill.tsx"),
                         route("edit", "routes/staff/master/skill/action/edit-skill.tsx"),
+                        route("update-urutan", "routes/staff/master/skill/action/update-urutan-subskill.tsx"),
 
                         ...prefix("subskill", [
                             route("new", "routes/staff/master/skill/action/add-subskill.tsx"),
                             ...prefix(":idSubSkill", [
                                 route("edit", "routes/staff/master/skill/action/edit-subskill.tsx"),
-                                route("delete", "routes/staff/master/skill/action/delete-subskill.tsx")
+                                route("delete", "routes/staff/master/skill/action/delete-subskill.tsx"),
                             ])
                         ])
                     ]),

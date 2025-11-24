@@ -1,5 +1,5 @@
 import { db } from "database/connect";
-import { tKuisElement, tKuisProgress } from "database/schema/schema";
+import { mSubSkill, tKuisElement, tKuisProgress } from "database/schema/schema";
 import { eq, inArray } from "drizzle-orm";
 
 export async function getSoalData(idKuisElement: string) {
@@ -56,9 +56,20 @@ export async function updateKuisProgress(idKuisProgress: string, {
     jumlahBenar,
     isSelesai
 }: typeof tKuisProgress.$inferInsert) {
-    await db.update(tKuisProgress).set({
+    return await db.update(tKuisProgress).set({
         jawabanSet: jawabanSet,
         jumlahBenar: jumlahBenar,
         isSelesai: isSelesai
     }).where(eq(tKuisProgress.idKuisProgress, idKuisProgress))
+        .returning()
+}
+
+export async function getIdSkillByIdSubskill(idSubskill: string) {
+    const res = await db.query.mSubSkill.findFirst({
+        columns: {
+            idSkill: true
+        },
+        where: eq(mSubSkill.idSubSkill, idSubskill)
+    })
+    return res?.idSkill
 }

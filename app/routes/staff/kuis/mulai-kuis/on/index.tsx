@@ -1,6 +1,6 @@
 import { Separator } from "~/components/ui/separator";
 import type { Route } from "./+types";
-import { getAllSoalData, getDokumenDataByIdKuis, hitungBenarJawaban, updateKuisProgress } from "./_service";
+import { getAllSoalData, getDokumenDataByIdKuis, getIdSkillByIdSubskill, hitungBenarJawaban, updateKuisProgress } from "./_service";
 import { useState } from "react";
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
@@ -20,14 +20,16 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     const jumlahBenar = await hitungBenarJawaban(jawabanSet)
 
-    await updateKuisProgress(params.idKuisProgress, {
+    const updatedProgress = await updateKuisProgress(params.idKuisProgress, {
         jumlahBenar: jumlahBenar,
         jawabanSet: JSON.stringify(jawabanSet),
         isSelesai: true
     })
+    const idSubskill = updatedProgress[0].idSubSkill
+    const idSkill = await getIdSkillByIdSubskill(idSubskill!)
 
 
-    return redirect(`/${FIRST_SEGMENT}/kuis/skor`)
+    return redirect(`/${FIRST_SEGMENT}/dokumen/Knowledge/skill/${idSkill}`)
 }
 
 export async function loader({ request, params }: Route.LoaderArgs) {
