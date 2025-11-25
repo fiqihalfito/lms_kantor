@@ -14,6 +14,17 @@ import { Sortable, SortableContent, SortableItem, SortableItemHandle, SortableOv
 import type { mSubSkill } from "database/schema/schema";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { cn } from "~/lib/utils";
+import { TableWrapper } from "~/components/table-wrapper";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "~/components/ui/table"
 
 type ListSkillSubSkillType = {
     teamAndSkill: Awaited<ReturnType<typeof getTeamAndSkill>>,
@@ -76,7 +87,7 @@ export function ListSkillSubSkill({ teamAndSkill, listTeam, filterTeam, allUsers
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div>
                                                         <h3 className="text-xs text-muted-foreground">Skill</h3>
-                                                        <h2 className="font-medium">{s.namaSkill}</h2>
+                                                        <h2 className="font-semibold">{s.namaSkill}</h2>
                                                     </div>
                                                     <div className="flex items-center gap-x-1.5">
                                                         <FormSubSkill
@@ -106,83 +117,155 @@ export function ListSkillSubSkill({ teamAndSkill, listTeam, filterTeam, allUsers
                                                     ) : (
                                                         <div className="flex flex-col gap-2">
                                                             <p className="text-xs text-muted-foreground">list subskill</p>
-                                                            {
-                                                                // Group subskills by their level for better readability
-                                                                Object.entries(s.subSkill.reduce((acc: Record<string, typeof s.subSkill[number][]>, sub) => {
-                                                                    const level = sub.level;
-                                                                    if (!acc[level]) acc[level] = [];
-                                                                    acc[level].push(sub);
-                                                                    return acc;
-                                                                }, {})).sort(([levelA], [levelB]) => parseInt(levelA) - parseInt(levelB)).map(([level, subskills]) => {
+                                                            <div className="flex flex-col gap-8">
+                                                                {
+                                                                    // Group subskills by their level for better readability
+                                                                    Object.entries(s.subSkill.reduce((acc: Record<string, typeof s.subSkill[number][]>, sub) => {
+                                                                        const level = sub.level;
+                                                                        if (!acc[level]) acc[level] = [];
+                                                                        acc[level].push(sub);
+                                                                        return acc;
+                                                                    }, {})).sort(([levelA], [levelB]) => parseInt(levelA) - parseInt(levelB)).map(([level, subskills]) => {
 
 
-                                                                    // for optimistic update
-                                                                    let subskillsForLevel = subskills
-                                                                    if (fetcher.formData?.get("level") == level && fetcher.formData?.get("idSkill") == s.idSkill) {
-                                                                        subskillsForLevel = JSON.parse(fetcher.formData?.get("newSubskill") as string || "[]") as typeof subskills
-                                                                    }
+                                                                        // for optimistic update
+                                                                        let subskillsForLevel = subskills
+                                                                        if (fetcher.formData?.get("level") == level && fetcher.formData?.get("idSkill") == s.idSkill) {
+                                                                            subskillsForLevel = JSON.parse(fetcher.formData?.get("newSubskill") as string || "[]") as typeof subskills
+                                                                        }
 
 
-                                                                    return (
-                                                                        <Sortable
-                                                                            key={level}
-                                                                            value={subskillsForLevel}
-                                                                            onValueChange={handleOrderSubSkill}
-                                                                            getItemValue={(subskill) => subskill.idSubSkill}
-                                                                        >
+                                                                        return (
+                                                                            <div key={level}>
+                                                                                {/* <Sortable
+                                                                                key={level}
+                                                                                value={subskillsForLevel}
+                                                                                onValueChange={handleOrderSubSkill}
+                                                                                getItemValue={(subskill) => subskill.idSubSkill}
+                                                                            >
 
-                                                                            <div className="mb-4 last:mb-0">
-                                                                                <h4 className="text-sm font-semibold mb-2">Level {level}</h4>
-                                                                                <SortableContent asChild>
-                                                                                    <div className="flex flex-col gap-2">
-                                                                                        {subskillsForLevel.map((ss) => (
-                                                                                            <SortableItem key={ss.idSubSkill} value={ss.idSubSkill}>
-                                                                                                <div className="border rounded-sm px-2 py-2 text-sm flex items-center justify-between">
-                                                                                                    <div className="flex items-center gap-x-1.5">
-                                                                                                        <SortableItemHandle asChild>
-                                                                                                            <Button variant="ghost" size="icon" className="size-8">
-                                                                                                                <GripVerticalIcon className="h-4 w-4" />
-                                                                                                            </Button>
-                                                                                                        </SortableItemHandle>
-                                                                                                        <div className="space-y-1.5">
-                                                                                                            <div className="flex items-center gap-x-1.5">
-                                                                                                                <span>{ss.namaSubSkill}</span>
-                                                                                                                <Badge className="rounded-full" variant="outline">Level {ss.level}</Badge>
+                                                                                <div className="mb-4 last:mb-0">
+                                                                                    <h4 className="text-sm font-semibold mb-2">Level {level}</h4>
+                                                                                    <SortableContent asChild>
+                                                                                        <div className="flex flex-col gap-2">
+                                                                                            {subskillsForLevel.map((ss) => (
+                                                                                                <SortableItem key={ss.idSubSkill} value={ss.idSubSkill}>
+                                                                                                    <div className="border rounded-sm px-2 py-2 text-sm flex items-center justify-between">
+                                                                                                        <div className="flex items-center gap-x-1.5">
+                                                                                                            <SortableItemHandle asChild>
+                                                                                                                <Button variant="ghost" size="icon" className="size-8">
+                                                                                                                    <GripVerticalIcon className="h-4 w-4" />
+                                                                                                                </Button>
+                                                                                                            </SortableItemHandle>
+                                                                                                            <div className="space-y-1.5">
+                                                                                                                <div className="flex items-center gap-x-1.5">
+                                                                                                                    <span>{ss.namaSubSkill}</span>
+                                                                                                                    <Badge className="rounded-full" variant="outline">Level {ss.level}</Badge>
+                                                                                                                </div>
+                                                                                                                <p className="text-xs text-muted-foreground">PIC: {ss.pic?.nama}</p>
                                                                                                             </div>
-                                                                                                            <p className="text-xs text-muted-foreground">PIC: {ss.pic?.nama}</p>
+                                                                                                        </div>
+                                                                                                        <div className="flex items-center gap-x-1.5">
+                                                                                                            <FormSubSkill
+                                                                                                                key={"update" + ss.idSubSkill}
+                                                                                                                allUsers={allUsers}
+                                                                                                                idTeam={t.idTeam}
+                                                                                                                mode="update"
+                                                                                                                idSubSkill={ss.idSubSkill}
+                                                                                                                dv={{
+                                                                                                                    namaSubSkill: ss.namaSubSkill,
+                                                                                                                    idUser: ss.idUser,
+                                                                                                                    level: ss.level
+                                                                                                                }}
+                                                                                                            />
+                                                                                                            <DeleteSubSkill key={"delete" + ss.idSubSkill} idSkill={s.idSkill} idSubSkill={ss.idSubSkill} nama={ss.namaSubSkill} />
                                                                                                         </div>
                                                                                                     </div>
-                                                                                                    <div className="flex items-center gap-x-1.5">
-                                                                                                        <FormSubSkill
-                                                                                                            key={"update" + ss.idSubSkill}
-                                                                                                            allUsers={allUsers}
-                                                                                                            idTeam={t.idTeam}
-                                                                                                            mode="update"
-                                                                                                            idSubSkill={ss.idSubSkill}
-                                                                                                            dv={{
-                                                                                                                namaSubSkill: ss.namaSubSkill,
-                                                                                                                idUser: ss.idUser,
-                                                                                                                level: ss.level
-                                                                                                            }}
-                                                                                                        />
-                                                                                                        <DeleteSubSkill key={"delete" + ss.idSubSkill} idSkill={s.idSkill} idSubSkill={ss.idSubSkill} nama={ss.namaSubSkill} />
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </SortableItem>
+                                                                                                </SortableItem>
 
-                                                                                        ))}
+                                                                                            ))}
+                                                                                        </div>
+
+                                                                                    </SortableContent>
+                                                                                </div>
+                                                                                <SortableOverlay>
+                                                                                    <div className="size-full rounded-md bg-primary/10" />
+                                                                                </SortableOverlay>
+                                                                            </Sortable> */}
+
+
+
+                                                                                <Sortable
+                                                                                    key={level}
+                                                                                    value={subskillsForLevel}
+                                                                                    onValueChange={handleOrderSubSkill}
+                                                                                    getItemValue={(subskill) => subskill.idSubSkill}
+                                                                                >
+                                                                                    <div>
+                                                                                        <h4 className="text-sm font-semibold mb-2">Level {level}</h4>
                                                                                     </div>
+                                                                                    <TableWrapper>
+                                                                                        <Table>
+                                                                                            <TableHeader>
+                                                                                                <TableRow>
+                                                                                                    <TableHead className="w-[50px]"></TableHead> {/*handleOrderSubSkill*/}
+                                                                                                    <TableHead>SubSkill</TableHead>
+                                                                                                    <TableHead>PIC</TableHead>
+                                                                                                    <TableHead className="text-right">Aksi</TableHead>
+                                                                                                </TableRow>
+                                                                                            </TableHeader>
+                                                                                            <SortableContent asChild>
+                                                                                                <TableBody>
+                                                                                                    {subskillsForLevel.map((ss) => (
+                                                                                                        <SortableItem asChild key={ss.idSubSkill} value={ss.idSubSkill}>
+                                                                                                            <TableRow>
+                                                                                                                <TableCell>
+                                                                                                                    <SortableItemHandle asChild>
+                                                                                                                        <Button variant="ghost" size="icon" className="size-8">
+                                                                                                                            <GripVerticalIcon className="h-4 w-4" />
+                                                                                                                        </Button>
+                                                                                                                    </SortableItemHandle>
+                                                                                                                </TableCell>
+                                                                                                                <TableCell className="font-medium">{ss.namaSubSkill}</TableCell>
+                                                                                                                <TableCell>{ss.pic?.nama}</TableCell>
+                                                                                                                <TableCell className="flex justify-end items-center gap-x-1.5">
+                                                                                                                    <FormSubSkill
+                                                                                                                        key={"update" + ss.idSubSkill}
+                                                                                                                        allUsers={allUsers}
+                                                                                                                        idTeam={t.idTeam}
+                                                                                                                        mode="update"
+                                                                                                                        idSubSkill={ss.idSubSkill}
+                                                                                                                        dv={{
+                                                                                                                            namaSubSkill: ss.namaSubSkill,
+                                                                                                                            idUser: ss.idUser,
+                                                                                                                            level: ss.level
+                                                                                                                        }}
+                                                                                                                    />
+                                                                                                                    <DeleteSubSkill key={"delete" + ss.idSubSkill} idSkill={s.idSkill} idSubSkill={ss.idSubSkill} nama={ss.namaSubSkill} />
+                                                                                                                </TableCell>
+                                                                                                            </TableRow>
+                                                                                                        </SortableItem>
+                                                                                                    ))}
+                                                                                                </TableBody>
+                                                                                            </SortableContent>
 
-                                                                                </SortableContent>
+                                                                                            {/* <TableFooter>
+                                                                                            <TableRow>
+                                                                                                <TableCell colSpan={3}>Total</TableCell>
+                                                                                                <TableCell className="text-right">$2,500.00</TableCell>
+                                                                                            </TableRow>
+                                                                                        </TableFooter> */}
+                                                                                        </Table>
+                                                                                    </TableWrapper>
+                                                                                </Sortable>
                                                                             </div>
-                                                                            {/* <SortableOverlay>
-                                                                            <div className="size-full rounded-md bg-primary/10" />
-                                                                        </SortableOverlay> */}
-                                                                        </Sortable>
-                                                                    )
 
-                                                                })
-                                                            }
+                                                                        )
+
+                                                                    })
+                                                                }
+                                                            </div>
+
                                                         </div>
                                                     )
                                                 }
