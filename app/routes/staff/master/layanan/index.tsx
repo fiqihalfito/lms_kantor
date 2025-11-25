@@ -26,7 +26,6 @@ import {
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import { Spinner } from "~/components/ui/spinner";
-import { MyAlert } from "~/components/alert-custom";
 import { getToast } from "remix-toast";
 import { useToastEffect } from "~/hooks/use-toast";
 
