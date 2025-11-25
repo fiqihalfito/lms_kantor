@@ -3,7 +3,7 @@ import { mSkill, mUser, tDokumen, tKuisProgress } from "database/schema/schema";
 import { and, eq, notInArray } from "drizzle-orm";
 
 export async function getAllSkill(idUser: string, idTeam: string) {
-    const res = await db.query.mSkill.findMany({
+    const res = await db.query.mUser.findMany({
         with: {
             kuisProgress: {
                 where: and(
@@ -11,19 +11,15 @@ export async function getAllSkill(idUser: string, idTeam: string) {
                     eq(tKuisProgress.isSelesai, true)
                 ),
                 with: {
-                    kuis: {
+                    subSkill: {
                         with: {
-                            dokumen: {
-                                columns: {
-                                    judul: true
-                                }
-                            }
+                            skill: true
                         }
                     }
                 }
             }
         },
-        where: eq(mSkill.idTeam, idTeam)
+        where: eq(mUser.idUser, idUser)
     })
     // const res = await db.query.tKuisProgress.findMany({
     //     with: {
@@ -41,7 +37,7 @@ export async function getAllSkill(idUser: string, idTeam: string) {
     //     where: eq(tKuisProgress.idUser, idUser)
     // })
 
-    return res
+    return res[0]
 }
 
 export async function getUnskilled(idSubBidang: string, idSkilled: string[]) {

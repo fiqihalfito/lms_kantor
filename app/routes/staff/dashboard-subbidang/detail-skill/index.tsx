@@ -50,6 +50,17 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
     }, []);
     const navigate = useNavigate()
 
+    const groupedSkills = Object.entries(allSkill.kuisProgress.reduce((acc: Record<string, Array<NonNullable<typeof allSkill.kuisProgress[0]['subSkill']>>>, kp) => {
+        const skillId = kp.subSkill?.skill?.namaSkill;
+        if (skillId && kp.subSkill) {
+            if (!acc[skillId]) {
+                acc[skillId] = [];
+            }
+            acc[skillId].push(kp.subSkill);
+        }
+        return acc;
+    }, {}));
+
 
     return (
         <div className="fixed inset-0 z-50 bg-black/50">
@@ -90,12 +101,12 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
                                             </>
                                         ) : undefined}
                                     </div> */}
-                                    {allSkill.map((ls, i) => (
+                                    {groupedSkills.map(([idSkill, subSkills], i) => (
                                         <div>
-                                            <h6 className="font-semibold">{ls.namaSkill}</h6>
+                                            <h6 className="font-semibold">{idSkill}</h6>
                                             <ul>
-                                                {ls.kuisProgress.map((kp, i) => (
-                                                    <li>{kp.kuis?.dokumen.judul}</li>
+                                                {subSkills.map((ss, i) => (
+                                                    <li>{ss.namaSubSkill}</li>
                                                 ))}
                                             </ul>
                                         </div>
