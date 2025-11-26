@@ -5,30 +5,14 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "~/components/ui/accordion"
-import {
-    Item,
-    ItemActions,
-    ItemContent,
-    ItemDescription,
-    ItemMedia,
-    ItemTitle,
-} from "~/components/ui/item"
-import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button";
 import { useEffect } from "react";
 import { getAllSkill, getUserData } from "./_service";
-import { userContext } from "~/lib/context";
-import { ScrollArea } from "~/components/ui/scroll-area";
 import { useNavigate } from "react-router";
 
-export async function loader({ request, params, context }: Route.LoaderArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
 
-    const user = context.get(userContext)
-    const allSkill = await getAllSkill(user?.idUser!, user?.idTeam!)
-    // const idSkilled = allSkill.flatMap(s =>
-    //     s.kuis?.idDokumen ? [s.kuis.idDokumen] : []
-    // );
-    // const unskilled = await getUnskilled(user?.idSubBidang!, idSkilled)
+    const allSkill = await getAllSkill(params.idUser)
     const userdata = await getUserData(params.idUser)
 
     return { allSkill, userdata }
@@ -81,26 +65,6 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
                             <AccordionItem value="skill">
                                 <AccordionTrigger>Skill Terupdate</AccordionTrigger>
                                 <AccordionContent>
-                                    {/* <ScrollArea className="h-96 border rounded-md p-4"> */}
-                                    {/* <div className=" flex flex-col gap-1.5">
-                                        {allSkill.length > 0 ? (
-                                            <>
-                                                {allSkill.map((s, i) => (
-                                                    <Item variant="outline" key={i} size={"sm"}>
-                                                        <ItemMedia variant="icon">
-                                                            {i + 1}
-                                                        </ItemMedia>
-                                                        <ItemContent>
-                                                            <ItemTitle>{s.kuis?.dokumen.judul}</ItemTitle>
-                                                        </ItemContent>
-                                                        <ItemActions>
-                                                            <div className="bg-green-400 size-5 rounded" />
-                                                        </ItemActions>
-                                                    </Item>
-                                                ))}
-                                            </>
-                                        ) : undefined}
-                                    </div> */}
                                     {groupedSkills.map(([idSkill, subSkills], i) => (
                                         <div>
                                             <h6 className="font-semibold">{idSkill}</h6>
@@ -111,9 +75,9 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
                                             </ul>
                                         </div>
                                     ))}
-
-                                    {/* </ScrollArea> */}
-
+                                    {groupedSkills.length === 0 ? (
+                                        <p className="text-center text-red-500">Belum melakukan kuis</p>
+                                    ) : undefined}
                                 </AccordionContent>
                             </AccordionItem>
                             <AccordionItem value="unskill">

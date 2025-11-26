@@ -1,8 +1,8 @@
 import { db } from "database/connect";
-import { mSkill, mUser, tDokumen, tKuisProgress } from "database/schema/schema";
+import { mUser, tDokumen, tKuisProgress } from "database/schema/schema";
 import { and, eq, notInArray } from "drizzle-orm";
 
-export async function getAllSkill(idUser: string, idTeam: string) {
+export async function getAllSkill(idUser: string) {
     const res = await db.query.mUser.findMany({
         with: {
             kuisProgress: {

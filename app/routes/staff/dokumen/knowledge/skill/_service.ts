@@ -32,7 +32,7 @@ export async function getSkilldanSubskill(idSkill: string, idUser: string) {
                         }
                     }
                 },
-                orderBy: [mSubSkill.level]
+                orderBy: [mSubSkill.level, mSubSkill.urutan]
             }
         }
     })
