@@ -7,20 +7,21 @@ import {
 } from "~/components/ui/accordion"
 import { Button } from "~/components/ui/button";
 import { useEffect } from "react";
-import { getAllSkill, getUserData } from "./_service";
+import { getAllSubSkill, getUserData } from "./_service";
 import { useNavigate } from "react-router";
+import { Badge } from "~/components/ui/badge";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
 
-    const allSkill = await getAllSkill(params.idUser)
     const userdata = await getUserData(params.idUser)
+    const allSubSkill = await getAllSubSkill(params.idUser, userdata.idTeam!)
 
-    return { allSkill, userdata }
+    return { allSubSkill, userdata }
 }
 
 export default function DetailSkill({ params, loaderData }: Route.ComponentProps) {
 
-    const { allSkill, userdata } = loaderData
+    const { allSubSkill, userdata } = loaderData
 
     // background lock scroll
     useEffect(() => {
@@ -34,13 +35,18 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
     }, []);
     const navigate = useNavigate()
 
-    const groupedSkills = Object.entries(allSkill.kuisProgress.reduce((acc: Record<string, Array<NonNullable<typeof allSkill.kuisProgress[0]['subSkill']>>>, kp) => {
-        const skillId = kp.subSkill?.skill?.namaSkill;
-        if (skillId && kp.subSkill) {
-            if (!acc[skillId]) {
-                acc[skillId] = [];
+    const groupedSkills = Object.entries(allSubSkill.reduce((acc: Record<string, { subskills: Array<NonNullable<typeof allSubSkill[number]>>, jumlahSubskill: number }>, ss) => {
+        const namaSkill = ss.skill?.idTeam === userdata.idTeam ? ss.skill?.namaSkill : undefined;
+        if (namaSkill) {
+            if (!acc[namaSkill]) {
+                acc[namaSkill] = {
+                    subskills: [],
+                    jumlahSubskill: allSubSkill.filter(s => s.skill?.namaSkill === namaSkill).length
+                };
             }
-            acc[skillId].push(kp.subSkill);
+            if (ss.kuisProgress?.length > 0) {
+                acc[namaSkill].subskills.push(ss);
+            }
         }
         return acc;
     }, {}));
@@ -65,49 +71,37 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
                             <AccordionItem value="skill">
                                 <AccordionTrigger>Skill Terupdate</AccordionTrigger>
                                 <AccordionContent>
-                                    {groupedSkills.map(([idSkill, subSkills], i) => (
-                                        <div>
-                                            <h6 className="font-semibold">{idSkill}</h6>
-                                            <ul>
-                                                {subSkills.map((ss, i) => (
-                                                    <li>{ss.namaSubSkill}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ))}
+                                    <div className="flex flex-col gap-2">
+                                        {groupedSkills.map(([namaSkill, item]) => (
+                                            <div className="flex flex-col gap-2 border-2 rounded-md p-2">
+                                                <div className="flex justify-between items-center">
+                                                    <h6 className="font-semibold">{namaSkill}</h6>
+                                                    <Badge className="rounded-full">{item.subskills.length}/{item.jumlahSubskill}</Badge>
+                                                </div>
+                                                <ul>
+                                                    {item.subskills.map((ss, i) => (
+                                                        <li>{ss.namaSubSkill}</li>
+                                                    ))}
+                                                </ul>
+                                                {item.subskills.length == 0 ? (
+                                                    <p className="text-center text-red-500">Belum melakukan kuis</p>
+                                                ) : undefined}
+                                            </div>
+                                        ))}
+                                    </div>
+
                                     {groupedSkills.length === 0 ? (
                                         <p className="text-center text-red-500">Belum melakukan kuis</p>
                                     ) : undefined}
                                 </AccordionContent>
                             </AccordionItem>
-                            <AccordionItem value="unskill">
+                            {/* <AccordionItem value="unskill">
                                 <AccordionTrigger>Belum dikuasai</AccordionTrigger>
                                 <AccordionContent className="">
-                                    {/* <ScrollArea className="h-96 border rounded-md p-4">
-                                        <div className=" flex flex-col gap-1.5">
-                                            {unskilled.length > 0 ? (
-                                                <>
-                                                    {unskilled.map((s, i) => (
-                                                        <Item variant="outline" key={i} size={"sm"}>
-                                                            <ItemMedia variant="icon">
-                                                                {i + 1}
-                                                            </ItemMedia>
-                                                            <ItemContent>
-                                                                <ItemTitle>{s.judulDokumen}</ItemTitle>
-                                                            </ItemContent>
-                                                            <ItemActions>
-                                                                <div className="bg-red-400 size-5 rounded" />
-                                                            </ItemActions>
-                                                        </Item>
-                                                    ))}
-                                                </>
-                                            ) : undefined}
-                                        </div>
-
-                                    </ScrollArea> */}
+                                 
 
                                 </AccordionContent>
-                            </AccordionItem>
+                            </AccordionItem> */}
                         </Accordion>
                     </div>
                     <div className="flex">
