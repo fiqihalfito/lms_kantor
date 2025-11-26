@@ -1,5 +1,5 @@
 
-import { EyeIcon, FileUpIcon, GithubIcon, MoreHorizontalIcon, PencilIcon, PencilLineIcon } from "lucide-react"
+import { BanIcon, EyeIcon, FileUpIcon, GithubIcon, MoreHorizontalIcon, PencilIcon, PencilLineIcon } from "lucide-react"
 import { Link } from "react-router"
 import { Button } from "~/components/ui/button"
 import {
@@ -60,12 +60,20 @@ export function OptionSubskill({ idDokumen, idKuis, idSubSkill, idTeam }: Option
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuLabel>Kuis</DropdownMenuLabel>
-                    <DropdownMenuItem asChild>
-                        <Link to={`../kuis/buat-kuis/kuis-maker/${idDokumen}`} viewTransition>
-                            <PencilLineIcon className="mr-2" />
-                            <span>Buat Kuis</span>
-                        </Link>
-                    </DropdownMenuItem>
+                    {idDokumen ? (
+                        <DropdownMenuItem asChild>
+                            <Link to={`../kuis/buat-kuis/kuis-maker/${idDokumen}`} viewTransition>
+                                <PencilLineIcon className="mr-2" />
+                                <span>Buat Kuis</span>
+                            </Link>
+                        </DropdownMenuItem>
+                    ) : (
+                        <DropdownMenuItem disabled>
+                            <BanIcon className="mr-2" />
+                            <span>Upload Dokumen Dulu</span>
+                        </DropdownMenuItem>
+                    )}
+
                 </DropdownMenuGroup>
             </DropdownMenuContent>
         </DropdownMenu>

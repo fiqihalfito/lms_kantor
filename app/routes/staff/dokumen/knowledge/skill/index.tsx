@@ -75,38 +75,44 @@ export default function KnowledgePage({ loaderData }: Route.ComponentProps) {
                                             }, {})
                                         ).map(([level, subSkills], indexPerLevel, totalLevels) => {
 
-                                            const { isPreviousLevelBlocked, progressPercentage, isPreviousLevelNotCompleted } = indexPerLevel > 0 ? (() => {
+                                            const { isPreviousLevelBlocked, progressPercentage } = indexPerLevel > 0 ? (() => {
                                                 const [prevLevelName, prevSubSkills] = totalLevels[indexPerLevel - 1];
-                                                let totalAchievedScore = 0;
-                                                let totalPossibleScore = 0;
+                                                // let totalAchievedScore = 0;
+                                                // let totalPossibleScore = 0;
+                                                let totalPersenPerSubSkill = 0;
 
                                                 prevSubSkills.forEach((prevSub) => {
-                                                    if (prevSub.dokumen?.kuis?.kuisProgress[0]?.isSelesai) {
-                                                        totalAchievedScore += prevSub.dokumen.kuis.kuisProgress[0].jumlahBenar ?? 0;
-                                                        totalPossibleScore += (prevSub.dokumen.kuis.kuisElement.length ?? 0);
+                                                    if (prevSub.dokumen?.kuis) {
+                                                        const jumlahBenar = prevSub.dokumen.kuis?.kuisProgress[0]?.jumlahBenar ?? 0;
+                                                        const jumlahSoal = (prevSub.dokumen.kuis?.kuisElement.length ?? 0);
+                                                        totalPersenPerSubSkill += (jumlahBenar / jumlahSoal) * 100;
+                                                    } else {
+                                                        totalPersenPerSubSkill += 0;
                                                     }
                                                 });
 
-                                                const progressPercentage = totalPossibleScore > 0 ? (totalAchievedScore / totalPossibleScore) * 100 : 0;
+                                                const progressPercentage = totalPersenPerSubSkill / prevSubSkills.length;
                                                 const isPreviousLevelBlocked = progressPercentage < 80;
-                                                const isPreviousLevelNotCompleted = prevSubSkills.some((sub) => {
-                                                    return sub.dokumen === null || sub.dokumen?.idKuis === null || sub.dokumen?.kuis?.kuisProgress[0] === null || sub.dokumen?.kuis?.kuisProgress[0]?.isSelesai !== true
-                                                });
+                                                // const isPreviousLevelNotCompleted = prevSubSkills.some((sub) => {
+                                                //     return sub.dokumen === null || sub.dokumen?.idKuis === null || sub.dokumen?.kuis?.kuisProgress[0] === null || sub.dokumen?.kuis?.kuisProgress[0]?.isSelesai !== true
+                                                // });
 
-                                                return { isPreviousLevelBlocked, progressPercentage, isPreviousLevelNotCompleted };
-                                            })() : { isPreviousLevelBlocked: false, progressPercentage: 0, isPreviousLevelNotCompleted: false };
+                                                return { isPreviousLevelBlocked, progressPercentage };
+                                            })() : { isPreviousLevelBlocked: false, progressPercentage: 0 };
 
                                             const currentLevelProgressPercentage = (() => {
-                                                let currentAchievedScore = 0;
-                                                let currentPossibleScore = 0;
+                                                let totalPersenPerSubSkill = 0;
 
                                                 subSkills.forEach((currentSub) => {
-                                                    if (currentSub.dokumen?.kuis?.kuisProgress[0]?.isSelesai) {
-                                                        currentAchievedScore += currentSub.dokumen.kuis.kuisProgress[0].jumlahBenar ?? 0;
-                                                        currentPossibleScore += (currentSub.dokumen.kuis.kuisElement.length ?? 0);
+                                                    if (currentSub.dokumen?.kuis) {
+                                                        const jumlahBenar = currentSub.dokumen.kuis?.kuisProgress[0]?.jumlahBenar ?? 0;
+                                                        const jumlahSoal = (currentSub.dokumen.kuis?.kuisElement.length ?? 0);
+                                                        totalPersenPerSubSkill += (jumlahBenar / jumlahSoal) * 100;
+                                                    } else {
+                                                        totalPersenPerSubSkill += 0;
                                                     }
                                                 });
-                                                return currentPossibleScore > 0 ? (currentAchievedScore / currentPossibleScore) * 100 : 0;
+                                                return totalPersenPerSubSkill / subSkills.length;
                                             })();
 
 
@@ -136,12 +142,12 @@ export default function KnowledgePage({ loaderData }: Route.ComponentProps) {
                                                                 </div>
                                                             )}
 
-                                                            {isPreviousLevelNotCompleted && (
+                                                            {/* {isPreviousLevelNotCompleted && (
                                                                 <div className="flex items-center gap-2 text-red-500 font-medium text-sm">
                                                                     <CircleOffIcon className="size-4" />
                                                                     <p>ada kuis yang belum selesai</p>
                                                                 </div>
-                                                            )}
+                                                            )} */}
 
                                                         </div>
 
@@ -211,22 +217,33 @@ export default function KnowledgePage({ loaderData }: Route.ComponentProps) {
                                                                             sub.dokumen.statusBaca[0]?.isRead ? (
                                                                                 sub.dokumen.kuis.kuisElement.length > 0 ? (
                                                                                     !isPreviousLevelBlocked ? (
-                                                                                        !isPreviousLevelNotCompleted ? (
-                                                                                            sub.dokumen.kuis.kuisProgress[0]?.isSelesai ? (
-                                                                                                <Button size="default" onClick={() => handleMulaiKuis(sub.dokumen?.kuis?.idKuis)}>
-                                                                                                    <RepeatIcon />
-                                                                                                    Ulangi Kuis
-                                                                                                </Button>
-                                                                                            ) : (
-                                                                                                <Button size="default" onClick={() => handleMulaiKuis(sub.dokumen?.kuis?.idKuis)}>
-                                                                                                    <EyeIcon />
-                                                                                                    Mulai Kuis
-                                                                                                </Button>
-                                                                                            )
+                                                                                        // !isPreviousLevelNotCompleted ? (
+                                                                                        //     sub.dokumen.kuis.kuisProgress[0]?.isSelesai ? (
+                                                                                        //         <Button size="default" onClick={() => handleMulaiKuis(sub.dokumen?.kuis?.idKuis)}>
+                                                                                        //             <RepeatIcon />
+                                                                                        //             Ulangi Kuis
+                                                                                        //         </Button>
+                                                                                        //     ) : (
+                                                                                        //         <Button size="default" onClick={() => handleMulaiKuis(sub.dokumen?.kuis?.idKuis)}>
+                                                                                        //             <EyeIcon />
+                                                                                        //             Mulai Kuis
+                                                                                        //         </Button>
+                                                                                        //     )
+                                                                                        // ) : (
+                                                                                        //     <Button size="default" disabled>
+                                                                                        //         <LockIcon />
+                                                                                        //         Kuis lainnya belum selesai
+                                                                                        //     </Button>
+                                                                                        // )
+                                                                                        sub.dokumen.kuis.kuisProgress[0]?.isSelesai ? (
+                                                                                            <Button size="default" onClick={() => handleMulaiKuis(sub.dokumen?.kuis?.idKuis)}>
+                                                                                                <RepeatIcon />
+                                                                                                Ulangi Kuis
+                                                                                            </Button>
                                                                                         ) : (
-                                                                                            <Button size="default" disabled>
-                                                                                                <LockIcon />
-                                                                                                Kuis lainnya belum selesai
+                                                                                            <Button size="default" onClick={() => handleMulaiKuis(sub.dokumen?.kuis?.idKuis)}>
+                                                                                                <EyeIcon />
+                                                                                                Mulai Kuis
                                                                                             </Button>
                                                                                         )
                                                                                     ) : (
