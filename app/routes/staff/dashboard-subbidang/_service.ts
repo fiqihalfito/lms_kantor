@@ -1,11 +1,18 @@
 import { db } from "database/connect";
-import { mSubBidang, mTeam, mUser, tDokumen, tKuis, tKuisProgress, tStatusBaca } from "database/schema/schema";
+import { mSkill, mSubBidang, mTeam, mUser, tDokumen, tKuis, tKuisProgress, tStatusBaca } from "database/schema/schema";
 import { and, eq, notInArray, sql } from "drizzle-orm";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
 
 // export async function getSubbidangName(idSubbidang: string) {
 //        const res = await db.select({nama: })
 // }
+
+export async function getAllSkill(idSubBidang: string) {
+    const res = await db.query.mSkill.findMany({
+        where: eq(mSkill.idSubBidang, idSubBidang)
+    })
+    return res
+}
 
 
 export async function getTeamAndMember(idSubBidang: string) {
@@ -14,26 +21,16 @@ export async function getTeamAndMember(idSubBidang: string) {
             user: {
                 columns: {
                     nama: true,
-                    idUser: true
+                    idUser: true,
+                    idTeam: true
                 },
-                // with: {
-                //     kuisProgress: {
-                //         with: {
-                //             kuis: {
-                //                 with: {
-                //                     dokumen: {
-                //                         columns: {
-                //                             idDokumen: true,
-                //                             judul: true
-                //                         }
-                //                     }
-                //                 }
-                //             }
-                //         }
-
-                //     }
-                // }
-
+                with: {
+                    kuisProgress: {
+                        with: {
+                            subSkill: true
+                        }
+                    }
+                }
             }
         }
     })
@@ -70,24 +67,6 @@ export async function getDokumenAndStatusReadCount(
     idSubbidang: string,
     tipe: TIPE_DOKUMEN
 ) {
-    // const res = await db.query.tDokumen.findMany({
-    //     columns: {
-    //         idDokumen: true
-    //     },
-    //     where: and(
-    //         eq(tDokumen.idSubBidang, idSubbidang),
-    //         eq(tDokumen.tipe, tipe)
-    //     ),
-    //     with: {
-    //         statusBaca: {
-    //             columns: {
-    //                 idStatusBaca: true
-    //             },
-    //             where: eq(tStatusBaca.isRead, true)
-    //         }
-    //     }
-    // })
-    // return res
 
     const res = await db
         .select({
@@ -116,38 +95,3 @@ export async function getJumlahOrang(idSubBidang: string) {
     return res
 }
 
-// export async function getAllTipeSummary(idSubbidang: string) {
-//     const res = await db
-//         .select({
-//             tipe: tDokumen.tipe,
-//             totalDokumen: sql<number>`COUNT(DISTINCT ${tDokumen.idDokumen})`.as('total_dokumen'),
-//             jumlahSudahDibaca: sql<number>`
-//                 COUNT(DISTINCT CASE
-//                     WHEN ${tStatusBaca.isRead} = true
-//                     THEN ${tStatusBaca.idStatusBaca}
-//                 END)
-//             `.as('jumlah_sudah_dibaca'),
-//         })
-//         .from(tDokumen)
-//         .leftJoin(tStatusBaca, eq(tStatusBaca.idDokumen, tDokumen.idDokumen))
-//         .where(eq(tDokumen.idSubBidang, idSubbidang))
-//         .groupBy(tDokumen.tipe);
-
-//     // Transform ke object untuk mudah diakses
-//     const summary = {
-//         SOP: { totalDokumen: 0, jumlahSudahDibaca: 0 },
-//         IK: { totalDokumen: 0, jumlahSudahDibaca: 0 },
-//         Knowledge: { totalDokumen: 0, jumlahSudahDibaca: 0 },
-//     };
-
-//     res.forEach(item => {
-//         if (item.tipe && item.tipe in summary) {
-//             summary[item.tipe as TIPE_DOKUMEN] = {
-//                 totalDokumen: item.totalDokumen,
-//                 jumlahSudahDibaca: item.jumlahSudahDibaca,
-//             };
-//         }
-//     });
-
-//     return summary;
-// }

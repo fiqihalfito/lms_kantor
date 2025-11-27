@@ -128,7 +128,7 @@ export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen
                                 </Field>
                             )}
 
-                            {(tipeDokumen === "Knowledge") && (
+                            {/* {(tipeDokumen === "Knowledge") && (
                                 <Field>
                                     <FieldLabel htmlFor="skill">
                                         Skill
@@ -151,7 +151,7 @@ export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen
                                         </SelectContent>
                                     </Select>
                                 </Field>
-                            )}
+                            )} */}
 
 
 

@@ -1,8 +1,8 @@
 import { db } from "database/connect";
-import { mSubSkill, mUser, tDokumen, tKuisProgress } from "database/schema/schema";
+import { mSubSkill, mUser, tDokumen, tKuis, tKuisElement, tKuisProgress } from "database/schema/schema";
 import { and, eq, notInArray } from "drizzle-orm";
 
-export async function getAllSubSkill(idUser: string, idTeam: string) {
+export async function getAllSubSkillByLevel(idUser: string, idSkill: string) {
     // const res = await db.query.mUser.findMany({
     //     with: {
     //         kuisProgress: {
@@ -27,13 +27,38 @@ export async function getAllSubSkill(idUser: string, idTeam: string) {
             kuisProgress: {
                 where: and(
                     eq(tKuisProgress.idUser, idUser),
-                    eq(tKuisProgress.isSelesai, true)
+                    // eq(tKuisProgress.isSelesai, true)
                 ),
-            }
+                with: {
+                    kuis: {
+                        // extras: {
+                        //     jumlahSoal: db.$count(tKuisElement, eq(tKuisElement.idKuis, tKuis.idKuis)).as("jumlahSoal")
+                        // }
+                        with: {
+                            kuisElement: {
+                                columns: {
+                                    idKuisElement: true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
         },
+        where: eq(mSubSkill.idSkill, idSkill),
+        orderBy: [mSubSkill.level, mSubSkill.urutan]
     })
 
-    return res
+    const groupedLevel = Object.entries(res.reduce((acc, item) => {
+        if (!acc[item.level]) {
+            acc[item.level] = []
+        }
+        acc[item.level].push(item)
+        return acc
+    }, {} as Record<number, typeof res>))
+
+    return { namaSkill: res[0].skill?.namaSkill, groupedLevelSubSkill: groupedLevel }
 }
 
 export async function getUnskilled(idSubBidang: string, idSkilled: string[]) {

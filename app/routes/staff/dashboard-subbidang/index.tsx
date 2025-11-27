@@ -1,6 +1,6 @@
 import { userContext } from "~/lib/context";
 import type { Route } from "./+types";
-import { getDokumenAndStatusReadCount, getJumlahDokumen, getTeamAndMember } from "./_service";
+import { getAllSkill, getDokumenAndStatusReadCount, getJumlahDokumen, getTeamAndMember } from "./_service";
 import { Separator } from "~/components/ui/separator";
 import {
     Card,
@@ -15,6 +15,7 @@ import {
     Item,
     ItemActions,
     ItemContent,
+    ItemDescription,
     ItemMedia,
     ItemTitle,
 } from "~/components/ui/item"
@@ -34,7 +35,8 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     // total tim dan anggota
     const teamAndMember = await getTeamAndMember(user?.idSubBidang!)
 
-
+    // skill    
+    const skill = await getAllSkill(user.idSubBidang)
 
     // jumlah dokumen
     const jumlahDokumen = {
@@ -58,12 +60,12 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 
 
 
-    return { currentSubbidang, teamAndMember, jumlahDokumen, jumlahPembaca, }
+    return { currentSubbidang, teamAndMember, jumlahDokumen, jumlahPembaca, skill }
 }
 
 export default function DashboardSubbidang({ loaderData }: Route.ComponentProps) {
 
-    const { currentSubbidang, teamAndMember, jumlahDokumen, jumlahPembaca } = loaderData
+    const { currentSubbidang, teamAndMember, jumlahDokumen, jumlahPembaca, skill } = loaderData
     const totalMembers = teamAndMember.reduce((total, team) => {
         // Add the number of members in the current team to the total
         return total + team.user.length;
@@ -207,25 +209,24 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                                     {/* <CardAction>Card Action</CardAction> */}
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="space-y-1.5">
+                                    <div className="space-y-2">
                                         {tim.user.map((member, i) => (
                                             <Item variant="outline" size="sm" key={member.idUser}>
                                                 <ItemMedia variant={"icon"}>
                                                     {/* <BadgeCheckIcon className="size-5" /> */}
                                                     {i + 1}
                                                 </ItemMedia>
-                                                <ItemContent>
-                                                    <ItemTitle>{member.nama}</ItemTitle>
+                                                <ItemContent className="flex flex-col gap-2">
+                                                    <ItemTitle className="text-lg font-semibold">{member.nama}</ItemTitle>
+                                                    <SkillUserBadge skill={skill} member={member} />
                                                 </ItemContent>
-                                                <ItemActions>
-                                                    {/* <ChevronRightIcon className="size-4" /> */}
-                                                    {/* <SkillUser /> */}
+                                                {/* <ItemActions>
                                                     <Button size={"sm"} variant={"outline"}>
                                                         <NavLink to={`detail-skill/${member.idUser}`}>
                                                             Lihat Skill
                                                         </NavLink>
                                                     </Button>
-                                                </ItemActions>
+                                                </ItemActions> */}
                                             </Item>
                                         ))}
                                     </div>
@@ -242,4 +243,20 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
             </div>
         </div>
     )
+}
+
+function SkillUserBadge({ skill, member }: { skill: { idSkill: string; idTeam: string | null; idSubBidang: string; namaSkill: string; }[], member: { idUser: string; idTeam: string | null; nama: string | null; kuisProgress: { idUser: string | null; idKuis: string | null; idKuisProgress: string; idSubSkill: string | null; updatedAt: string | null; createdAt: string; deletedAt: string | null; jumlahBenar: number | null; jawabanSet: string | null; isSelesai: boolean | null; subSkill: { idUser: string | null; idSkill: string | null; idSubSkill: string; namaSubSkill: string; level: number; urutan: number | null; } | null; }[]; } }) {
+    return (
+        <div className="flex flex-wrap items-center gap-1">
+            {skill.filter((skill) => skill.idTeam === member.idTeam).map((skill, i) => (
+                <Badge key={skill.idSkill} className=" rounded-full py-1 px-2.5" variant={"secondary"} asChild>
+                    <NavLink to={`detail-skill/${member.idUser}/skill/${skill.idSkill}`}>
+                        {skill.namaSkill} : {" "}
+                        {member.kuisProgress.filter(kp => kp?.subSkill?.idSkill === skill.idSkill).reduce((total, kp, index, filteredSubskill) => total + ((kp.jumlahBenar ?? 0) / filteredSubskill.length), 0).toFixed(1) + " %"}
+                    </NavLink>
+
+                </Badge>
+            ))}
+        </div>
+    );
 }
