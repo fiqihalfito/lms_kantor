@@ -63,7 +63,7 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
                     <h2 className="text-xl font-semibold">{allSubSkill.namaSkill}</h2>
                     {(() => {
 
-                        let totalPersenSkill = 0
+                        let totalPersenPerLevel = 0
 
                         allSubSkill.groupedLevelSubSkill.forEach(([level, subSkills], i) => {
 
@@ -75,11 +75,11 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
                                 totalPersenSubSkill += percentage;
                             });
                             const persenSubSkill = totalPersenSubSkill / subSkills.length;
-                            totalPersenSkill += persenSubSkill;
+                            totalPersenPerLevel += persenSubSkill;
 
                         });
 
-                        const persenSkill = totalPersenSkill / allSubSkill.groupedLevelSubSkill.length;
+                        const persenSkill = totalPersenPerLevel / allSubSkill.groupedLevelSubSkill.length;
 
 
                         return (
