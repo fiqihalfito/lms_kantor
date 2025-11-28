@@ -245,18 +245,42 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
     )
 }
 
-function SkillUserBadge({ skill, member }: { skill: { idSkill: string; idTeam: string | null; idSubBidang: string; namaSkill: string; }[], member: { idUser: string; idTeam: string | null; nama: string | null; kuisProgress: { idUser: string | null; idKuis: string | null; idKuisProgress: string; idSubSkill: string | null; updatedAt: string | null; createdAt: string; deletedAt: string | null; jumlahBenar: number | null; jawabanSet: string | null; isSelesai: boolean | null; subSkill: { idUser: string | null; idSkill: string | null; idSubSkill: string; namaSubSkill: string; level: number; urutan: number | null; } | null; }[]; } }) {
+function SkillUserBadge({ skill, member }: {
+    skill: Awaited<ReturnType<typeof getAllSkill>>,
+    member: Awaited<ReturnType<typeof getTeamAndMember>>[number]["user"][number]
+}) {
     return (
         <div className="flex flex-wrap items-center gap-1">
-            {skill.filter((skill) => skill.idTeam === member.idTeam).map((skill, i) => (
-                <Badge key={skill.idSkill} className=" rounded-full py-1 px-2.5" variant={"secondary"} asChild>
-                    <NavLink to={`detail-skill/${member.idUser}/skill/${skill.idSkill}`}>
-                        {skill.namaSkill} : {" "}
-                        {member.kuisProgress.filter(kp => kp?.subSkill?.idSkill === skill.idSkill).reduce((total, kp, index, filteredSubskill) => total + ((kp.jumlahBenar ?? 0) / filteredSubskill.length), 0).toFixed(1) + " %"}
-                    </NavLink>
-
-                </Badge>
-            ))}
+            {skill
+                .filter((skill) => skill.idTeam === member.idTeam)
+                .map((skill) => {
+                    const mapKuisProgress = new Map(member.kuisProgress.map(kp => [kp.idSubSkill, kp]))
+                    let totalPersenSubskill = 0
+                    skill.subSkill.forEach((subSkill) => {
+                        const currKuisProgress = mapKuisProgress.get(subSkill.idSubSkill)
+                        if (currKuisProgress) {
+                            const jumlahBenar = currKuisProgress.jumlahBenar ?? 0;
+                            const jumlahSoal = currKuisProgress?.kuis?.kuisElement?.length ?? 0;
+                            totalPersenSubskill += (jumlahSoal === 0 ? 0 : jumlahBenar / jumlahSoal) * 100;
+                        }
+                    });
+                    const persenSkill = skill.subSkill.length === 0 ? 0 : totalPersenSubskill / skill.subSkill.length;
+                    return { skill, persenSkill };
+                })
+                .sort((a, b) => b.persenSkill - a.persenSkill) // Sort in descending order of persenSkill
+                .map(({ skill, persenSkill }) => (
+                    <Badge key={skill.idSkill}
+                        className={cn(" rounded-full py-1 px-2.5", {
+                            "bg-green-500 text-white": persenSkill >= 80,
+                        })}
+                        variant={"secondary"}
+                        asChild>
+                        <NavLink to={`detail-skill/${member.idUser}/skill/${skill.idSkill}`}>
+                            {skill.namaSkill} : {" "}
+                            {persenSkill.toFixed(2)} %
+                        </NavLink>
+                    </Badge>
+                ))}
         </div>
     );
 }

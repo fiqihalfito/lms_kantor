@@ -5,7 +5,7 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
 import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button"
 import { Link, Outlet, useSubmit } from "react-router"
-import { ArrowDownIcon, CircleOffIcon, EyeIcon, FileCheckIcon, FileText, FileXIcon, HelpCircle, LockIcon, PencilOffIcon, Repeat1Icon, RepeatIcon } from "lucide-react"
+import { ArrowDownIcon, CircleOffIcon, EyeIcon, FileCheckIcon, FileText, FileXIcon, HelpCircle, LockIcon, PencilOffIcon, PercentIcon, Repeat1Icon, RepeatIcon } from "lucide-react"
 import { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemTitle } from "~/components/ui/item"
 import { FieldGroup, FieldSeparator } from "~/components/ui/field"
 import type { Route } from "./+types"
@@ -57,7 +57,41 @@ export default function KnowledgePage({ loaderData }: Route.ComponentProps) {
                     skilldanSubskill.map((s, i) => (
                         <Card className="rounded-md " key={s.idSkill}>
                             <CardHeader>
-                                <CardTitle className="text-xl font-semibold">{s.namaSkill}</CardTitle>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="text-xl font-semibold">{s.namaSkill}</CardTitle>
+
+                                    {(() => {
+
+
+                                        let totalPersenSubSkill = 0
+                                        s.subSkill.forEach((ss, i) => {
+
+                                            const jumlahBenar = ss?.dokumen?.kuis?.kuisProgress[0]?.jumlahBenar ?? 0;
+                                            const totalKuisElement = ss?.dokumen?.kuis?.kuisElement.length ?? 0;
+                                            const percentage = totalKuisElement > 0 ? (jumlahBenar / totalKuisElement) * 100 : 0;
+                                            totalPersenSubSkill += percentage;
+
+                                            // const persenSubSkill = totalPersenSubSkill / subSkills.length;
+
+                                        });
+
+                                        const sumSubskill = s.subSkill.length
+
+                                        // const persenSkill = totalPersenSkill / allSubSkill.groupedLevelSubSkill.length;
+                                        const persenSkill = totalPersenSubSkill / sumSubskill;
+
+
+                                        return (
+                                            <>
+                                                <Badge variant="outline" className="rounded-full py-2 px-3 text-base [&>svg]:size-5 shadow-md">
+                                                    <PercentIcon className="mr-2" />
+                                                    Persentase Skill: {persenSkill.toFixed(2)}%
+                                                </Badge>
+                                            </>
+                                        )
+                                    })()}
+
+                                </div>
                                 {/* <CardDescription className="text-sm">sdfsf</CardDescription> */}
                                 {/* <CardAction>Card Action</CardAction> */}
                             </CardHeader>

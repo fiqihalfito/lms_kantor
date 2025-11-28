@@ -22,6 +22,7 @@ import {
     ItemTitle,
 } from "~/components/ui/item"
 import { CirclePercent, PercentIcon } from "lucide-react";
+import { cn } from "~/lib/utils";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
 
@@ -63,7 +64,7 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
                     <h2 className="text-xl font-semibold">{allSubSkill.namaSkill}</h2>
                     {(() => {
 
-                        let totalPersenPerLevel = 0
+                        let totalPersenSkill = 0
 
                         allSubSkill.groupedLevelSubSkill.forEach(([level, subSkills], i) => {
 
@@ -74,12 +75,15 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
                                 const percentage = totalKuisElement > 0 ? (jumlahBenar / totalKuisElement) * 100 : 0;
                                 totalPersenSubSkill += percentage;
                             });
-                            const persenSubSkill = totalPersenSubSkill / subSkills.length;
-                            totalPersenPerLevel += persenSubSkill;
+                            // const persenSubSkill = totalPersenSubSkill / subSkills.length;
+                            totalPersenSkill += totalPersenSubSkill;
 
                         });
 
-                        const persenSkill = totalPersenPerLevel / allSubSkill.groupedLevelSubSkill.length;
+                        const sumSubskill = allSubSkill.groupedLevelSubSkill.reduce((acc, [level, subSkills]) => acc + subSkills.length, 0);
+
+                        // const persenSkill = totalPersenSkill / allSubSkill.groupedLevelSubSkill.length;
+                        const persenSkill = totalPersenSkill / sumSubskill;
 
 
                         return (
@@ -115,7 +119,12 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
 
                                                 return (
 
-                                                    <Badge className="rounded-full" variant="outline">Progress Level {level}: {persenSubSkill.toFixed(2)}%</Badge>
+                                                    <Badge
+                                                        className={cn("rounded-full", persenSubSkill > 80 && "bg-green-600")}
+                                                        variant={persenSubSkill > 80 ? "default" : "destructive"}
+                                                    >
+                                                        Progress Level {level}: {persenSubSkill.toFixed(2)}%
+                                                    </Badge>
 
                                                 )
                                             })()}
@@ -153,10 +162,10 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
                                                             const totalKuisElement = ss.kuisProgress[0]?.kuis?.kuisElement.length ?? 0;
                                                             const percentage = totalKuisElement > 0 ? (jumlahBenar / totalKuisElement) * 100 : 0;
                                                             const displayPercentage = percentage.toFixed(0);
-                                                            const badgeVariant = percentage > 80 ? "default" : "destructive"; // Assuming "default" variant is green or suitable for success
-
                                                             return (
-                                                                <Badge className="rounded-full" variant={badgeVariant}>
+                                                                <Badge
+                                                                    className={cn("rounded-full", percentage > 80 && "bg-green-600")}
+                                                                    variant={percentage > 80 ? "default" : "destructive"}>
                                                                     Persentase : {displayPercentage}%
                                                                 </Badge>
                                                             );

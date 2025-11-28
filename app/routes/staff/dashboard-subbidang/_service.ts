@@ -9,7 +9,10 @@ import type { TIPE_DOKUMEN } from "~/lib/constants";
 
 export async function getAllSkill(idSubBidang: string) {
     const res = await db.query.mSkill.findMany({
-        where: eq(mSkill.idSubBidang, idSubBidang)
+        where: eq(mSkill.idSubBidang, idSubBidang),
+        with: {
+            subSkill: true,
+        }
     })
     return res
 }
@@ -27,7 +30,19 @@ export async function getTeamAndMember(idSubBidang: string) {
                 with: {
                     kuisProgress: {
                         with: {
-                            subSkill: true
+                            subSkill: true,
+                            kuis: {
+                                columns: {
+                                    idKuis: true,
+                                },
+                                with: {
+                                    kuisElement: {
+                                        columns: {
+                                            idKuisElement: true,
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
