@@ -2,8 +2,8 @@ import * as Minio from "minio";
 import path from "node:path";
 
 export const minioClient = new Minio.Client({
-    endPoint: "127.0.0.1",   // ganti jika pakai domain/ip lain
-    port: 9000,
+    endPoint: process.env.MINIO_ENDPOINT!,   // ganti jika pakai domain/ip lain
+    port: Number(process.env.MINIO_PORT),
     useSSL: false,           // true kalau pakai TLS
     accessKey: process.env.MINIO_ROOT_USER!,
     secretKey: process.env.MINIO_ROOT_PASSWORD!,
