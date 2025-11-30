@@ -10,10 +10,11 @@ export default [
 
     route("app", "routes/app/index.tsx", { id: "app_segment" }, [
 
+
         // staff
         layout("routes/staff/_components/sidebar-layout.tsx", [
             // index("routes/staff/layout-index.tsx"),
-            route("dashboard", "routes/staff/index.tsx"),
+            route("dashboard", "routes/staff/dashboard/dashboard.tsx"),
             ...prefix("dashboard-subbidang", [
                 route("", "routes/staff/dashboard-subbidang/index.tsx", [
                     route("detail-skill/:idUser/skill/:idSkill", "routes/staff/dashboard-subbidang/detail-skill/index.tsx")
