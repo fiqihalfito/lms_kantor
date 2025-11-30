@@ -17,28 +17,50 @@ import {
     FieldLabel,
 } from "~/components/ui/field"
 import { LoaderCircleIcon, XIcon } from "lucide-react";
-import { useFetcher, useNavigate } from "react-router";
+import { Form, useFetcher, useNavigate } from "react-router";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
+import { getInputProps, useForm } from '@conform-to/react';
+import { tUpdateNewDokumenValidation } from "../edit-dokumen/_schema";
+import { parseWithZod } from "~/lib/conform";
+import { tInsertNewDokumenValidation } from "../upload-dokumen/_schema";
+
 
 type UploadDokumenFormType = {
     dv?: {
         judul: string | null,
         filename: string | null
     },
-    idDokumen?: string
+    idDokumen?: string,
+    mode: "insert" | "update"
 }
 
-export function UploadDokumenForm({ dv, idDokumen }: UploadDokumenFormType) {
+export function UploadDokumenForm({ dv, idDokumen, mode }: UploadDokumenFormType) {
 
     const fetcher = useFetcher({ key: "upload_dokumen" })
     const errors = fetcher.data?.errors
     const uploading = fetcher.state !== "idle"
     const navigate = useNavigate()
 
+    const [form, fields] = useForm({
+        // wajib client validate
+        onValidate({ formData }) {
+            return parseWithZod(formData, { schema: mode === "insert" ? tInsertNewDokumenValidation : tUpdateNewDokumenValidation })
+        },
+        lastResult: fetcher.state === 'idle' ? fetcher.data : null,
+        defaultValue: {
+            judul: dv?.judul,
+
+        },
+        shouldValidate: "onBlur",
+        shouldRevalidate: "onInput",
+
+    })
+
+
     return (
         <div className="fixed inset-0  bg-black/50 z-99">
-            <fetcher.Form method="post" className="h-screen w-screen flex items-center justify-center" encType="multipart/form-data">
+            <fetcher.Form method="post" id={form.id} className="h-screen w-screen flex items-center justify-center" encType="multipart/form-data" onSubmit={form.onSubmit} noValidate>
                 <Card className="w-1/4">
                     <CardHeader className="">
                         <CardTitle>{`Upload Dokumen`}</CardTitle>
@@ -63,15 +85,19 @@ export function UploadDokumenForm({ dv, idDokumen }: UploadDokumenFormType) {
                                     Judul Dokumen
                                 </FieldLabel>
                                 <Input
-                                    id="judul"
+                                    // id="judul"
+                                    // placeholder="Judul dokumen"
+                                    // // name="judul"
+                                    // name={fields.judul.name}
+                                    // defaultValue={fields.judul.initialValue}
+                                    // required
+                                    {...getInputProps(fields.judul, { type: "text" })}
                                     placeholder="Judul dokumen"
-                                    name="judul"
-                                    defaultValue={dv?.judul ?? undefined}
-                                    required
                                 />
-                                {errors?.judul ? (
-                                    <FieldError>{errors.judul}!</FieldError>
-                                ) : null}
+                                {/* {fields.judul.errors ? (
+                                    <FieldError>{fields.judul.errors}</FieldError>
+                                ) : null} */}
+                                <FieldError id={fields.judul.errorId}>{fields.judul.errors}</FieldError>
                             </Field>
 
                             <Field>
@@ -79,22 +105,21 @@ export function UploadDokumenForm({ dv, idDokumen }: UploadDokumenFormType) {
                                     Upload Dokumen
                                 </FieldLabel>
                                 <Input
-                                    id="file"
-                                    type="file"
-                                    name="file"
-                                    required={idDokumen ? false : true}
+                                    // id="file"
+                                    // type="file"
+                                    // // name="file"
+                                    // name={fields.file.name}
+                                    // required={idDokumen ? false : true}
+                                    {...getInputProps(fields.file, { type: "file", accept: "application/pdf" })}
+                                    placeholder="Upload file"
                                 />
                                 {idDokumen && (
                                     <FieldDescription>
                                         filename: {dv?.filename}
                                     </FieldDescription>
                                 )}
-                                {errors?.file ? (
-                                    <FieldError>{errors.file}!</FieldError>
-                                ) : null}
+                                <FieldError id={fields.file.errorId}>{fields.file.errors}</FieldError>
                             </Field>
-
-
 
 
 

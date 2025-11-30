@@ -1,6 +1,6 @@
 
 import { ChevronRight, LayoutGridIcon, PyramidIcon, ShapesIcon, SquareUserRoundIcon, UsersRoundIcon, type LucideIcon } from "lucide-react"
-import { NavLink } from "react-router"
+import { NavLink, useLocation } from "react-router"
 
 import {
     Collapsible,
@@ -66,14 +66,17 @@ const items: {
     ]
 
 export function NavMaster() {
+
+    const location = useLocation();
+
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Master</SidebarGroupLabel>
+            <SidebarGroupLabel>Master Data</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item, i) => (
 
                     <SidebarMenuItem key={i}>
-                        <SidebarMenuButton tooltip={item.title} asChild>
+                        <SidebarMenuButton tooltip={item.title} asChild isActive={location.pathname === item.url}>
                             <NavLink to={item.url}>
                                 {item.icon && <item.icon />}
                                 <span>{item.title}</span>

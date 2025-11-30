@@ -49,7 +49,6 @@ export default function SkillPage({ loaderData }: Route.ComponentProps) {
 
             <div className="">
                 <ListSkillSubskill skillAndSubskill={skillAndSubskill} />
-
             </div>
 
             <Outlet />

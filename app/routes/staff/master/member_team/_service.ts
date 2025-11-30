@@ -1,9 +1,9 @@
 import { db } from "database/connect";
 import { mTeam, mUser } from "database/schema/schema";
-import { asc, eq, ne } from "drizzle-orm";
+import { and, asc, eq, isNull, ne } from "drizzle-orm";
 
 
-export async function getAllMemberTeamByIdTeam(idTeam: string) {
+export async function getAllMemberTeamByIdTeam(idSubBidang: string, idTeam: string) {
     // const res = await db.query.mMemberTeam.findMany({
     //     where: eq(mMemberTeam.idTeam, idTeam),
     //     with: {
@@ -14,7 +14,10 @@ export async function getAllMemberTeamByIdTeam(idTeam: string) {
         .select()
         .from(mUser)
         // .innerJoin(mUser, eq(mMemberTeam.idUser, mUser.idUser))
-        .where(eq(mUser.idTeam, idTeam))
+        .where(and(
+            idTeam === "noteam" ? isNull(mUser.idTeam) : eq(mUser.idTeam, idTeam),
+            eq(mUser.idSubBidang, idSubBidang)
+        ))
         .orderBy(asc(mUser.nama));
 
     return res

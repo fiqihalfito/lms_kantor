@@ -21,7 +21,7 @@ import {
     ItemMedia,
     ItemTitle,
 } from "~/components/ui/item"
-import { CirclePercent, PercentIcon } from "lucide-react";
+import { CirclePercent, PercentIcon, XIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -56,7 +56,10 @@ export default function DetailSkill({ params, loaderData }: Route.ComponentProps
             <div className="w-3/4 h-5/6 bg-white rounded-md p-8 relative flex flex-col gap-y-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-semibold">{userdata.nama}</h1>
-                    <Button onClick={() => navigate(-1)}>Tutup</Button>
+                    <Button onClick={() => navigate(-1)} className="cursor-pointer">
+                        <XIcon />
+                        Tutup
+                    </Button>
                 </div>
                 <Separator />
 

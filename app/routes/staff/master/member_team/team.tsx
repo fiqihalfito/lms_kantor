@@ -12,7 +12,7 @@ import {
     TableRow,
 } from "~/components/ui/table"
 import { TableWrapper } from "~/components/table-wrapper";
-import { getAllMemberTeamByIdTeam, getOtherTeamDataExceptThisTeam, getTeamName } from "./_service";
+import { getAllMemberTeamByIdTeam } from "./_service";
 import { EmptyMaster } from "~/components/empty-master";
 import {
     AlertDialog,
@@ -25,7 +25,6 @@ import {
     AlertDialogTrigger,
 } from "~/components/ui/alert-dialog"
 import { Spinner } from "~/components/ui/spinner";
-import { MyAlert } from "~/components/alert-custom";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -38,22 +37,26 @@ import {
 import { useCallback } from "react";
 import { getToast } from "remix-toast";
 import { useToastEffect } from "~/hooks/use-toast";
+import { userContext } from "~/lib/context";
 
 export async function loader({ request, context, params }: Route.LoaderArgs) {
 
-    // const user = context.get(userContext)
+    const user = context.get(userContext)
     // await wait(3000)
-    const members = await getAllMemberTeamByIdTeam(params.idTeam)
-    const nameTeam = await getTeamName(params.idTeam)
-    const otherTeam = await getOtherTeamDataExceptThisTeam(params.idTeam)
+    const members = await getAllMemberTeamByIdTeam(user.idSubBidang, params.idTeam)
+    // const nameTeam = params.idTeam === "noteam" ? "Belum ada team" : await getTeamName(params.idTeam).then((t) => t[0].namaTeam)
+    // const otherTeam = params.idTeam === "noteam" ? [] : await getOtherTeamDataExceptThisTeam(params.idTeam)
 
     const { headers, toast } = await getToast(request)
-    return data({ members, toast, nameTeam: nameTeam[0].namaTeam, otherTeam }, { headers })
+    return data({ members, toast }, { headers })
 }
 
-export default function MemberTeamMaster({ loaderData }: Route.ComponentProps) {
+export default function MemberTeamMaster({ loaderData, matches, params }: Route.ComponentProps) {
 
-    const { members, toast, nameTeam, otherTeam } = loaderData
+    const { members, toast } = loaderData
+    const allTeams = matches[3].loaderData.teams
+    const currentTeam = params.idTeam === "noteam" ? "Belum ada team" : allTeams.find((t) => t.idTeam === params.idTeam)?.nama
+    const otherTeam = allTeams.filter((t) => t.idTeam !== params.idTeam)
 
     useToastEffect(toast)
 
@@ -86,7 +89,7 @@ export default function MemberTeamMaster({ loaderData }: Route.ComponentProps) {
 
             <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                    <h1 className="text-3xl font-semibold tracking-tight">Team {nameTeam}</h1>
+                    <h1 className="text-3xl font-semibold tracking-tight">Team {currentTeam}</h1>
                     <p className="text-muted-foreground">List Member Team</p>
                 </div>
             </div>
@@ -98,7 +101,7 @@ export default function MemberTeamMaster({ loaderData }: Route.ComponentProps) {
                 <EmptyMaster Icon={OctagonXIcon} title="Member team" />
             ) : (
                 <TableWrapper className="w-1/2">
-                    <Table key={nameTeam}>
+                    <Table key={currentTeam}>
                         {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                         <TableHeader>
                             <TableRow>

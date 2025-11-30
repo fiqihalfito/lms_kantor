@@ -3,9 +3,12 @@ import { UploadDokumenForm } from "../_components/upload-dokumen-form";
 import type { Route } from "./+types";
 import { parseFormData, type FileUpload } from "@remix-run/form-data-parser";
 import { deleteInRealBucket, moveToRealBucket, removeTempFileIfValidationFail, uploadToMinioTemp } from "~/lib/minio.server";
-import { getDokumenByIdDokumen, getNamaSubskill, updateDokumen, tUpdateNewDokumenValidation, getFilenameDokumenByIdDokumen } from "./_service";
+import { getDokumenByIdDokumen, getNamaSubskill, updateDokumen, getFilenameDokumenByIdDokumen } from "./_service";
+import { tUpdateNewDokumenValidation } from "./_schema";
 import z from "zod";
 import { dataWithError, redirectWithSuccess } from "remix-toast";
+import { parseWithZod } from "@conform-to/zod/v4";
+import { getDbErrorMessage } from "database/dbErrorUtils";
 
 export async function action({
     request,
@@ -33,10 +36,20 @@ export async function action({
     );
 
     try {
+        const submission = parseWithZod(formData, { schema: tUpdateNewDokumenValidation });
+        if (submission.status !== 'success') {
+            // cleanup minio first if validation fail
+            if (filename) await removeTempFileIfValidationFail(filename)
+            return dataWithError(submission.reply(), "Data yang dikirim salah");
+        }
 
-        const formUploadDokumen = Object.fromEntries(formData)
-        const validated = tUpdateNewDokumenValidation.parse(formUploadDokumen)
 
+
+
+        const updatedDokumenId = await updateDokumen(params.idDokumen, {
+            ...(filename ? { filename } : {}),
+            judul: submission.value.judul,
+        })
 
         // move to real production bucket if validation success
         if (filename) {
@@ -49,23 +62,13 @@ export async function action({
             }
         }
 
-        const updatedDokumenId = await updateDokumen(params.idDokumen, {
-            ...(filename ? { filename } : {}),
-            judul: validated.judul,
-        })
-
         const namaSubSkill = await getNamaSubskill(params.idSubSkill)
 
         return redirectWithSuccess(`..`, `Dokumen subskill ${namaSubSkill.namaSubSkill} berhasil diupdate`)
     } catch (err) {
-        if (err instanceof z.ZodError) {
-            // cleanup minio first if validation fail
-            if (filename) await removeTempFileIfValidationFail(filename)
+        const { message, constraint } = getDbErrorMessage(err);
 
-            const errors = z.flattenError(err).fieldErrors
-            return dataWithError({ errors }, "Data yang dikirim salah");
-        }
-        return dataWithError(null, "Error di query DB")
+        return dataWithError(null, message)
     }
 
 }
@@ -84,6 +87,6 @@ export default function EditDokumen({ params, loaderData }: Route.ComponentProps
     const { dokumen } = loaderData
 
     return (
-        <UploadDokumenForm dv={dokumen} idDokumen={params.idDokumen} />
+        <UploadDokumenForm dv={dokumen} idDokumen={params.idDokumen} mode="update" />
     )
 }

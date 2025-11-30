@@ -16,69 +16,69 @@ import { Badge } from "~/components/ui/badge"
 import { OptionSubskill } from "./option-subskill"
 
 type ListSubSkillType = {
-    subskill: Awaited<ReturnType<typeof getSkillAndSubSkillByPIC>>[number]["subSkill"]
+    level: string | number,
+    subskill: Awaited<ReturnType<typeof getSkillAndSubSkillByPIC>>[number]["levelSubskill"][number][1]
 }
 
-export function ListSubSkill({ subskill }: ListSubSkillType) {
+export function ListSubSkill({ level, subskill }: ListSubSkillType) {
     return (
-        <TableWrapper>
-            <Table>
-                {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[100px]">No</TableHead>
-                        <TableHead>Subskill</TableHead>
-                        <TableHead className="text-center">Level</TableHead>
-                        <TableHead className="text-center">PIC</TableHead>
-                        <TableHead className="text-center">Dokumen</TableHead>
-                        <TableHead className="text-center">Kuis</TableHead>
-                        <TableHead className="text-center">Jumlah Soal</TableHead>
-                        <TableHead className="text-right">Aksi</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {subskill.map((ss, i) => (
-                        <TableRow key={ss.idSubSkill}>
-                            <TableCell className="font-medium">{i + 1}</TableCell>
-                            <TableCell>{ss.namaSubSkill}</TableCell>
-                            <TableCell className="text-center">{ss.level}</TableCell>
-                            <TableCell className="text-center">{ss.pic?.nama}</TableCell>
-                            <TableCell className="text-center">
-                                {ss.dokumen ? (
-                                    <Badge className="bg-green-500 rounded-full">
-                                        Done
-                                    </Badge>
-                                ) : (
-                                    <Badge variant={"destructive"} className="rounded-full">
-                                        Belum
-                                    </Badge>
-                                )}
-                            </TableCell>
-                            <TableCell className="text-center">
-                                {ss.dokumen?.kuis ? (
-                                    <Badge className="bg-green-500 rounded-full">
-                                        Done
-                                    </Badge>
-                                ) : (
-                                    <Badge variant={"destructive"} className="rounded-full">
-                                        Belum
-                                    </Badge>
-                                )}
-                            </TableCell>
-                            <TableCell className="text-center">{ss.dokumen?.kuis?.kuisElement?.length ?? "-"}</TableCell>
-                            <TableCell className="text-right">
-                                <OptionSubskill idSubSkill={ss.idSubSkill} idTeam={ss.pic?.idTeam} idDokumen={ss.dokumen?.idDokumen} idKuis={ss.dokumen?.idKuis} />
-                            </TableCell>
+        <div className="flex flex-col gap-2">
+            <div>
+                <p className="font-semibold">Level {level}</p>
+            </div>
+            <TableWrapper>
+                <Table>
+                    {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[100px]">No</TableHead>
+                            <TableHead>Subskill</TableHead>
+                            <TableHead className="text-center">Level</TableHead>
+                            <TableHead className="text-center">PIC</TableHead>
+                            <TableHead className="text-center">Dokumen</TableHead>
+                            <TableHead className="text-center">Kuis</TableHead>
+                            <TableHead className="text-center">Jumlah Soal</TableHead>
+                            <TableHead className="text-right">Aksi</TableHead>
                         </TableRow>
-                    ))}
-                </TableBody>
-                {/* <TableFooter>
-                    <TableRow>
-                        <TableCell colSpan={3}>Total</TableCell>
-                        <TableCell className="text-right">$2,500.00</TableCell>
-                    </TableRow>
-                </TableFooter> */}
-            </Table>
-        </TableWrapper>
+                    </TableHeader>
+                    <TableBody>
+                        {subskill.map((ss, i) => (
+                            <TableRow key={ss.idSubSkill}>
+                                <TableCell className="font-medium">{i + 1}</TableCell>
+                                <TableCell>{ss.namaSubSkill}</TableCell>
+                                <TableCell className="text-center">{ss.level}</TableCell>
+                                <TableCell className="text-center">{ss.pic?.nama}</TableCell>
+                                <TableCell className="text-center">
+                                    {ss.dokumen ? (
+                                        <Badge className="bg-green-500 rounded-full">
+                                            Done
+                                        </Badge>
+                                    ) : (
+                                        <Badge variant={"destructive"} className="rounded-full">
+                                            Belum
+                                        </Badge>
+                                    )}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {ss.dokumen?.kuis ? (
+                                        <Badge className="bg-green-500 rounded-full">
+                                            Done
+                                        </Badge>
+                                    ) : (
+                                        <Badge variant={"destructive"} className="rounded-full">
+                                            Belum
+                                        </Badge>
+                                    )}
+                                </TableCell>
+                                <TableCell className="text-center">{ss.dokumen?.kuis?.kuisElement?.length ?? "-"}</TableCell>
+                                <TableCell className="text-right">
+                                    <OptionSubskill idSubSkill={ss.idSubSkill} idTeam={ss.pic?.idTeam} idDokumen={ss.dokumen?.idDokumen} idKuis={ss.dokumen?.idKuis} />
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableWrapper>
+        </div>
     )
 }

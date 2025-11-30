@@ -40,16 +40,18 @@ export default function IndexMemberTeamPage({ loaderData, params }: Route.Compon
                 <div className="border shadow rounded-md w-72 p-4">
                     <h6 className="font-medium mb-4 text-sm text-muted-foreground ml-2">Available Team</h6>
                     <ItemGroup className="gap-y-2">
-                        {teams.map((x, i) => (
-                            <Item key={i} variant="outline" size="sm" className={cn(params.idTeam === x.idTeam && "bg-slate-400/20 hover:bg-slate-500")} asChild >
-                                <NavLink to={x.idTeam}>
+                        {teams.map((t, i) => (
+                            <Item key={i} variant="outline" size="sm" asChild >
+                                <NavLink to={t.idTeam} className={({ isActive, isPending }) =>
+                                    isPending ? "pending" : isActive ? "bg-slate-400/20" : "bg-slate-400/20"
+                                }>
                                     {({ isPending, isActive }) => (
                                         <>
                                             <ItemMedia>
                                                 {isPending && <Spinner className="size-5" />}
                                             </ItemMedia>
                                             <ItemContent>
-                                                <ItemTitle className={cn(isActive ? "font-bold" : "text-muted-foreground")}>{x.nama}</ItemTitle>
+                                                <ItemTitle className={cn(isActive ? "font-bold" : "text-muted-foreground")}>{t.nama}</ItemTitle>
                                             </ItemContent>
                                             <ItemActions>
                                                 {isActive && <ChevronRightIcon className="size-5" />}
@@ -59,6 +61,25 @@ export default function IndexMemberTeamPage({ loaderData, params }: Route.Compon
                                 </NavLink>
                             </Item>
                         ))}
+                        <Item key={"belum_ada_team"} variant="outline" size="sm" asChild >
+                            <NavLink to={"noteam"} className={({ isActive, isPending }) =>
+                                isPending ? "pending" : isActive ? "bg-slate-400/20" : "bg-slate-400/20"
+                            }>
+                                {({ isPending, isActive }) => (
+                                    <>
+                                        <ItemMedia>
+                                            {isPending && <Spinner className="size-5" />}
+                                        </ItemMedia>
+                                        <ItemContent>
+                                            <ItemTitle className={cn(isActive ? "font-bold" : "text-muted-foreground")}>Belum ada team</ItemTitle>
+                                        </ItemContent>
+                                        <ItemActions>
+                                            {isActive && <ChevronRightIcon className="size-5" />}
+                                        </ItemActions>
+                                    </>
+                                )}
+                            </NavLink>
+                        </Item>
                     </ItemGroup>
                 </div>
                 <div className="flex-1">

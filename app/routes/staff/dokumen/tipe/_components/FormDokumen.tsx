@@ -30,6 +30,10 @@ import { FIRST_SEGMENT } from "~/lib/route-config";
 import { Button } from "~/components/ui/button";
 import type { mLayanan, mSkill, tDokumen } from "database/schema/schema";
 import type { TIPE_DOKUMEN } from "~/lib/constants";
+import { getInputProps, useForm } from "@conform-to/react";
+import { parseWithZod } from "@conform-to/zod/v4";
+import { tInsertNewDokumenValidation } from "../add/_schema";
+import { tUpdateDokumenValidation } from "../edit/_schema";
 
 
 type FormDokumenProp = {
@@ -58,14 +62,29 @@ export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen
         }
     }
 
-    //khusus edit
-    // const [reuploadMode, setReuploadMode] = useState(false)
+
     const navigate = useNavigate()
+
+    const [form, fields] = useForm({
+        // wajib client validate
+        onValidate({ formData }) {
+            return parseWithZod(formData, { schema: mode === "insert" ? tInsertNewDokumenValidation : tUpdateDokumenValidation })
+        },
+        lastResult: fetcher.state === 'idle' ? fetcher.data : null,
+        defaultValue: {
+            judul: defaultValues?.judul,
+            layanan: defaultValues?.idLayanan,
+
+        },
+        shouldValidate: "onBlur",
+        shouldRevalidate: "onInput",
+
+    })
 
 
     return (
         <div className="fixed inset-0  bg-black/50 z-99">
-            <fetcher.Form method="post" className="h-screen w-screen flex items-center justify-center" encType="multipart/form-data">
+            <fetcher.Form method="post" className="h-screen w-screen flex items-center justify-center" encType="multipart/form-data" id={form.id} onSubmit={form.onSubmit}>
                 <Card className="w-1/4">
                     <CardHeader className="">
                         <CardTitle>{`${modeMapping[mode].title} Dokumen ${tipeDokumen}`}</CardTitle>
@@ -92,16 +111,17 @@ export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen
                                     Judul Dokumen
                                 </FieldLabel>
                                 <Input
-                                    id="judul"
-                                    placeholder="Judul dokumen"
-                                    name="judul"
-                                    defaultValue={defaultValues?.judul ?? undefined}
-                                    required
+                                    // id="judul"
+                                    // placeholder="Judul dokumen"
+                                    // name="judul"
+                                    // defaultValue={defaultValues?.judul ?? undefined}
+                                    // required
+                                    {...getInputProps(fields.judul, { type: "text" })}
+                                    placeholder="Judul Dokumen"
                                 />
-                                {errors?.judul ? (
-                                    <FieldError>{errors.judul}!</FieldError>
-                                ) : null}
+                                <FieldError id={fields.judul.errorId}>{fields.judul.errors}</FieldError>
                             </Field>
+
 
                             {(tipeDokumen === "IK") && (
                                 <Field>
@@ -109,12 +129,14 @@ export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen
                                         Layanan
                                     </FieldLabel>
                                     <Select
-                                        name="layanan"
-                                        defaultValue={defaultValues?.idLayanan ?? undefined}
+
+                                        name={fields.layanan.name}
+                                        defaultValue={fields.layanan.defaultValue}
                                         required={tipeDokumen === "IK"}
+
                                     >
-                                        <SelectTrigger id="layanan">
-                                            <SelectValue placeholder="Layanan" />
+                                        <SelectTrigger id="layanan" aria-describedby="layanan">
+                                            <SelectValue placeholder="Layanan" aria-describedby="layanan" />
                                         </SelectTrigger>
                                         <SelectContent className="z-9999">
                                             <SelectGroup>
@@ -125,61 +147,9 @@ export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+                                    <FieldError id={fields.layanan.errorId}>{fields.layanan.errors}</FieldError>
                                 </Field>
                             )}
-
-                            {/* {(tipeDokumen === "Knowledge") && (
-                                <Field>
-                                    <FieldLabel htmlFor="skill">
-                                        Skill
-                                    </FieldLabel>
-                                    <Select
-                                        name="skill"
-                                        defaultValue={defaultValues?.idSkill ?? undefined}
-                                        required={tipeDokumen === "Knowledge"}
-                                    >
-                                        <SelectTrigger id="skill">
-                                            <SelectValue placeholder="Skill" />
-                                        </SelectTrigger>
-                                        <SelectContent className="z-9999">
-                                            <SelectGroup>
-                                                <SelectLabel>Skill</SelectLabel>
-                                                {listSkill?.map((l, i) => (
-                                                    <SelectItem value={l.idSkill}>{l.namaSkill}</SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </Field>
-                            )} */}
-
-
-
-
-
-                            {/* {mode === "update" && (
-                                    <div className="flex gap-x-2">
-                                        <Input
-                                            type="text"
-                                            defaultValue={defaultValues?.filename ?? undefined}
-                                            disabled
-                                        />
-                                        <Button type="button" variant={"outline"} onClick={() => setReuploadMode(prev => !prev)}>
-                                            {!reuploadMode ? (
-                                                <>
-                                                    <FolderSyncIcon />
-                                                    Upload ulang?
-                                                </>
-
-                                            ) : (
-                                                <>
-                                                    <CircleXIcon />
-                                                    Batal upload
-                                                </>
-                                            )}
-                                        </Button>
-                                    </div>
-                                )} */}
 
 
 
@@ -189,14 +159,10 @@ export function FormDokumen({ defaultValues, listLayanan, listSkill, tipeDokumen
                                         Upload Dokumen
                                     </FieldLabel>
                                     <Input
-                                        id="file"
-                                        type="file"
-                                        name="file"
-                                        required
+                                        {...getInputProps(fields.file, { type: "file", accept: "application/pdf" })}
+                                        placeholder="Upload file"
                                     />
-                                    {errors?.file ? (
-                                        <FieldError>{errors.file}!</FieldError>
-                                    ) : null}
+                                    <FieldError id={fields.file.errorId}>{fields.file.errors}</FieldError>
                                 </Field>
                             )}
 

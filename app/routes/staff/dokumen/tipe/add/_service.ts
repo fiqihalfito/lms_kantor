@@ -2,21 +2,6 @@
 import { db } from "database/connect";
 import { mLayanan, mSkill, tDokumen } from "database/schema/schema";
 import { and, eq } from "drizzle-orm";
-import * as z from "zod";
-
-export const tInsertNewDokumenValidation = z.object({
-    judul: z
-        .string({
-            error: (iss) => iss.input === undefined ? "Judul is required." : "Invalid input."
-        })
-        .min(1, "Judul tidak boleh kosong"),
-    layanan: z.preprocess(val => val === "" ? null : val, z.string().nullable()).optional(),
-    skill: z.preprocess(val => val === "" ? null : val, z.string().nullable()).optional(),
-    file: z
-        .file({ error: "File wajib diupload" })
-        .mime(["application/pdf"], { error: "hanya upload pdf" })
-        .max(5 * 1024 * 1024, { error: "max 5 mb" }), // file diambil dari hasil parse
-});
 
 export async function saveNewDokumen({ filename, idLayanan, idSubBidang, judul, tipe, idUser, idTeam, idSubSkill }: typeof tDokumen.$inferInsert) {
     const newIDDokumen = await db.insert(tDokumen).values({

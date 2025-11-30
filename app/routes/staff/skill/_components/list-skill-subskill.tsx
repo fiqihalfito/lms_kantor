@@ -9,12 +9,17 @@ type ListSkillSubskillType = {
 export function ListSkillSubskill({ skillAndSubskill }: ListSkillSubskillType) {
     return (
         <div className="flex flex-col gap-12">
-            {skillAndSubskill.filter(s => s.subSkill.length > 0).map((s, i) => (
-                <div className="border rounded-sm p-4 space-y-4 shadow">
+            {skillAndSubskill.filter(s => s.jumlahSubskill > 0).map((s, i) => (
+                <div key={s.idSkill} className="border rounded-sm p-4 space-y-4 shadow">
                     <div>
                         <h1 className="font-semibold">{s.namaSkill}</h1>
                     </div>
-                    <ListSubSkill subskill={s.subSkill} />
+                    <div className="flex flex-col gap-6">
+                        {s.levelSubskill.map(([level, subskill], i) => (
+                            <ListSubSkill key={level} level={level} subskill={subskill} />
+                        ))}
+                    </div>
+
                 </div>
             ))}
         </div>

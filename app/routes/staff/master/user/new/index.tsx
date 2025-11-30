@@ -36,14 +36,6 @@ export async function action({ request, context }: Route.ActionArgs) {
         password: "123"
     })
 
-    // const flashHeaders = await setFlashSession(request, {
-    //     type: "success",
-    //     message: `User ${validated.data.namaUser} berhasil disimpan`
-    // })
-    // return redirect("..", {
-    //     headers: flashHeaders
-    // })
-
     return redirectWithSuccess("..", `User ${validated.data.namaUser} berhasil disimpan`)
 }
 
