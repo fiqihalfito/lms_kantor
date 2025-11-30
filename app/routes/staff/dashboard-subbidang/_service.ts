@@ -1,11 +1,7 @@
 import { db } from "database/connect";
 import { mSkill, mSubBidang, mSubSkill, mTeam, mUser, tDokumen, tKuis, tKuisProgress, tStatusBaca } from "database/schema/schema";
 import { and, count, eq, notInArray, sql } from "drizzle-orm";
-import type { TIPE_DOKUMEN } from "~/lib/constants";
 
-// export async function getSubbidangName(idSubbidang: string) {
-//        const res = await db.select({nama: })
-// }
 
 export async function getAllSkill(idSubBidang: string) {
     const res = await db.query.mSkill.findMany({
@@ -18,51 +14,6 @@ export async function getAllSkill(idSubBidang: string) {
 }
 
 
-export async function getTeamAndMember(idSubBidang: string) {
-    const res = await db.query.mTeam.findMany({
-        with: {
-            user: {
-                columns: {
-                    nama: true,
-                    idUser: true,
-                    idTeam: true
-                },
-                with: {
-                    kuisProgress: {
-                        with: {
-                            subSkill: true,
-                            kuis: {
-                                columns: {
-                                    idKuis: true,
-                                },
-                                with: {
-                                    kuisElement: {
-                                        columns: {
-                                            idKuisElement: true,
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    })
-
-    // const res = await db.select()
-    //     .from(mUser)
-    //     .fullJoin(tDokumen, eq(mUser.idUser, tDokumen.idDokumen))
-    //     .leftJoin(tKuisProgress, eq(tKuisProgress.idUser, mUser.idUser))
-    //     .leftJoin(mTeam, eq(mTeam.idSubBidang, mSubBidang.idSubBidang))
-    //     .leftJoin(mMemberTeam, eq(mMemberTeam.idUser, mUser.idUser))
-    //     .leftJoin(tKuis, eq(tKuis.idDokumen, tDokumen.idDokumen))
-    //     .where(and(
-    //         eq(mUser.idSubBidang, idSubBidang)
-    //     ))
-
-    return res
-}
 
 export async function getAllUsersWithScore(idSubBidang: string) {
     const raw = await db.query.mUser.findMany({
@@ -163,56 +114,114 @@ export async function getAllTeams(idSubBidang: string) {
     return res
 }
 
-// export async function getSubSkillSkor(idSubBidang: string) {
-//     const res = await db.query.tKuisProgress.findMany({
-//         where: eq(tKuisProgress., idSubBidang)
-//     })
-//     return res
-// }
-
-export async function getUnskilled(idSkilled: string[]) {
-    const res = await db.select({
+export async function getPersentaseMembaca(idSubBidang: string) {
+    const raw = await db.select({
         idDokumen: tDokumen.idDokumen,
-        judulDokumen: tDokumen.judul
+        idTeam: mUser.idTeam,
+        jumlahPembaca: count(tStatusBaca.isRead)
     }).from(tDokumen)
-        .where(notInArray(tDokumen.idDokumen, idSkilled))
-    return res
-}
-
-export async function getJumlahDokumen(idSubBidang: string, tipe: TIPE_DOKUMEN) {
-    const res = await db.$count(tDokumen, and(eq(tDokumen.idSubBidang, idSubBidang), eq(tDokumen.tipe, tipe)))
-    return res
-}
-
-export async function getDokumenAndStatusReadCount(
-    idSubbidang: string,
-    tipe: TIPE_DOKUMEN
-) {
-
-    const res = await db
-        .select({
-            judul: tDokumen.judul,
-            tipe: tDokumen.tipe,
-            // Hitung jumlah user yang sudah baca (isRead = true)
-            jumlahDibaca: sql<number>`
-                COUNT(CASE WHEN ${tStatusBaca.isRead} = true THEN 1 END)
-            `.as('jumlah_dibaca'),
-        })
-        .from(tDokumen)
         .leftJoin(tStatusBaca, eq(tStatusBaca.idDokumen, tDokumen.idDokumen))
-        .where(
-            and(
-                eq(tDokumen.idSubBidang, idSubbidang),
-                eq(tDokumen.tipe, tipe)
-            )
-        )
-        .groupBy(tDokumen.idDokumen, tDokumen.judul, tDokumen.tipe);
+        .leftJoin(mUser, eq(mUser.idUser, tStatusBaca.idUser))
+        .where(and(
+            eq(tDokumen.idSubBidang, idSubBidang),
+            eq(tStatusBaca.isRead, true)
+        ))
+        .groupBy(tDokumen.idDokumen, mUser.idTeam)
 
-    return res;
+    const jumlahUserPerTeam = await db.select({
+        idTeam: mTeam.idTeam,
+        namaTeam: mTeam.nama,
+        jumlahUser: count(mUser.idUser)
+    }).from(mTeam)
+        .leftJoin(mUser, eq(mUser.idTeam, mTeam.idTeam))
+        .where(eq(mTeam.idSubBidang, idSubBidang))
+        .groupBy(mTeam.idTeam)
+
+    const jumlahUserMap = Object.fromEntries(jumlahUserPerTeam.map(item => [item.idTeam, item.jumlahUser]))
+
+    const persentaseMembacaPerDokumen = raw.map(item => {
+        const totalUsersInTeam = jumlahUserMap[item.idTeam!] ?? 0;
+        const persentaseBaca = totalUsersInTeam ? (item.jumlahPembaca / totalUsersInTeam) * 100 : 0;
+        return {
+            ...item,
+            persentaseBaca
+        }
+    })
+
+    const persentaseMembacaPerTeam = jumlahUserPerTeam.map(team => {
+
+        const jumlahPersentaseBaca = persentaseMembacaPerDokumen.reduce((acc, dokItem) => {
+            if (dokItem.idTeam === team.idTeam) {
+                acc += dokItem.persentaseBaca;
+            }
+            return acc;
+        }, 0);
+
+        const jumlahDokumenByTeam = persentaseMembacaPerDokumen.filter(item => item.idTeam === team.idTeam).length;
+        const persentaseBaca = jumlahDokumenByTeam ? (jumlahPersentaseBaca / jumlahDokumenByTeam) : 0;
+
+        return {
+            ...team,
+            persentaseBaca
+        }
+    })
+
+    return persentaseMembacaPerTeam
 }
 
-export async function getJumlahOrang(idSubBidang: string) {
-    const res = await db.$count(mUser, eq(mUser.idSubBidang, idSubBidang))
-    return res
+export async function getPersentaseKuis(idSubBidang: string) {
+    const raw = await db.select({
+        idKuis: tKuis.idKuis,
+        idTeam: mUser.idTeam,
+        jumlahOrangKuis: count(tKuisProgress.isSelesai)
+    }).from(tKuis)
+        .leftJoin(tKuisProgress, eq(tKuisProgress.idKuis, tKuis.idKuis))
+        .leftJoin(mUser, eq(mUser.idUser, tKuisProgress.idUser))
+        .where(and(
+            eq(tKuis.idSubBidang, idSubBidang),
+            eq(tKuisProgress.isSelesai, true)
+        ))
+        .groupBy(tKuis.idKuis, mUser.idTeam)
+
+    const jumlahUserPerTeam = await db.select({
+        idTeam: mTeam.idTeam,
+        namaTeam: mTeam.nama,
+        jumlahUser: count(mUser.idUser)
+    }).from(mTeam)
+        .leftJoin(mUser, eq(mUser.idTeam, mTeam.idTeam))
+        .where(eq(mTeam.idSubBidang, idSubBidang))
+        .groupBy(mTeam.idTeam)
+
+    const jumlahUserMap = Object.fromEntries(jumlahUserPerTeam.map(item => [item.idTeam, item.jumlahUser]))
+
+    const persentaseOrangKuisPerKuis = raw.map(item => {
+        const totalUsersInTeam = jumlahUserMap[item.idTeam!] ?? 0;
+        const persentaseOrangKuis = totalUsersInTeam ? (item.jumlahOrangKuis / totalUsersInTeam) * 100 : 0;
+        return {
+            ...item,
+            persentaseOrangKuis
+        }
+    })
+
+    const persentaseOrangKuisPerTeam = jumlahUserPerTeam.map(team => {
+
+        const jumlahPersentaseOrangKuis = persentaseOrangKuisPerKuis.reduce((acc, dokItem) => {
+            if (dokItem.idTeam === team.idTeam) {
+                acc += dokItem.persentaseOrangKuis;
+            }
+            return acc;
+        }, 0);
+
+        const jumlahDokumenByTeam = persentaseOrangKuisPerKuis.filter(item => item.idTeam === team.idTeam).length;
+        const persentaseOrangKuis = jumlahDokumenByTeam ? (jumlahPersentaseOrangKuis / jumlahDokumenByTeam) : 0;
+
+        return {
+            ...team,
+            persentaseOrangKuis
+        }
+    })
+
+    // console.log(persentaseOrangKuisPerTeam)
+    return persentaseOrangKuisPerTeam
 }
 

@@ -1,6 +1,6 @@
 import { userContext } from "~/lib/context";
 import type { Route } from "./+types";
-import { getAllSkill, getAllTeams, getAllUsersWithScore, getDokumenAndStatusReadCount, getJumlahDokumen, getTeamAndMember } from "./_service";
+import { getAllSkill, getAllTeams, getAllUsersWithScore, getPersentaseKuis } from "./_service";
 import { Separator } from "~/components/ui/separator";
 import {
     Card,
@@ -26,6 +26,7 @@ import type { TIPE_DOKUMEN } from "~/lib/constants";
 // import { ChevronRightIcon } from "lucide-react";
 import { SkillUser } from "./_components/skill-user";
 import { Button } from "~/components/ui/button";
+import { getPersentaseMembaca } from "./_service";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -33,7 +34,6 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     // currentSubbidang
     const currentSubbidang = user?.namaSubbidang!
     // total tim dan anggota
-    const teamAndMember = await getTeamAndMember(user?.idSubBidang!)
 
     const allUsers = await getAllUsersWithScore(user.idSubBidang)
     const allTeams = await getAllTeams(user.idSubBidang)
@@ -41,19 +41,9 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     // skill    
     const allSkill = await getAllSkill(user.idSubBidang)
 
-    // jumlah dokumen
-    const jumlahDokumen = {
-        SOP: await getJumlahDokumen(user?.idSubBidang!, "SOP"),
-        IK: await getJumlahDokumen(user?.idSubBidang!, "IK"),
-        Knowledge: await getJumlahDokumen(user?.idSubBidang!, "Knowledge"),
-    }
-
-    const jumlahPembaca = {
-        SOP: await getDokumenAndStatusReadCount(user?.idSubBidang!, "SOP"),
-        IK: await getDokumenAndStatusReadCount(user?.idSubBidang!, "IK"),
-        Knowledge: await getDokumenAndStatusReadCount(user?.idSubBidang!, "Knowledge")
-
-    }
+    // persentase membaca
+    const persentaseMembaca = await getPersentaseMembaca(user.idSubBidang)
+    const persentaseKuis = await getPersentaseKuis(user.idSubBidang)
 
 
 
@@ -62,13 +52,12 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
 
 
 
-
-    return { currentSubbidang, teamAndMember, jumlahDokumen, jumlahPembaca, allSkill, allUsers, allTeams }
+    return { currentSubbidang, allSkill, allUsers, allTeams, persentaseMembaca, persentaseKuis }
 }
 
 export default function DashboardSubbidang({ loaderData }: Route.ComponentProps) {
 
-    const { currentSubbidang, teamAndMember, jumlahDokumen, jumlahPembaca, allSkill, allUsers, allTeams } = loaderData
+    const { currentSubbidang, allSkill, allUsers, allTeams, persentaseMembaca, persentaseKuis } = loaderData
 
     // Mapping data for performance
     const userMap = new Map(allUsers.map(user => [user.idUser, user]));
@@ -77,26 +66,6 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
 
 
 
-    const totalMembers = teamAndMember.reduce((total, team) => {
-        // Add the number of members in the current team to the total
-        return total + team.user.length;
-    }, 0); // Start the initial total at 0
-
-
-    function getPersentageReader(totalPembaca: number, jumlahOrang: number) {
-        if (jumlahOrang === 0) return 0 // hindari division by zero
-        return (totalPembaca / jumlahOrang) * 100
-    }
-
-    const persentasePembacaSemuaDokumen = (tipe: TIPE_DOKUMEN) => {
-        if (jumlahPembaca[tipe].length === 0) {
-            return 0
-        }
-        const jumlah = jumlahPembaca[tipe].reduce((total, item) => {
-            return total + getPersentageReader(item.jumlahDibaca, totalMembers)
-        }, 0) / jumlahPembaca[tipe].length
-        return jumlah
-    }
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-8 pt-2">
@@ -112,48 +81,18 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
 
             <div className="flex flex-col gap-4">
 
-                <div className="grid grid-cols-3 gap-4">
-                    <Card>
-                        <CardHeader>
-                            <CardDescription>Jumlah dokumen SOP</CardDescription>
-                            <CardTitle className="text-4xl tabular-nums">{jumlahDokumen.SOP}</CardTitle>
-                            {/* <CardAction>Card Action</CardAction> */}
-                        </CardHeader>
-                        {/* <CardFooter>
-                            <p>Card Footer</p>
-                        </CardFooter> */}
-                    </Card>
-                    <Card>
-                        <CardHeader>
-                            <CardDescription>Jumlah dokumen IK</CardDescription>
-                            <CardTitle className="text-4xl tabular-nums">{jumlahDokumen.IK}</CardTitle>
-                            {/* <CardAction>Card Action</CardAction> */}
-                        </CardHeader>
-                        {/* <CardFooter>
-                            <p>Card Footer</p>
-                        </CardFooter> */}
-                    </Card>
-                    <Card>
-                        <CardHeader>
-                            <CardDescription>Jumlah dokumen Knowledge</CardDescription>
-                            <CardTitle className="text-4xl tabular-nums">{jumlahDokumen.Knowledge}</CardTitle>
-                            {/* <CardAction>Card Action</CardAction> */}
-                        </CardHeader>
-                        {/* <CardFooter>
-                            <p>Card Footer</p>
-                        </CardFooter> */}
-                    </Card>
-                </div>
+
 
                 {/* baris 2 */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                     <NavLink to={"dokumen-read-persentage/tipe/SOP"} viewTransition>
                         <Card>
                             <CardHeader>
-                                <CardDescription>Persentase Membaca Dokumen SOP</CardDescription>
-                                <CardTitle className="text-4xl tabular-nums">{persentasePembacaSemuaDokumen("SOP").toFixed(2)}%</CardTitle>
-                                {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
-                                {/* <CardAction>Card Action</CardAction> */}
+                                <CardDescription>Persentase Membaca</CardDescription>
+                                {/* <CardTitle className="text-4xl tabular-nums">{}%</CardTitle> */}
+                                {persentaseMembaca.map((item) => (
+                                    <CardTitle key={"baca" + item.idTeam} className="text-4xl tabular-nums">{item.namaTeam}{" : "}{item.persentaseBaca.toFixed(2)}%</CardTitle>
+                                ))}
                             </CardHeader>
                             {/* <CardFooter>
                             <p>Card Footer</p>
@@ -163,23 +102,11 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                     <NavLink to={"dokumen-read-persentage/tipe/IK"} viewTransition>
                         <Card>
                             <CardHeader>
-                                <CardDescription>Persentase Membaca Dokumen IK</CardDescription>
-                                <CardTitle className="text-4xl tabular-nums">{persentasePembacaSemuaDokumen("IK").toFixed(2)}%</CardTitle>
-                                {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
-                                {/* <CardAction>Card Action</CardAction> */}
-                            </CardHeader>
-                            {/* <CardFooter>
-                            <p>Card Footer</p>
-                        </CardFooter> */}
-                        </Card>
-                    </NavLink>
-
-                    <NavLink to={"dokumen-read-persentage/tipe/Knowledge"} viewTransition>
-                        <Card>
-                            <CardHeader>
-                                <CardDescription>Persentase Membaca Dokumen Knowledge</CardDescription>
-                                <CardTitle className="text-4xl tabular-nums">{persentasePembacaSemuaDokumen("Knowledge").toFixed(2)}%</CardTitle>
-                                {/* menampilkan dokumen > persentase isread dari tiap anggota > anggota yang belum baca */}
+                                <CardDescription>Persentase Kuis</CardDescription>
+                                {/* <CardTitle className="text-4xl tabular-nums">%</CardTitle> */}
+                                {persentaseKuis.map((item) => (
+                                    <CardTitle key={"kuis" + item.idTeam} className="text-4xl tabular-nums">{item.namaTeam}{" : "}{item.persentaseOrangKuis.toFixed(2)}%</CardTitle>
+                                ))}
                                 {/* <CardAction>Card Action</CardAction> */}
                             </CardHeader>
                             {/* <CardFooter>
@@ -218,11 +145,11 @@ export default function DashboardSubbidang({ loaderData }: Route.ComponentProps)
                                     <div className="space-y-2">
                                         {userByTeamMap.get(t.idTeam)?.map((user, i) => (
                                             <Item variant="outline" size="sm" key={user.idUser}>
-                                                <ItemMedia variant={"icon"}>
+                                                <ItemMedia variant={"icon"} className="self-start">
                                                     {i + 1}
                                                 </ItemMedia>
                                                 <ItemContent className="flex flex-col gap-2">
-                                                    <ItemTitle className="text-lg font-semibold">{user.nama}</ItemTitle>
+                                                    <ItemTitle className="text-lg font-semibold ml-2">{user.nama}</ItemTitle>
                                                     <div className="flex flex-wrap items-center gap-1">
                                                         {allSkill.filter((skill) => skill.idTeam === t.idTeam).map((skill) => (
                                                             <BadgeSkill key={skill.idSkill} skill={skill} persenSkill={user.persentaseTiapSkill?.[skill.idSkill]} idUser={user.idUser} />
