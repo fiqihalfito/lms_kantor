@@ -5,6 +5,9 @@ import { ProfilSection } from "./_components/profil-section";
 import { getDokumenSudahDibaca, getKuisSelesai, getNamaTeam } from "./_service";
 import { DokumenSudahDibaca } from "./_components/dokumen-sudah-dibaca";
 import { KuisSudahSelesai } from "./_components/kuis-sudah-selesai";
+import { Button } from "~/components/ui/button";
+import { Link } from "react-router";
+import { SquareArrowOutUpRightIcon } from "lucide-react";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -29,6 +32,12 @@ export default function DashboardPage({ loaderData }: Route.ComponentProps) {
                     <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
                     <p className="text-muted-foreground">Informasi Progress User</p>
                 </div>
+                <Button size={"lg"} variant={"outline"} asChild className="shadow-xl rounded-full">
+                    <Link to={"/dashboard"}>
+                        <SquareArrowOutUpRightIcon />
+                        Dashboard Subbidang
+                    </Link>
+                </Button>
             </div>
             <Separator />
             <div className="flex flex-col gap-8">

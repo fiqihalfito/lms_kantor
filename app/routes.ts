@@ -8,6 +8,10 @@ export default [
         route("logout", "routes/auth/logout/index.tsx")
     ]),
 
+    ...prefix("dashboard", [
+        index("routes/vp/dashboard-page.tsx"),
+    ]),
+
     route("app", "routes/app/index.tsx", { id: "app_segment" }, [
 
 
@@ -128,7 +132,9 @@ export default [
                     ]),
                 ]),
             ])
-        ])
+        ]),
+
+
     ])
 
 
