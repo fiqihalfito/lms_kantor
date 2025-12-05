@@ -1,0 +1,52 @@
+INSERT INTO m_user (
+    id_user, email, nama, password, id_subbidang, id_team
+) VALUES
+-- USER LMS
+('84d9a71a-995c-471b-ae21-f77c4fc170e8','dicky.arief@iconpln.co.id','Dicky Arief Widiarno','1234','s1',NULL),
+('25ef3da6-87d9-4348-b576-e3c73b5c287d','herri.apristanto@iconpln.co.id','Herri Nur Apristanto','1234','s1',NULL),
+('891e36e0-8e84-4914-9842-54db93ec567d','fiqih.alfito@iconpln.co.id','Fiqih Alfito','1234','s1',NULL),
+('64ac08c3-8e76-4536-8301-7516b64724d8','vickya.ramadhan@iconpln.co.id','M. Vickya Ramadhan','1234','s1',NULL),
+
+-- DBA
+('76772c22-0c94-4a67-aeea-41639741d855','hananta.prasetia@iconpln.co.id','Hananta Prasetia','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('ee1b41ee-7ad3-428a-a502-66d945b9307d','asdin.pamungkas@iconpln.co.id','Asdin Wahyu Pamungkas','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('04577662-ed90-4166-9f9a-6f1678562205','fahri.firmansyah@iconpln.co.id','Fahri Bagus Firmansyah','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('8a623469-4b42-4bf2-8bd9-7dc38ce10f5d','ando.wibawa@iconpln.co.id','Ando Pratama Wibawa','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('9870e2cd-6003-43f0-93a0-a281061aed36','andi.jalil@iconpln.co.id','Andi Abd. Jalil','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('c5c966fa-5081-462f-b0d5-493addfe7131','muhammad.hakim@iconpln.co.id','Muhammad Ridha HAKIM','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('8e033bc1-25bb-404f-a28a-9c9d869a81f6','latif.irfanto@iconpln.co.id','Latif Unggul Irfanto','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('f909ec77-82c1-4b55-8561-13d6c3ecc5c1','dwiky.melinia@iconpln.co.id','Dwiky Melinia Eriani','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('f39001d8-c3fa-4b28-ab03-e5cf2af38b97','kamila.aprilia@iconpln.co.id','Kamila Aprilia','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('d74ab3a7-dd4d-43dc-a816-2eece5fdd11b','rizky.ramdani@iconpln.co.id','Rizky Ramdani','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('c911c042-c636-4d6d-8437-064106ef74f0','doand.panjaitan@iconpln.co.id','Doand Panjaitan','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('06c65ea5-3b99-455c-bbe5-a9cd4311fe42','bayu.sulistyo@iconpln.co.id','Bayu Tri Sulistyo','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('4d242348-3f78-47a0-9282-b0ecd9ccbb66','achmad.ridwan@iconpln.co.id','Achmad Ridwan','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('3129720e-c412-45c4-93f4-e7671e0c4e5d','ikrar.harvy@iconpln.co.id','Ikrar Harvy','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('3f17bfdb-c548-4a0c-a4aa-6de2f97c6da7','nabila.fidasari@iconpln.co.id','Nabila Fidasari','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('3039d395-0760-4361-9476-154e3dfdfbe1','mahrunisa.indah@iconpln.co.id','Mahrunisa Indah','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('379ecd94-9670-4fa2-8531-18ff14f3c47b','citra.hafitasari@iconpln.co.id','Citra Hafitasari','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('e13ada46-0fd2-4d8d-91e8-4fe861c34cfd','felisia.maria@iconpln.co.id','Felisia Mascarehas','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('504ee8ff-8718-4635-8880-3d939894d736','lucky.ardiansyah@iconpln.co.id','Lucky Ardiansyah','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+('8b703e47-0a2e-4d7a-b05a-bccffa603ef7','yafi.zuhdi@iconpln.co.id','Yafi Irfan Zuhdi','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000001'),
+
+-- DEVOPS
+('7270d3e9-e4b5-4475-986e-4d99c1f0a572','ayu.pebriani@iconpln.co.id','Ayu Pebriani','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('3033f84d-7de4-4524-a21d-39d453884a0a','sekar.sari@iconpln.co.id','Sekar Melati Arum Sari','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('9f42c1c4-0813-4ea5-8cf8-aacefee73d97','agnesia.indryany@iconpln.co.id','Agnesia Indryany Mangopo','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('b08450b9-9101-4d13-b8ac-55bfce6a454f','alia.argasah@iconpln.co.id','Alia Ahadi Argasah','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('3d0ca79d-a112-4cac-99d9-674aa94c49b3','agung.febriyanto@iconpln.co.id','Agung Ramadhan Febrianto','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('f1668085-ddf3-4e80-a437-175af4c4b1bc','oktori.nugroho@iconpln.co.id','Oktori Thio Nugroho','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('aa61d359-2f5e-4231-905a-314552f7e2ae','andika.putra@iconpln.co.id','Andika Putra','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('3012d838-39bf-48d9-a2ba-e3c2c492e532','tedi.mahendra@iconpln.co.id','Tedi Mahendra','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('a57b5835-848a-4212-8e17-161033d5dd24','afrizal.zulfikar@iconpln.co.id','Afrizal Aulia Zulfikar','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('402744a2-96b3-4e3a-937f-dd4be8f17737','fajri.syarief@iconpln.co.id','Fajri Nur Syarif','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('40e21ba3-d81b-4504-a827-6cc44b87a638','rizkia.romainur@iconpln.co.id','Rizkia Kamila Romainur','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('913cbe71-3bb2-4846-ae4f-ed971c553a15','muamar.muamar@iconpln.co.id','Muamar','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('7b56fa9c-0e1e-4875-a394-e40b8f26dca0','agung.surya@iconpln.co.id','Agung Surya Nugraha','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('26801fda-09c8-4e93-94a0-28849b3984d0','eduward.situmorang@iconpln.co.id','Eduward S.','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('a424933d-3162-459f-a6a1-b0974307fb11','muhammad.ikhwan@iconpln.co.id','Muhammad Ikhwan Perwira','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('94c88935-c0da-4dba-a582-62ac8987c2f7','alivia.prameswari@iconpln.co.id','Alivia Paradhita Prameswari','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('1614881b-24d5-424a-b4db-39784e5a9aa1','lutfiah.sumardi@iconpln.co.id','Lutfiah Sania Sumardi','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('84f6d8fc-43ac-4667-9704-25ab0c7ced27','gloria.putri@iconpln.co.id','Gloria Jelita Putri Meisya Nugroho','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('72255456-86e9-44c7-9f02-33680c516890','annisya.safira@iconpln.co.id','Annisya Amanda Safira','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002'),
+('5cb83cc1-818c-4a54-b59a-0282b491eb5e','muhamad.misbahudin@iconpln.co.id','Muhamad Misbahudin Sobirin','1234','s1','aaaaaaaa-aaaa-4000-8000-000000000002');

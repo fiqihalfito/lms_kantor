@@ -9,6 +9,7 @@ import {
 import { sql, eq } from "drizzle-orm";
 import { seedSubskill, seedSubskillAdministrasiOS } from "./seed-subskill";
 import { seedBackupAplikasi, seedContainerizationDocker, seedContainerizationKubernetes, seedGitGitlab, seedLinuxServer, seedLogAnalisis, seedLogManagement, seedMonitoring, seedRestoreAplikasi, seedSecurityOS, seedVirtualMachine, seedWebServer, seedWindowsServer } from "./seed-devops";
+import { usersS1Data } from "./seed-user";
 
 async function main() {
     console.time("🌱 Seeding completed in");
@@ -210,32 +211,34 @@ async function main() {
 
     // 3️⃣ Insert users dengan UUID hardcoded
     console.log("👤 Seeding users...");
-    const userS1Names = [
-        // DBA Team - 18 orang
-        "Achmad Ridwan", "Andi Abd Jalil", "Ando Pratama Wibawa", "Asdin Wahyu Pamungkas", "Bayu Tri Sulistyo",
-        "Citra Hafitasari", "Doand Panjaitan", "Dwiky Melinia Eriani", "Fahri Bagus Firmansyah", "Felisia Mascarehas",
-        "Hananta Prasetia", "Ikrar Harvy", "Kamila Aprilia", "Latif Unggul Irfanto", "Mahrunisa Indah",
-        "Muhammad Ridha HAKIM", "Nabila Fidasari", "Rizky Ramdani",
-        // Devops Team - 19 orang
-        "Afrizal Aulia Zulfikar", "Agnesia Indryany Mangopo", "Agung Ramadhan Febrianto", "Agung Surya Nugraha",
-        "Alia Ahadi Argasah", "Alivia Paradhita", "Andika Putra", "Annisya Amanda Safira", "Ayu Pebriani",
-        "Eduward S.", "Fajri Noor Syarif", "Gloria Jelita Putri Meisya Nugroho", "Lutfiah Sania Sumardi",
-        "Muamar", "Muhammad Ikhwan Perwira", "Oktori Thio Nugroho", "Rizkia Kamila Romainur",
-        "Sekar Melati Arum Sari", "Tedi Mahendra",
-    ];
+    // const userS1Names = [
+    //     // DBA Team - 18 orang
+    //     "Achmad Ridwan", "Andi Abd Jalil", "Ando Pratama Wibawa", "Asdin Wahyu Pamungkas", "Bayu Tri Sulistyo",
+    //     "Citra Hafitasari", "Doand Panjaitan", "Dwiky Melinia Eriani", "Fahri Bagus Firmansyah", "Felisia Mascarehas",
+    //     "Hananta Prasetia", "Ikrar Harvy", "Kamila Aprilia", "Latif Unggul Irfanto", "Mahrunisa Indah",
+    //     "Muhammad Ridha HAKIM", "Nabila Fidasari", "Rizky Ramdani",
+    //     // Devops Team - 19 orang
+    //     "Afrizal Aulia Zulfikar", "Agnesia Indryany Mangopo", "Agung Ramadhan Febrianto", "Agung Surya Nugraha",
+    //     "Alia Ahadi Argasah", "Alivia Paradhita", "Andika Putra", "Annisya Amanda Safira", "Ayu Pebriani",
+    //     "Eduward S.", "Fajri Noor Syarif", "Gloria Jelita Putri Meisya Nugroho", "Lutfiah Sania Sumardi",
+    //     "Muamar", "Muhammad Ikhwan Perwira", "Oktori Thio Nugroho", "Rizkia Kamila Romainur",
+    //     "Sekar Melati Arum Sari", "Tedi Mahendra",
+    // ];
 
-    const usersS1 = userS1Names.map((nama, idx) => {
-        const slug = nama.toLowerCase().replace(/\s+/g, ".").replace(/[^a-z.]/g, "");
-        return {
-            idUser: `11111111-1111-4000-8000-${String(idx).padStart(12, '0')}`,
-            // email: `${slug}@${mapSlug["s1"]}.iconpln.co.id`,
-            email: `${slug}@iconpln.co.id`,
-            nama,
-            idSubBidang: "s1",
-            password: "123",
-            idTeam: idx <= 17 ? mapTeam["DBA"] : mapTeam["Devops"]
-        };
-    });
+    // const usersS1 = userS1Names.map((nama, idx) => {
+    //     const slug = nama.toLowerCase().replace(/\s+/g, ".").replace(/[^a-z.]/g, "");
+    //     return {
+    //         idUser: `11111111-1111-4000-8000-${String(idx).padStart(12, '0')}`,
+    //         // email: `${slug}@${mapSlug["s1"]}.iconpln.co.id`,
+    //         email: `${slug}@iconpln.co.id`,
+    //         nama,
+    //         idSubBidang: "s1",
+    //         password: "123",
+    //         idTeam: idx <= 17 ? mapTeam["DBA"] : mapTeam["Devops"]
+    //     };
+    // });
+
+    const usersS1 = usersS1Data;
 
     const usersOther = [
         { idUser: "22222222-2222-4000-8000-000000000001", email: `alex.${mapSlug["s2"]}@example.com`, nama: "Alex Prakoso", idSubBidang: "s2", password: "123" },
@@ -244,10 +247,11 @@ async function main() {
         { idUser: "33333333-3333-4000-8000-000000000002", email: `dina.${mapSlug["s3"]}@example.com`, nama: "Dina Kurniawati", idSubBidang: "s3", password: "123" },
     ];
 
+
     await db.insert(mUser).values([...usersS1, ...usersOther]);
 
     // Mapping user
-    const mapUser = Object.fromEntries([...usersS1, ...usersOther].map((u) => [u.email!, u.idUser]));
+    const mapUser = Object.fromEntries([...usersS1, ...usersOther].map((u) => [u.email, u.idUser]));
 
     // insert subskill
     console.log("👨‍👩‍👧‍👦 Seeding subskill...");
@@ -262,25 +266,25 @@ async function main() {
         //     idUser: mapUser[usersS1[2].email]
         // },
 
-        ...seedSubskill(mapSkill["PostgreSQL"], mapUser[usersS1[2].email]),
-        ...seedSubskill(mapSkill["MySQL"], mapUser[usersS1[10].email]),
-        ...seedSubskill(mapSkill["SQL Server"], mapUser[usersS1[8].email]),
-        ...seedSubskill(mapSkill["MongoDB"], mapUser[usersS1[3].email]),
-        ...seedSubskillAdministrasiOS(mapSkill["Administrasi Linux"], mapUser[usersS1[11].email]),
-        ...seedSubskillAdministrasiOS(mapSkill["Administrasi Windows"], mapUser[usersS1[17].email]),
-        ...seedVirtualMachine(mapSkill["Virtual Machine"], mapUser[usersS1[24].email]),
-        ...seedLinuxServer(mapSkill["Linux Server"], mapUser[usersS1[24].email]),
-        ...seedWindowsServer(mapSkill["Windows Server"], mapUser[usersS1[24].email]),
-        ...seedWebServer(mapSkill["Web Server"], mapUser[usersS1[24].email]),
-        ...seedMonitoring(mapSkill["Monitoring Server & APM"], mapUser[usersS1[20].email]),
-        ...seedBackupAplikasi(mapSkill["Backup Aplikasi"], mapUser[usersS1[21].email]),
-        ...seedRestoreAplikasi(mapSkill["Restore Aplikasi"], mapUser[usersS1[21].email]),
-        ...seedSecurityOS(mapSkill["Security OS"], mapUser[usersS1[24].email]),
-        ...seedContainerizationDocker(mapSkill["Containerization Docker"], mapUser[usersS1[24].email]),
-        ...seedContainerizationKubernetes(mapSkill["Containerization Kubernetes"], mapUser[usersS1[24].email]),
-        ...seedGitGitlab(mapSkill["Git & Gitlab"], mapUser[usersS1[33].email]),
-        ...seedLogManagement(mapSkill["Log Management"], mapUser[usersS1[36].email]),
-        ...seedLogAnalisis(mapSkill["Log Analisis"], mapUser[usersS1[36].email]),
+        ...seedSubskill(mapSkill["PostgreSQL"], mapUser["ando.wibawa@iconpln.co.id"]),
+        ...seedSubskill(mapSkill["MySQL"], mapUser["fahri.firmansyah@iconpln.co.id"]),
+        ...seedSubskill(mapSkill["SQL Server"], mapUser["rizky.ramdani@iconpln.co.id"]),
+        ...seedSubskill(mapSkill["MongoDB"], mapUser["asdin.pamungkas@iconpln.co.id"]),
+        ...seedSubskillAdministrasiOS(mapSkill["Administrasi Linux"], mapUser["ikrar.harvy@iconpln.co.id"]),
+        ...seedSubskillAdministrasiOS(mapSkill["Administrasi Windows"], mapUser["hananta.prasetia@iconpln.co.id"]),
+        ...seedVirtualMachine(mapSkill["Virtual Machine"], mapUser["andika.putra@iconpln.co.id"]),
+        ...seedLinuxServer(mapSkill["Linux Server"], mapUser["andika.putra@iconpln.co.id"]),
+        ...seedWindowsServer(mapSkill["Windows Server"], mapUser["andika.putra@iconpln.co.id"]),
+        ...seedWebServer(mapSkill["Web Server"], mapUser["andika.putra@iconpln.co.id"]),
+        ...seedMonitoring(mapSkill["Monitoring Server & APM"], mapUser["agung.febriyanto@iconpln.co.id"]),
+        ...seedBackupAplikasi(mapSkill["Backup Aplikasi"], mapUser["agung.surya@iconpln.co.id"]),
+        ...seedRestoreAplikasi(mapSkill["Restore Aplikasi"], mapUser["agung.surya@iconpln.co.id"]),
+        ...seedSecurityOS(mapSkill["Security OS"], mapUser["andika.putra@iconpln.co.id"]),
+        ...seedContainerizationDocker(mapSkill["Containerization Docker"], mapUser["andika.putra@iconpln.co.id"]),
+        ...seedContainerizationKubernetes(mapSkill["Containerization Kubernetes"], mapUser["andika.putra@iconpln.co.id"]),
+        ...seedGitGitlab(mapSkill["Git & Gitlab"], mapUser["muamar.muamar@iconpln.co.id"]),
+        ...seedLogManagement(mapSkill["Log Management"], mapUser["tedi.mahendra@iconpln.co.id"]),
+        ...seedLogAnalisis(mapSkill["Log Analisis"], mapUser["tedi.mahendra@iconpln.co.id"]),
     ]
 
     await db.insert(mSubSkill).values(subskillData);
@@ -298,7 +302,7 @@ async function main() {
             filename: "test-pdf.pdf",
             idLayanan: mapLayanan["AMS"],
             idSubBidang: "s1",
-            idUser: mapUser[usersS1[0].email],
+            idUser: mapUser["achmad.ridwan@iconpln.co.id"],
             idTeam: mapTeam["DBA"],
             idSubSkill: null
         },
@@ -309,7 +313,7 @@ async function main() {
             filename: "test-pdf.pdf",
             idLayanan: null,
             idSubBidang: "s1",
-            idUser: mapUser[usersS1[0].email],
+            idUser: mapUser["achmad.ridwan@iconpln.co.id"],
             idTeam: mapTeam["DBA"],
             idSubSkill: mapSubSkill["Replication"]
         },
@@ -320,7 +324,7 @@ async function main() {
             filename: "test-pdf.pdf",
             idLayanan: null,
             idSubBidang: "s1",
-            idUser: mapUser[usersS1[0].email],
+            idUser: mapUser["achmad.ridwan@iconpln.co.id"],
             idTeam: mapTeam["DBA"],
             idSubSkill: mapSubSkill["Backup Restore"]
         },
@@ -331,7 +335,7 @@ async function main() {
             filename: "test-pdf.pdf",
             idLayanan: null,
             idSubBidang: "s1",
-            idUser: mapUser[usersS1[0].email],
+            idUser: mapUser["achmad.ridwan@iconpln.co.id"],
             idTeam: mapTeam["DBA"],
             idSubSkill: mapSubSkill["WAL"]
         },
@@ -366,14 +370,14 @@ async function main() {
     const statusBacaData = [
         {
             idStatusBaca: "eeeeeeee-eeee-4000-8000-000000000001",
-            idUser: mapUser[usersS1[2].email],
+            idUser: mapUser["ando.wibawa@iconpln.co.id"],
             idDokumen: dokumenData[0].idDokumen,
             isRead: true,
             countRead: 3,
         },
         {
             idStatusBaca: "eeeeeeee-eeee-4000-8000-000000000002",
-            idUser: mapUser[usersS1[3].email],
+            idUser: mapUser["bayu.sulistyo@iconpln.co.id"],
             idDokumen: dokumenData[0].idDokumen,
             isRead: false,
             countRead: 1,
