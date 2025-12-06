@@ -7,6 +7,7 @@ import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescript
 import { Button } from "~/components/ui/button"
 import { Spinner } from "~/components/ui/spinner"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip"
+import { FIRST_SEGMENT } from "~/lib/route-config"
 
 
 export function DeleteSubSkill({
@@ -60,7 +61,7 @@ export function DeleteSubSkill({
                         Batal
                     </AlertDialogCancel>
                     {/* ini submit ke action */}
-                    <fetcher.Form method="post" action={`${idSkill}/subskill/${idSubSkill}/delete`}>
+                    <fetcher.Form method="post" action={`/${FIRST_SEGMENT}/master/skill/action/delete-subskill/${idSubSkill}`}>
                         {/* <AlertDialogAction */}
                         {/* pakai button supaya bisa loading dulu baru menutup dialog */}
                         <Button

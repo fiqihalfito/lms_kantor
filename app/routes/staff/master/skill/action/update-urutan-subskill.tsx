@@ -1,6 +1,7 @@
 import { wait } from "~/lib/utils";
-import type { Route } from "./+types/update-urutan-subskill";
 import { updateUrutanSubSkill } from "../_service";
+import type { Route } from "./+types/update-urutan-subskill";
+import { dataWithSuccess } from "remix-toast";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
 
@@ -8,11 +9,8 @@ export async function action({ request, params, context }: Route.ActionArgs) {
     const subskillsString = formData.get("newOrder") as string
     const subskills = JSON.parse(subskillsString) as { idSubSkill: string, urutan: number }[]
 
-    for (const subskill of subskills) {
-        await updateUrutanSubSkill(subskill)
-    }
+    await updateUrutanSubSkill(subskills)
 
 
-
-    return {}
+    return dataWithSuccess({ ok: true }, `Urutan subskill berhasil diperbarui`);
 }

@@ -1,6 +1,6 @@
 import { db } from "database/connect";
 import { mSkill, mSubSkill, mTeam, mUser, tDokumen, tKuis } from "database/schema/schema";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, sql, SQL } from "drizzle-orm";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 
 
@@ -119,8 +119,32 @@ export async function getFilenameDokumenBySubSkillId(idSubSkill: string) {
 }
 
 export async function getSubSkillByidSkill(idSkill: string) {
-    const res = await db.select().from(mSubSkill).where(eq(mSubSkill.idSkill, idSkill))
-    return res
+    // const raw = await db
+    //     .select()
+    //     .from(mSubSkill)
+    //     .where(eq(mSubSkill.idSkill, idSkill))
+    //     .orderBy(mSubSkill.level, mSubSkill.urutan);
+
+    const raw = await db.query.mSubSkill.findMany({
+        where: eq(mSubSkill.idSkill, idSkill),
+        orderBy: [mSubSkill.level, mSubSkill.urutan],
+        with: {
+            pic: {
+                columns: {
+                    nama: true
+                }
+            }
+        }
+    })
+
+    const map = new Map<number, typeof raw>();
+
+    for (const row of raw) {
+        if (!map.has(row.level)) map.set(row.level, []);
+        map.get(row.level)!.push(row);
+    }
+
+    return Array.from(map.entries());
 }
 
 export async function getManyDokumenBySubSkillIds(idSubSkills: string[]) {
@@ -142,10 +166,45 @@ export async function deleteManyKuis(idKuis: string[]) {
 }
 
 
-export async function updateUrutanSubSkill(newOrder: { idSubSkill: string, urutan: number }) {
+export async function updateUrutanSubSkill(newOrder: { idSubSkill: string, urutan: number }[]) {
+
+    if (newOrder.length === 0) {
+        return;
+    }
+
+    const sqlChunks: SQL[] = [];
+    const idSubSkills: string[] = [];
+
+    sqlChunks.push(sql`(case`);
+
+    for (const subskill of newOrder) {
+        sqlChunks.push(sql`when ${mSubSkill.idSubSkill} = ${subskill.idSubSkill}`);
+        sqlChunks.push(sql<number>`then ${subskill.urutan}::integer`);
+        idSubSkills.push(subskill.idSubSkill);
+    }
+
+    sqlChunks.push(sql`end)`);
+
+    const finalSql: SQL = sql.join(sqlChunks, sql.raw(' '));
+
+
     await db.update(mSubSkill)
         .set({
-            urutan: newOrder.urutan
+            urutan: finalSql
         })
-        .where(eq(mSubSkill.idSubSkill, newOrder.idSubSkill))
+        .where(inArray(mSubSkill.idSubSkill, idSubSkills))
+}
+
+export async function getSkillByIdTeam(idTeam: string) {
+    const res = await db.select().from(mSkill).where(eq(mSkill.idTeam, idTeam)).orderBy(mSkill.namaSkill)
+    return res
+}
+
+export async function getUserTeam(idTeam: string) {
+    const res = await db.select({
+        namaUser: mUser.nama,
+        idUser: mUser.idUser,
+        idTeam: mUser.idTeam,
+    }).from(mUser).where(eq(mUser.idTeam, idTeam))
+    return res
 }

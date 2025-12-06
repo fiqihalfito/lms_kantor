@@ -37,13 +37,14 @@ import {
     DialogTrigger,
 } from "~/components/ui/dialog"
 import { useEffect, useState } from "react";
+import { FIRST_SEGMENT } from "~/lib/route-config";
 
 type modeType = "insert" | "update"
 
 type FormSkillProp = {
     idSkill?: string,
     idTeam?: string,
-    namaTeam?: string,
+    namaTeam?: string | null,
     defaultValues?: {
         namaSkill: string | null,
     },
@@ -72,13 +73,13 @@ export function FormSkill({ defaultValues, mode, idSkill, idTeam, namaTeam }: Fo
             tooltipContent: `Tambah Skill ${namaTeam}`,
             icon: <CircleFadingPlusIcon className="size-5" />,
             dialogTitle: `Tambah Skill ${namaTeam}`,
-            action: `team/${idTeam}/new`
+            action: `/${FIRST_SEGMENT}/master/skill/action/add-skill/${idTeam}`
         },
         update: {
             tooltipContent: "Edit SubSkill",
             icon: <PencilIcon />,
             dialogTitle: "Edit SubSkill",
-            action: `${idSkill}/edit`
+            action: `/${FIRST_SEGMENT}/master/skill/action/edit-skill/${idSkill}`
         }
     }
 

@@ -1,8 +1,8 @@
 import { updateSubSkill } from "../_service";
-import type { Route } from "./+types/edit-subskill";
 import z from "zod";
 import { wait } from "~/lib/utils";
 import { dataWithError, dataWithSuccess } from "remix-toast";
+import type { Route } from "./+types/edit-subskill";
 
 export async function action({ request, params }: Route.ActionArgs) {
 

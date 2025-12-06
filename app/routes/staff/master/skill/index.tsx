@@ -1,42 +1,52 @@
-import { data, Link, Outlet } from "react-router";
+import { NavLink, Outlet } from "react-router";
 import type { Route } from "./+types/index";
-import { Button } from "~/components/ui/button";
-import { CircleFadingPlusIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import { Separator } from "~/components/ui/separator";
-import { getAllUsers, getListTeam, getTeamAndSkill } from "./_service";
+import { getListTeam } from "./_service";
 import { userContext } from "~/lib/context";
-import { getToast } from "remix-toast";
-import { ListSkillSubSkill } from "./_components/list-skill-subskill";
-import { useToastEffect } from "~/hooks/use-toast";
+import {
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemDescription,
+    ItemGroup,
+    ItemMedia,
+    ItemTitle,
+} from "~/components/ui/item"
+import { cn } from "~/lib/utils";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
     const user = context.get(userContext)
 
     // toast
-    const { toast, headers } = await getToast(request);
+    // const { toast, headers } = await getToast(request);
 
-    // filter
-    const url = new URL(request.url)
-    const filterTeam = url.searchParams.get("team")
-    const teamAndSkill = await getTeamAndSkill(user?.idSubBidang!, filterTeam)
+    // // filter
+    // const url = new URL(request.url)
+    // const filterTeam = url.searchParams.get("team")
+    // const teamAndSkill = await getTeamAndSkill(user?.idSubBidang!, filterTeam)
 
-    // masterFilter
-    const listTeam = await getListTeam(user.idSubBidang)
+    // // masterFilter
+    // const listTeam = await getListTeam(user.idSubBidang)
 
-    // masterForm
-    const allUsers = await getAllUsers(user?.idSubBidang!)
+    // // masterForm
+    // const allUsers = await getAllUsers(user?.idSubBidang!)
 
-    return data({ teamAndSkill, listTeam, filterTeam, allUsers, toast }, { headers })
+    // return data({ teamAndSkill, listTeam, filterTeam, allUsers, toast }, { headers })
+
+    const allTeams = await getListTeam(user.idSubBidang)
+
+    return { allTeams }
+
 }
 
 
 export default function SkillMaster({ loaderData }: Route.ComponentProps) {
 
-    const { teamAndSkill, listTeam, filterTeam, allUsers, toast } = loaderData
+    const { allTeams } = loaderData
 
 
-    useToastEffect(toast)
 
 
     return (
@@ -51,14 +61,42 @@ export default function SkillMaster({ loaderData }: Route.ComponentProps) {
 
             <Separator />
 
-            <Outlet />
 
-            <ListSkillSubSkill
+            {/* <ListSkillSubSkill
                 allUsers={allUsers}
                 filterTeam={filterTeam}
                 listTeam={listTeam}
                 teamAndSkill={teamAndSkill}
-            />
+            /> */}
+
+            <div className="flex flex-row gap-8">
+                <div className="w-60">
+                    <h1 className="font-semibold text-muted-foreground mb-2">Team</h1>
+                    <ItemGroup className="flex flex-col gap-2">
+                        {allTeams.map((team, i) => (
+                            <NavLink key={team.idTeam} to={`team/${team.idTeam}`}>
+                                {({ isActive }) => (
+                                    <Item variant={"outline"} className={cn(isActive && "bg-accent")}>
+
+                                        <ItemContent>
+                                            <ItemTitle>{team.nama}</ItemTitle>
+                                        </ItemContent>
+                                        <ItemActions>
+                                            <ChevronRightIcon className="size-4" />
+                                        </ItemActions>
+                                    </Item>
+                                )}
+
+                            </NavLink>
+                        ))}
+                    </ItemGroup>
+                </div>
+
+                <Outlet />
+
+
+            </div>
+
 
 
 

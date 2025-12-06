@@ -2,7 +2,7 @@
 
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip"
-import type { getAllUsers } from "../_service"
+import type { getAllUsers, getUserTeam } from "../_service"
 import {
     Dialog,
     DialogContent,
@@ -15,17 +15,18 @@ import { Button } from "~/components/ui/button"
 import { CircleFadingPlusIcon, PencilIcon, type LucideIcon } from "lucide-react"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "~/components/ui/field"
 import { Input } from "~/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Form, useFetcher } from "react-router"
 import { useEffect, useRef, useState } from "react"
 import { Spinner } from "~/components/ui/spinner"
 import { toast as notify } from "sonner"
 import type { ToastMessage } from "remix-toast"
+import { FIRST_SEGMENT } from "~/lib/route-config"
 
 type modeType = "insert" | "update"
 
 type FormSubSkillType = {
-    allUsers: Awaited<ReturnType<typeof getAllUsers>>,
+    // allUsers: Awaited<ReturnType<typeof getAllUsers>>,
     idTeam: string,
     idSkill?: string,
     idSubSkill?: string,
@@ -38,11 +39,11 @@ type FormSubSkillType = {
     mode: modeType,
 }
 
-export function FormSubSkill({ allUsers, idTeam, idSkill, idSubSkill, namaSkill, mode, dv }: FormSubSkillType) {
+export function FormSubSkill({ idTeam, idSkill, idSubSkill, namaSkill, mode, dv }: FormSubSkillType) {
 
     const [open, setOpen] = useState(false)
 
-    const userTeam = allUsers.filter(user => user.idTeam === idTeam)
+    // const userTeam = allUsers.filter(user => user.idTeam === idTeam)
 
     type modeMapType = {
         [k in modeType]: {
@@ -57,13 +58,14 @@ export function FormSubSkill({ allUsers, idTeam, idSkill, idSubSkill, namaSkill,
             tooltipContent: `Tambah SubSkill ${namaSkill}`,
             icon: <CircleFadingPlusIcon className="size-5" />,
             dialogTitle: `Tambah SubSkill ${namaSkill}`,
-            action: `${idSkill}/subskill/new`
+            action: `/${FIRST_SEGMENT}/master/skill/action/add-subskill/${idSkill}`
         },
         update: {
             tooltipContent: "Edit SubSkill",
             icon: <PencilIcon />,
             dialogTitle: "Edit SubSkill",
-            action: `${idSkill}/subskill/${idSubSkill}/edit`
+            // action: `${idSkill}/subskill/${idSubSkill}/edit`
+            action: `/${FIRST_SEGMENT}/master/skill/action/edit-subskill/${idSubSkill}`
         }
     }
 
@@ -79,22 +81,45 @@ export function FormSubSkill({ allUsers, idTeam, idSkill, idSubSkill, namaSkill,
         }
     }, [fetcher.state, fetcher.data])
 
+    let fetcherUserTeam = useFetcher({ key: "user_team" })
+    let userTeam = fetcherUserTeam.data?.userTeam as Awaited<ReturnType<typeof getUserTeam>> | undefined
+
+    useEffect(() => {
+        fetcherUserTeam.load(`/${FIRST_SEGMENT}/master/skill/loader/load-user-team/${idTeam}`)
+    }, [idTeam])
 
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <DialogTrigger asChild>
-                        <Button size={"icon-sm"} variant={"outline"} className="cursor-pointer">
-                            {modeMap[mode].icon}
-                        </Button>
-                    </DialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>{modeMap[mode].tooltipContent}</p>
-                </TooltipContent>
-            </Tooltip>
+            {mode === "insert" ? (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <DialogTrigger asChild>
+                            <Button size={"sm"} variant={"outline"} className="cursor-pointer">
+                                {modeMap[mode].icon}
+                                Tambah SubSkill
+                            </Button>
+                        </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{modeMap[mode].tooltipContent}</p>
+                    </TooltipContent>
+                </Tooltip>
+            ) : (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <DialogTrigger asChild>
+                            <Button size={"icon-sm"} variant={"outline"} className="cursor-pointer">
+                                {modeMap[mode].icon}
+                            </Button>
+                        </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{modeMap[mode].tooltipContent}</p>
+                    </TooltipContent>
+                </Tooltip>
+            )}
+
             <DialogContent className="gap-6" >
                 <DialogHeader>
                     <DialogTitle>
@@ -121,14 +146,22 @@ export function FormSubSkill({ allUsers, idTeam, idSkill, idSubSkill, namaSkill,
                         </Field>
                         <Field>
                             <FieldLabel>PIC</FieldLabel>
-                            <Select name="idUser" required defaultValue={dv?.idUser ?? undefined}>
+                            <Select name="idUser" required defaultValue={dv?.idUser ?? undefined} >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Pilih anggota" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {userTeam.map((u, i) => (
-                                        <SelectItem key={u.idUser} value={u.idUser}>{u.namaUser}</SelectItem>
-                                    ))}
+                                    <SelectGroup>
+                                        <SelectLabel>PIC</SelectLabel>
+                                        {userTeam ? (
+                                            userTeam.map((u, i) => (
+                                                <SelectItem key={u.idUser} value={u.idUser}>{u.namaUser}</SelectItem>
+                                            ))
+                                        ) : (
+                                            <SelectItem value="null" disabled>Tidak ada anggota</SelectItem>
+                                        )}
+                                    </SelectGroup>
+
                                 </SelectContent>
                             </Select>
                         </Field>

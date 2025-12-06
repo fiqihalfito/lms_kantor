@@ -93,22 +93,26 @@ export default [
                     route("edit/:idLayanan", "routes/staff/master/layanan/edit/index.tsx"),
                 ]),
                 route("skill", "routes/staff/master/skill/index.tsx", [
-                    ...prefix("team/:idTeam", [
-                        route("new", "routes/staff/master/skill/action/add-skill.tsx"),
-                    ]),
-                    ...prefix(":idSkill", [
-                        route("delete", "routes/staff/master/skill/action/delete-skill.tsx"),
-                        route("edit", "routes/staff/master/skill/action/edit-skill.tsx"),
-                        route("update-urutan", "routes/staff/master/skill/action/update-urutan-subskill.tsx"),
-
-                        ...prefix("subskill", [
-                            route("new", "routes/staff/master/skill/action/add-subskill.tsx"),
-                            ...prefix(":idSubSkill", [
-                                route("edit", "routes/staff/master/skill/action/edit-subskill.tsx"),
-                                route("delete", "routes/staff/master/skill/action/delete-subskill.tsx"),
-                            ])
+                    route("team/:idTeam", "routes/staff/master/skill/team-skill/index.tsx", [
+                        route("team-skill/:idSkill", "routes/staff/master/skill/team-skill/subskill/index.tsx", [
+                            route("update-urutan", "routes/staff/master/skill/action/update-urutan-subskill.tsx")
                         ])
                     ]),
+
+                    ...prefix("loader", [
+                        route("load-user-team/:idTeam", "routes/staff/master/skill/loader/load-user-team.tsx"),
+                    ]),
+
+                    ...prefix("action", [
+                        route("add-skill/:idTeam", "routes/staff/master/skill/action/add-skill.tsx"),
+                        route("edit-skill/:idSkill", "routes/staff/master/skill/action/edit-skill.tsx"),
+                        route("delete-skill/:idSkill", "routes/staff/master/skill/action/delete-skill.tsx"),
+                        route("add-subskill/:idSkill", "routes/staff/master/skill/action/add-subskill.tsx"),
+                        route("edit-subskill/:idSubSkill", "routes/staff/master/skill/action/edit-subskill.tsx"),
+                        route("delete-subskill/:idSubSkill", "routes/staff/master/skill/action/delete-subskill.tsx"),
+                    ])
+
+
 
 
 
