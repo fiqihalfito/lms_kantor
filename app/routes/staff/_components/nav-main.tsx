@@ -119,7 +119,7 @@ export function NavMain() {
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
-        <SidebarMenuItem key={"dashboard-subbidang"}>
+        {/* <SidebarMenuItem key={"dashboard-subbidang"}>
           <SidebarMenuButton asChild isActive={location.pathname === `/${FIRST_SEGMENT}/dashboard-subbidang`}>
             <NavLink to={`/${FIRST_SEGMENT}/dashboard-subbidang`}>
               {({ isPending }) => (
@@ -131,7 +131,7 @@ export function NavMain() {
               )}
             </NavLink>
           </SidebarMenuButton>
-        </SidebarMenuItem>
+        </SidebarMenuItem> */}
         {items.map((item) => (
           <Collapsible
             key={item.title}
