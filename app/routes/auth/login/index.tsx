@@ -54,6 +54,16 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 }
 
+export async function loader({ request, params }: Route.LoaderArgs) {
+
+    // tidak return apa apa
+    // digunakan hanya sebagai Trigger Server Middleware
+    // server middleware hanya akan jalan kalau ada server loader 
+    // https://reactrouter.com/how-to/middleware 
+
+    return null
+}
+
 
 export default function LoginPage({ actionData, }: Route.ComponentProps) {
 

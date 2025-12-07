@@ -23,6 +23,7 @@ export async function authMiddleware({ request, context }: any) {
 }
 
 export async function loginMiddleware({ request, context }: any) {
+    console.log("loginMiddleware");
     const idUser = await getIdUserFromSession(request);
     if (idUser) {
         throw redirect(`/${FIRST_SEGMENT}/dashboard`)

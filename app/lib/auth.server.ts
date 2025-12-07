@@ -3,7 +3,7 @@ import { mUser } from "database/schema/schema";
 import { and, eq } from "drizzle-orm";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
-import { hash, verify } from "@node-rs/argon2";
+import { verify } from "@node-rs/argon2";
 import "dotenv/config"
 
 
