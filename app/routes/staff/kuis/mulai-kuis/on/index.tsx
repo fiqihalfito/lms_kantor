@@ -16,12 +16,14 @@ export async function action({ request, params }: Route.ActionArgs) {
     const formData = await request.formData()
     const data = Object.fromEntries(formData)
     const jawabanSet = JSON.parse(data.jawabanSet as string) as Record<string, "a" | "b" | "c" | "d">
-
+    const jumlahSoal = Number(data.jumlahSoal)
+    console.log("jumlahSoal", jumlahSoal)
 
     const jumlahBenar = await hitungBenarJawaban(jawabanSet)
 
     const updatedProgress = await updateKuisProgress(params.idKuisProgress, {
         jumlahBenar: jumlahBenar,
+        jumlahSoal: jumlahSoal,
         jawabanSet: JSON.stringify(jawabanSet),
         isSelesai: true
     })
@@ -71,7 +73,8 @@ export default function UjianPage({ params, loaderData }: Route.ComponentProps) 
     const handleSubmit = () => {
 
         submit({
-            jawabanSet: JSON.stringify(jawabanSet)
+            jawabanSet: JSON.stringify(jawabanSet),
+            jumlahSoal: allSoal.length
         }, {
             method: "post"
         })

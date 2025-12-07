@@ -8,8 +8,11 @@ export default [
         route("logout", "routes/auth/logout/index.tsx")
     ]),
 
-    ...prefix("dashboard", [
-        index("routes/vp/dashboard-page.tsx"),
+    route("dashboard", "routes/vp/dashboard-page.tsx", [
+        route("detail-skill/:idUser/skill/:idSkill", "routes/vp/detail-skill/index.tsx"),
+        route("dokumen-read-persentage/tipe/:tipe", "routes/vp/dokumen-read-persentage/index.tsx", [
+            route(":idDokumen/jumlah-orang-baca", "routes/vp/dokumen-read-persentage/jumlah-orang-baca/index.tsx")
+        ]),
     ]),
 
     route("app", "routes/app/index.tsx", { id: "app_segment" }, [

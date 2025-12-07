@@ -1,6 +1,6 @@
 import { db } from "database/connect";
 import { mSkill, mSubBidang, mSubSkill, mTeam, mUser, tDokumen, tKuis, tKuisProgress, tStatusBaca } from "database/schema/schema";
-import { and, count, eq, notInArray, sql } from "drizzle-orm";
+import { and, count, eq, gt, gte, notInArray, sql } from "drizzle-orm";
 import { wait } from "~/lib/utils";
 
 
@@ -15,6 +15,67 @@ export async function getAllSkill(idSubBidang: string) {
 }
 
 
+export async function getAllSkillPercentageByFinishedQuiz(idSubBidang: string) {
+    const raw = await db.query.mSkill.findMany({
+        where: eq(mSkill.idSubBidang, idSubBidang),
+        with: {
+            subSkill: {
+                with: {
+                    kuisProgress: {
+                        where: and(
+                            eq(tKuisProgress.isSelesai, true),
+                            // sql`${tKuisProgress.jumlahBenar} * 100 > ${tKuisProgress.jumlahSoal} * 80`
+                            // gte(tKuisProgress.jumlahBenar, tKuisProgress.jumlahSoal * 0.8)
+                            sql`${tKuisProgress.jumlahBenar} > ${tKuisProgress.jumlahSoal} * 0.8`
+                        )
+                    }
+                }
+            },
+            team: true
+        }
+    })
+
+    const jumlahUserPerTeam = await db.select({
+        idTeam: mTeam.idTeam,
+        namaTeam: mTeam.nama,
+        jumlahUser: count(mUser.idUser)
+    }).from(mTeam)
+        .leftJoin(mUser, eq(mUser.idTeam, mTeam.idTeam))
+        .where(eq(mTeam.idSubBidang, idSubBidang))
+        .groupBy(mTeam.idTeam)
+
+    const mappingPersentase = raw.map(skill => {
+        const subskillWithPersentase = skill.subSkill.map(subSkill => {
+            const teamId = skill.team?.idTeam;
+            const totalUsersInTeam = jumlahUserPerTeam.find(team => team.idTeam === teamId)?.jumlahUser || 1;
+            const totalOrangYangMengerjakan = subSkill.kuisProgress.length;
+            const persentaseSubskill = (totalOrangYangMengerjakan / totalUsersInTeam) * 100;
+            return {
+                // ...subSkill,
+                idSubSkill: subSkill.idSubSkill,
+                persentaseSubskill
+            }
+        });
+        const persentaseSkill = subskillWithPersentase.reduce((acc, subSkill) => acc + subSkill.persentaseSubskill, 0) / skill.subSkill.length;
+        return {
+            ...skill,
+            subSkill: subskillWithPersentase,
+            persentaseSkill
+        }
+    })
+
+    const mappingTeam = mappingPersentase.reduce((acc, skill) => {
+        if (skill.team) {
+            acc[skill.team.idTeam] = acc[skill.team.idTeam] || [];
+            acc[skill.team.idTeam].push(skill);
+        }
+        return acc;
+    }, {} as Record<string, typeof mappingPersentase>)
+
+    return mappingTeam
+
+}
+
 
 export async function getAllUsersWithScore(idSubBidang: string) {
 
@@ -23,6 +84,7 @@ export async function getAllUsersWithScore(idSubBidang: string) {
         where: and(
             eq(mUser.idSubBidang, idSubBidang)
         ),
+        orderBy: [mUser.nama],
         columns: {
             password: false
         },
@@ -226,5 +288,10 @@ export async function getPersentaseKuis(idSubBidang: string) {
 
     // console.log(persentaseOrangKuisPerTeam)
     return persentaseOrangKuisPerTeam
+}
+
+export async function getAllSubbidang() {
+    const res = await db.select().from(mSubBidang)
+    return res
 }
 

@@ -1,7 +1,7 @@
 import type { mUser } from "./schema/schema";
 import { hash } from "@node-rs/argon2";
 
-const hashedPassword = await hash("123x");
+const hashedPassword = await hash("1234");
 
 export const usersS1Data: typeof mUser.$inferSelect[] = [
     // LMS

@@ -54,11 +54,13 @@ export async function hitungBenarJawaban(jawabanSet: Record<string, "a" | "b" | 
 export async function updateKuisProgress(idKuisProgress: string, {
     jawabanSet,
     jumlahBenar,
+    jumlahSoal,
     isSelesai
 }: typeof tKuisProgress.$inferInsert) {
     return await db.update(tKuisProgress).set({
         jawabanSet: jawabanSet,
         jumlahBenar: jumlahBenar,
+        jumlahSoal: jumlahSoal,
         isSelesai: isSelesai
     }).where(eq(tKuisProgress.idKuisProgress, idKuisProgress))
         .returning()

@@ -50,7 +50,7 @@ export const mUser = pgTable('m_user', {
 })
 
 export const mSubBidang = pgTable('m_subbidang', {
-    idSubBidang: char("id_subbidang", { length: 3 }).primaryKey(),
+    idSubBidang: char("id_subbidang", { length: 2 }).primaryKey(),
     slug: char("slug", { length: 6 }).unique(),
     nama: text('nama')
 })
@@ -131,6 +131,7 @@ export const tKuisProgress = pgTable('t_kuis_progress', {
     ...userFK, // orang yang jawab soal
     ...subSkillFK,
     jumlahBenar: integer("jumlah_benar").default(0),
+    jumlahSoal: integer("jumlah_soal").default(0),
     jawabanSet: text("jawaban_set"),
     isSelesai: boolean("is_selesai").default(false),
     ...timestamps
