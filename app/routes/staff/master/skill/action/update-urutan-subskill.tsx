@@ -5,6 +5,7 @@ import { dataWithSuccess } from "remix-toast";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
 
+    // await wait(3000)
     const formData = await request.formData()
     const subskillsString = formData.get("newOrder") as string
     const subskills = JSON.parse(subskillsString) as { idSubSkill: string, urutan: number }[]

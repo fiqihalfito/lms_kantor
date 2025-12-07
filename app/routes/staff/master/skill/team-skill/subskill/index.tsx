@@ -21,6 +21,7 @@ import { getToast } from "remix-toast";
 import { DeleteSubSkill } from "../../_components/delete-subskill";
 import { EmptySubSkill } from "../../_components/empty-subskill";
 import { wait } from "~/lib/utils";
+import { useState } from "react";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
 
@@ -36,14 +37,44 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export default function SubskillList({ loaderData, params, matches }: Route.ComponentProps) {
 
-    const { allSubskill: groupSubskill, toast } = loaderData
+    const { allSubskill, toast } = loaderData
     const namaSkill = matches[4].loaderData.listSkill.find((skill) => skill.idSkill === params.idSkill)?.namaSkill
 
     useToastEffect(toast)
 
     const fetcher = useFetcher()
-    const handleOrderSubSkill = (subskill: typeof groupSubskill[number][1]) => {
-        const newSubskillOrder = subskill.map((subskill, i) => {
+    // let groupSubskill = allSubskill
+    // for optimistic UI
+    // if (fetcher.formData) {
+    //     let changedSubskillOrder = JSON.parse(fetcher.formData.get("newOrder") as string) as { idSubSkill: string, urutan: number }[]
+    //     let mapping = new Map(changedSubskillOrder.map(s => [s.idSubSkill, s.urutan]));
+    //     let level = Number(fetcher.formData.get("level"))
+    //     let oldOrderLevel = allSubskill[level - 1]
+    //     let newSubskillOrder: typeof groupSubskill[number] = [
+    //         level,
+    //         oldOrderLevel[1].map(s =>
+    //             mapping.has(s.idSubSkill)
+    //                 ? { ...s, urutan: mapping.get(s.idSubSkill)! }
+    //                 : s
+    //         ).sort((a, b) => a.urutan! - b.urutan!)
+    //     ]
+    //     groupSubskill[level - 1] = newSubskillOrder
+    // }
+
+    const [groupSubskill, setGroupSubskill] = useState(allSubskill)
+
+    const handleOrderSubSkill = (newSubskillOrder: typeof groupSubskill[number][1]) => {
+
+        setGroupSubskill((prev) => {
+            return prev.map(([level, subskills], i) => {
+                if (level === newSubskillOrder[0].level) {
+                    return [level, newSubskillOrder]
+                }
+                return [level, subskills]
+            })
+        })
+
+        const submittedNewSubskillOrder = newSubskillOrder.map((subskill, i) => {
             return {
                 idSubSkill: subskill.idSubSkill,
                 urutan: i + 1
@@ -51,7 +82,8 @@ export default function SubskillList({ loaderData, params, matches }: Route.Comp
         })
 
         fetcher.submit({
-            newOrder: JSON.stringify(newSubskillOrder), // to database
+            newOrder: JSON.stringify(submittedNewSubskillOrder), // to database
+            // level: newSubskillOrder[0].level, // level sample
         }, {
             method: "post",
             action: `update-urutan`,
@@ -97,7 +129,7 @@ export default function SubskillList({ loaderData, params, matches }: Route.Comp
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead className="w-[50px]"></TableHead> {/*handleOrderSubSkill*/}
+                                            <TableHead className="w-[50px]" />
                                             <TableHead>SubSkill</TableHead>
                                             <TableHead>PIC</TableHead>
                                             <TableHead className="text-right">Aksi</TableHead>
@@ -106,8 +138,8 @@ export default function SubskillList({ loaderData, params, matches }: Route.Comp
                                     <SortableContent asChild>
                                         <TableBody>
                                             {subskills.map((ss) => (
-                                                <SortableItem asChild key={ss.idSubSkill} value={ss.idSubSkill}>
-                                                    <TableRow>
+                                                <SortableItem key={ss.idSubSkill} asChild value={ss.idSubSkill}>
+                                                    <TableRow key={ss.idSubSkill}>
                                                         <TableCell>
                                                             <SortableItemHandle asChild>
                                                                 <Button variant="ghost" size="icon" className="size-8">
