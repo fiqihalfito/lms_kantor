@@ -3,6 +3,7 @@ import { mUser } from "database/schema/schema";
 import { and, eq } from "drizzle-orm";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
+import { hash, verify } from "@node-rs/argon2";
 import "dotenv/config"
 
 
@@ -20,16 +21,24 @@ authenticator.use(
 
 
         // And finally, you can find, or create, the user
-        let idUser = await getIdUserByEmailandPassword(email, password);
+        let idUser = await verifyCredential(email, password);
 
         // And return the user as the Authenticator expects it
         return idUser
     })
 );
 
-export async function getIdUserByEmailandPassword(email: string, password: string) {
-    const res = await db.select().from(mUser).where(and(eq(mUser.email, email), eq(mUser.password, password)))
-    return res.length > 0 ? res[0].idUser : null
+export async function verifyCredential(email: string, inputPassword: string) {
+    const res = await db.select().from(mUser).where(eq(mUser.email, email))
+    if (res.length === 0) {
+        return null
+    }
+    const password = res[0].password
+    if (password === null) {
+        return null
+    }
+    const valid = await verify(password, inputPassword)
+    return valid ? res[0].idUser : null
 }
 
 

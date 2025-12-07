@@ -35,7 +35,7 @@ export async function getSkillAndSubSkillByPIC(idSubBidang: string, idUser: stri
         where: eq(mSkill.idSubBidang, idSubBidang)
     })
 
-    const res = raw.map((skill) => {
+    const res = raw.filter((skill) => skill.subSkill.length > 0).map((skill) => {
         const groupedSubSkills = skill.subSkill
             .sort((a, b) => a.level - b.level)
             .reduce((acc, subSkill) => {

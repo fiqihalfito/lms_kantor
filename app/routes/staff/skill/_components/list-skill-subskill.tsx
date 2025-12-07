@@ -9,7 +9,7 @@ type ListSkillSubskillType = {
 export function ListSkillSubskill({ skillAndSubskill }: ListSkillSubskillType) {
     return (
         <div className="flex flex-col gap-12">
-            {skillAndSubskill.filter(s => s.jumlahSubskill > 0).map((s, i) => (
+            {skillAndSubskill.map((s, i) => (
                 <div key={s.idSkill} className="border rounded-sm p-4 space-y-4 shadow">
                     <div>
                         <h1 className="font-semibold">{s.namaSkill}</h1>

@@ -8,6 +8,7 @@ import { userContext } from "~/lib/context";
 import { ListSkillSubskill } from "./_components/list-skill-subskill";
 import { getToast } from "remix-toast";
 import { useToastEffect } from "~/hooks/use-toast";
+import { EmptyNotPic } from "./_components/empty-not-pic";
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
 
@@ -46,6 +47,10 @@ export default function SkillPage({ loaderData }: Route.ComponentProps) {
             </div>
 
             <Separator />
+
+            {skillAndSubskill.length === 0 && <EmptyNotPic />}
+
+            {/* <pre>{JSON.stringify(skillAndSubskill, null, 4)}</pre> */}
 
             <div className="">
                 <ListSkillSubskill skillAndSubskill={skillAndSubskill} />
