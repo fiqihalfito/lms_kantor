@@ -1,5 +1,12 @@
 version: "3.9" # versi schema docker-compose
 services:
+    lms_app_service:
+        image: lms-image:latest
+        container_name: LMS_app_container
+        ports:
+            - "3000:3000"
+        restart: unless-stopped
+
     lms_db_service:
         image: postgres:16
         container_name: LMS_DB_postgres_container
