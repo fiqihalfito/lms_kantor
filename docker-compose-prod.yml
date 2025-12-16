@@ -1,19 +1,19 @@
 version: "3.9"
 
 services:
-  lms_app_service:
+  lms-app-service:
     image: lms-image:latest
     container_name: LMS_app_container
     ports:
       - "3000:3000"
     env_file:
-      - .env.prod                # <--- pastikan ada file .env
+      - .env.prod
     depends_on:
-      - lms_db_service
-      - lms_minio
+      - lms-db-service
+      - lms-minio
     restart: unless-stopped
 
-  lms_db_service:
+  lms-db-service:
     image: postgres:16
     container_name: LMS_DB_postgres_container
     environment:
@@ -26,7 +26,7 @@ services:
       - lmsdbdev_pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
-  lms_minio:
+  lms-minio:
     image: minio/minio:latest
     container_name: LMS_minio_container
     ports:
@@ -37,9 +37,10 @@ services:
       MINIO_ROOT_PASSWORD: lms_minio_dev # Ganti dengan password aman
     command: server /data --console-address ":9090"
     volumes:
-        - ./storage/minio_data:/data
+        - minio_data:/data
         # - ./storage/pdfs:/data/pdfs # opsional: mount folder host untuk PDF
     restart: unless-stopped
 
 volumes:
   lmsdbdev_pgdata:
+  minio_data:

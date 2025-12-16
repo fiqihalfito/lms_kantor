@@ -17,3 +17,5 @@ alur auth
 - id user sebagai session, ingat hanya iduser saja
 - di middleware, cek ke db dari iduser
 - data return dipakai sebagai context
+
+nama service di docker compose jangan underscore _, harus pakai dash -

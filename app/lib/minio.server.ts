@@ -7,6 +7,7 @@ export const minioClient = new Minio.Client({
     useSSL: false,           // true kalau pakai TLS
     accessKey: process.env.MINIO_ROOT_USER!,
     secretKey: process.env.MINIO_ROOT_PASSWORD!,
+
 });
 
 export async function uploadToMinioTemp(file: File) {
@@ -32,25 +33,39 @@ export async function uploadToMinioTemp(file: File) {
 }
 
 export async function removeTempFileIfValidationFail(filename: string) {
+    await checkIfBucketNotExistsThenCreateNewOne("temp");
     await minioClient.removeObject("temp", filename);
 }
 
 export async function moveToRealBucket(bucket: string, filename: string) {
+    await checkIfBucketNotExistsThenCreateNewOne(bucket);
     await minioClient.copyObject(bucket, filename, `/temp/${filename}`);
     await minioClient.removeObject("temp", filename);
 }
 
 export async function deleteInRealBucket(bucket: string, filename: string) {
+    await checkIfBucketNotExistsThenCreateNewOne(bucket);
     await minioClient.removeObject(bucket, filename);
 }
 
 export async function deleteManyInRealBucket(bucket: string, filename: string[]) {
+    await checkIfBucketNotExistsThenCreateNewOne(bucket);
     await minioClient.removeObjects(bucket, filename);
 }
 
 
 export async function getPresignedUrl(bucket: string, filename: string) {
-    return await minioClient.presignedGetObject(bucket, filename, 60); // berlaku 60 detik
+    await checkIfBucketNotExistsThenCreateNewOne(bucket);
+    const presignedUrl = await minioClient.presignedGetObject(bucket, filename, 60); // berlaku 60 detik
+
+    console.log(presignedUrl)
+
+    return presignedUrl
+}
+
+export async function checkIfBucketNotExistsThenCreateNewOne(bucket: string) {
+    const exists = await minioClient.bucketExists(bucket).catch(() => false);
+    if (!exists) await minioClient.makeBucket(bucket);
 }
 
 // export const fileStorage = new S3FileStorage(s3Client, 'bucket-name')

@@ -1,7 +1,7 @@
 import { db } from "database/connect";
 import { tDokumen } from "database/schema/schema";
 import { eq } from "drizzle-orm";
-import { minioClient } from "~/lib/minio.server";
+import { deleteInRealBucket } from "~/lib/minio.server";
 
 export async function deleteDokumen(idDokumen: string) {
     // delete dokumen in minio first
@@ -12,7 +12,8 @@ export async function deleteDokumen(idDokumen: string) {
     }).from(tDokumen).where(eq(tDokumen.idDokumen, idDokumen))
 
     if (res[0].filename) {
-        await minioClient.removeObject("dokumen", res[0].filename);
+        // await minioClient.removeObject("dokumen", res[0].filename);
+        await deleteInRealBucket("dokumen", res[0].filename)
     }
 
     // delete dokumen data in db
