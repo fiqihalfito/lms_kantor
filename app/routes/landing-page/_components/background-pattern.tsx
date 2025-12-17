@@ -26,7 +26,7 @@ export const BackgroundPattern = () => {
         className="absolute inset-0"
         quantity={100}
         ease={80}
-        color={isLightTheme ? "#000" : "#fff"}
+        color={!isLightTheme ? "#000" : "#fff"}
         refresh
       />
     </>
